@@ -55,8 +55,8 @@ declare -a PLUGINS=(
 
 # 网络设置
 URL_GHPROXY=${URL_GHPROXY:-"https:/"}
-readonly URL_GITHUB="${URL_GHPROXY}/github.com"
-readonly URL_RAW_GITHUB="${URL_GHPROXY}/raw.githubusercontent.com"
+URL_GITHUB="${URL_GHPROXY}/github.com"
+URL_RAW_GITHUB="${URL_GHPROXY}/raw.githubusercontent.com"
 readonly URL_GITLAB="https://gitlab.com"
 
 # Oh My Zsh 设置
