@@ -2,8 +2,7 @@
 
 @font-face {
   font-style: normal;
-  font-family: 'Genshin-Font';
-  src: url('https://file.letsshareall.com/others/fonts/汉仪文黑-85W_Heavy.ttf')
+  font-family: 'GenshinFont';
+  src: url('https://file.lssa.fun/others/fonts/汉仪文黑-85W_Heavy.ttf')
     format('truetype');
 }
-
