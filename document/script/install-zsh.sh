@@ -63,7 +63,7 @@ readonly URL_GITLAB="https://gitlab.com"
 readonly REPO="ohmyzsh/ohmyzsh"
 readonly REMOTE="${URL_GITHUB}/${REPO}.git"
 readonly BRANCH="master"
-readonly CHSH="no"
+readonly CHSH="yes"
 readonly RUNZSH="no"
 readonly KEEP_ZSHRC="no"
 
@@ -372,17 +372,17 @@ check_system() {
 
   # 操作系统检查
   case "${OSTYPE}" in
-    darwin*)
-      readonly OS_TYPE="macos"
-      check_homebrew
-      ;;
-    linux*)
-      readonly OS_TYPE="linux"
-      check_package_manager
-      ;;
-    *)
-      error_exit "❌ 不支持的操作系统类型: ${OSTYPE}" 1
-      ;;
+  darwin*)
+    readonly OS_TYPE="macos"
+    check_homebrew
+    ;;
+  linux*)
+    readonly OS_TYPE="linux"
+    check_package_manager
+    ;;
+  *)
+    error_exit "❌ 不支持的操作系统类型: ${OSTYPE}" 1
+    ;;
   esac
 
   log_info "✅ 系统环境检查通过：${OS_TYPE}"
@@ -651,24 +651,20 @@ switch_shell() {
 # 更新 Shell
 #==============================================================================
 update_shell() {
-  # 检查当前 Shell 类型
-  if [ "$(basename -- "$SHELL")" = "zsh" ]; then
-    if [ -f "${PATH_ZSHRC}" ]; then
-      log_info "♻️ 正在重新加载 Zsh 配置"
-      # 使用 zsh 命令显式执行配置重载
-      zsh -c "source ${PATH_ZSHRC}"
-    else
-      log_warn "⚠️ .zshrc 文件不存在"
-    fi
+  if [ -f "${PATH_ZSHRC}" ]; then
+    # 检查当前 Shell 类型
+    # if [ "$(basename -- "$SHELL")" = "zsh" ]; then
+    #   log_info "♻️ 正在重新加载 Zsh 配置"
+    #   # 使用 zsh 命令显式执行配置重载
+    #   zsh -c "source ${PATH_ZSHRC}"
+    # else
+    log_info "🚀 正在切换到新的 Zsh 会话"
+    # 直接切换到新的 zsh 会话
+    exec zsh -l
+    # fi
   else
-    if [ -f "${PATH_ZSHRC}" ]; then
-      log_info "🚀 正在切换到新的 Zsh 会话"
-      # 直接切换到新的 zsh 会话
-      exec zsh -l
-    else
-      log_warn "⚠️ .zshrc 文件不存在"
-      log_info "💡 请重新启动终端以完成切换"
-    fi
+    log_warn "⚠️ .zshrc 文件不存在"
+    # log_info "💡 请重新启动终端以完成切换"
   fi
 }
 
@@ -688,7 +684,7 @@ main() {
   install_plugins
   verify_installation
 
-  switch_shell
+  # switch_shell
 
   log_info "🎉 安装完成！"
   log_info "📝 日志文件位置：${PATH_LOG_FILE}"
