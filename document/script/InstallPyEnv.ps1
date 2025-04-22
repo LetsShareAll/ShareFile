@@ -64,10 +64,10 @@ function Test-CommandExist {
 }
 
 function Add-PathToEnvironment {
-    param ($directoryToAdd, $currentPath)
+    param ($directoryToAdd, $currentEnvPath)
     try {
-        if (-not ($currentPath -split ";" -contains $directoryToAdd)) {
-            $newPath = $currentPath + ";" + $directoryToAdd
+        if (-not ($currentEnvPath -split ";" -contains $directoryToAdd)) {
+            $newPath = $currentEnvPath + ";" + $directoryToAdd
             [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "Machine")
             Write-Host "Path added to the system environment variable PATH: $directoryToAdd"
         }
@@ -117,44 +117,46 @@ function Finish {
     Clear-Host
 }
 
+$currentDirPath = (Get-Location).Path.TrimEnd('\')
+$pyenvTargetDir = Join-Path -Path $currentDirPath -ChildPath "PyEnv"
+
 $pwsh = if (Test-CommandExist "pwsh.exe") { "pwsh.exe" } else { "powershell.exe" }
 
 if (-not (Test-Administrator)) {
     Write-Warning "Script requires Administrator privileges. Restarting script as Administrator..."
     Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
-    $Proc = Start-Process -PassThru -Verb RunAs $pwsh -Args "-ExecutionPolicy Bypass -Command Set-Location '$PSScriptRoot'; &'$PSCommandPath' EVAL"
+    $Proc = Start-Process -PassThru -Verb RunAs $pwsh -Args "-ExecutionPolicy Bypass -Command Set-Location '$currentDirPath'; &'$PSCommandPath' '$currentDirPath' '$pyenvTargetDir' EVAL"
     if ($Proc) {
         $Proc.WaitForExit()
     }
     if (-not $Proc -or $Proc.ExitCode -ne 0) {
-        Write-Warning "Failed to launch start as Administrator`r`nPress any key to exit"
+        Write-Warning "Failed to launch as Administrator.`r`nPress any key to exit."
         $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     }
     exit
 }
-elseif (($args.Count -eq 1) -and ($args[0] -eq "EVAL")) {
-    Start-Process $pwsh -NoNewWindow -Args "-ExecutionPolicy Bypass -Command Set-Location '$PSScriptRoot'; &'$PSCommandPath'"
-    exit
+elseif (($args.Count -ge 3) -and ($args[2] -eq "EVAL")) {
+    $currentDirPath = $args[0]
+    $pyenvTargetDir = $args[1]
+    Set-Location $currentDirPath
 }
 
-$currentPath = [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
-$currentDirectory = (Get-Location).Path.TrimEnd('\')
-$pyenvTargetDir = Join-Path -Path $currentDirectory -ChildPath "PyEnv"
+$currentEnvPath = [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
 
-if (!(Test-Path -Path "$currentDirectory\PyEnv" -PathType Container)) {
-    Write-Host "Setting up pyenv environment..."
+if (!(Test-Path -Path "$currentDirPath\PyEnv" -PathType Container)) {
+    Write-Host "Setting up pyenv-win environment..."
 
     try {
         PullOrClonePyenvWin -repoUrl "https://github.com/pyenv-win/pyenv-win.git" -targetDirectory $pyenvTargetDir
-        SetupPyenvEnvironment -pyenvPath $currentDirectory
-        Add-PathToEnvironment -directoryToAdd "$currentDirectory\pyenv-win\shims" -currentPath $currentPath
-        Add-PathToEnvironment -directoryToAdd "$currentDirectory\pyenv-win" -currentPath $currentPath
-        
+        SetupPyenvEnvironment -pyenvPath $currentDirPath
+        Add-PathToEnvironment -directoryToAdd "$currentDirPath\pyenv-win\shims" -currentEnvPath $currentEnvPath
+        Add-PathToEnvironment -directoryToAdd "$currentDirPath\pyenv-win" -currentEnvPath $currentEnvPath
+
         Write-Host "Current system PATH environment variable:"
         [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
     }
     catch {
-        Write-Host "Error occurred: $_" -ForegroundColor Red
+        WritError occurredst "Error occurred: $_" -ForegroundColor Red
     }
 }
 
