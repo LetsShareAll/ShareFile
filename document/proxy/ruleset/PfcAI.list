@@ -1,0 +1,6 @@
+# Anthropic
+DOMAIN,servd-anthropic-website.b-cdn.net
+# 谷歌 Bard
+DOMAIN,bard.google.com
+# Poe
+DOMAIN-SUFFIX,poe.com

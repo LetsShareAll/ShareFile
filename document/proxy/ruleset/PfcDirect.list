@@ -1,0 +1,40 @@
+# AGE 动漫
+DOMAIN-SUFFIX,age.tv
+DOMAIN-SUFFIX,agedm.com
+DOMAIN-SUFFIX,agefans.org
+# Clash 管理
+DOMAIN,clash.razord.top
+DOMAIN,yacd.haishan.me
+# Clash Nyanpasu
+DOMAIN,nyanpasu.elaina.moe
+# Github 镜像
+DOMAIN-SUFFIX,ghfast.top
+DOMAIN-SUFFIX,ghproxy.cc
+DOMAIN-SUFFIX,ghproxy.com
+DOMAIN-SUFFIX,ghproxy.link
+DOMAIN-SUFFIX,ghproxy.net
+# JetBrains
+DOMAIN-SUFFIX,jetbrains.com
+# JSDelivr
+DOMAIN,fastly.jsdelivr.net
+# 喵呜次元
+DOMAIN,anime.mwvod.xyz
+DOMAIN-SUFFIX,akamaized.net
+DOMAIN-SUFFIX,catw.moe
+DOMAIN-SUFFIX,mwcy.net
+# Microsoft Activation Scripts
+DOMAIN-SUFFIX,activated.win
+# Pixiv 镜像
+DOMAIN-SUFFIX,pixivel.art
+# Ubuntu
+DOMAIN-SUFFIX,ubuntu.com
+# VCB Studio
+DOMAIN-SUFFIX,404.website
+DOMAIN-SUFFIX,acgrip.com
+DOMAIN-SUFFIX,vcb-s.com
+# 一起分享吧
+DOMAIN-SUFFIX,lssa.fun
+# 云崽
+DOMAIN-SUFFIX,yunzai.chat
+# 知了
+DOMAIN-SUFFIX,zhile.io
