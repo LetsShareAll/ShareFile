@@ -7,8 +7,8 @@ declare -r SCRIPT_AUTHOR="LetsShareAll"
 
 declare genshin_name="YuanShen"
 declare genshin_launcher="${HOME}/Applications/CrossOver/YuanShen.app/Contents/MacOS/Menu Helper"
-declare temp_block_domain="dispatchcnglobal.yuanshen.com,test.example.com"
-declare local_block_script="${HOME}/Documents/CodeSpace/LetsShareAll/ShareFile/document/script/block-host.sh"
+declare temp_block_domain="dispatchcnglobal.yuanshen.com"
+declare local_block_script=""
 declare log_level=3 # 0：不输出日志, 1：输出错误日志, 2：输出警告日志, 3：输出信息日志, 4：输出调试日志
 
 declare -r ARG_TIP="请使用 ${0} -h 或 ${0} --help 查看帮助信息。"
