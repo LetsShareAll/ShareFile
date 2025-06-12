@@ -328,6 +328,7 @@ show_progress() {
             printf "] %5d 秒${STYLE_FORE_COLORS[DEFAULT]}" $((step * duration / steps))
             sleep "$(bc <<<"scale=2; $interval / 1000")"
         done
+        echo
     else
         for ((i = duration; i >= 0; i--)); do
             log progress "剩余时间：${STYLE[HIGHLIGHT]}$i${STYLE[RESET_HIGHLIGHT]} 秒……"
@@ -335,7 +336,6 @@ show_progress() {
         done
     fi
 
-    echo
     log info "域名屏蔽已结束！"
 }
 
