@@ -131,6 +131,10 @@ parse_args() {
                 log ERROR "屏蔽时间必须为数字！请检查输入：${STYLE[HIGHLIGHT]}${2}${STYLE[RESET_HIGHLIGHT]}。"
                 exit 1
             fi
+            if [[ "$2" -lt 10 ]]; then
+                log ERROR "屏蔽时间不推荐小于 10 秒！请检查输入：${STYLE[HIGHLIGHT]}${2}${STYLE[RESET_HIGHLIGHT]}。"
+                exit 1
+            fi
             temp_block_time="$2"
             shift 2
             ;;
