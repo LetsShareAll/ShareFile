@@ -2,19 +2,20 @@
 
 declare -r SCRIPT_NAME="RunGenShin"
 declare -r SCRIPT_DESCRIPTION="一键启动原神并屏蔽指定域名。"
-declare -r SCRIPT_VERSION="1.0.0"
+declare -r SCRIPT_VERSION="1.1.2"
 declare -r SCRIPT_AUTHOR="LetsShareAll"
 
 declare genshin_name="YuanShen"
 declare genshin_launcher="${HOME}/Applications/CrossOver/YuanShen.app/Contents/MacOS/Menu Helper"
 declare temp_block_domain="dispatchcnglobal.yuanshen.com"
+declare temp_block_time=10
 declare local_block_script=""
 declare log_level=3 # 0：不输出日志, 1：输出错误日志, 2：输出警告日志, 3：输出信息日志, 4：输出调试日志
 
 declare -r ARG_TIP="请使用 ${0} -h 或 ${0} --help 查看帮助信息。"
-declare -r REMOTE_BLOCK_SCRIPT="https://file.lssa.fun/document/script/block-host.sh"
 declare -r NAME_LENGTH_MIN=3
 declare -r DOMAIN_LENGTH_MIN=3
+declare -r REMOTE_BLOCK_SCRIPT="https://file.lssa.fun/document/script/block-host.sh"
 
 declare -A STYPE_FORMAT=(
     [BOLD]="\e[1m"
@@ -121,6 +122,18 @@ parse_args() {
             local_block_script="$2"
             shift 2
             ;;
+        -t | --time)
+            if [[ -z "$2" ]]; then
+                log ERROR "未指定屏蔽时间！${ARG_TIP}"
+                exit 1
+            fi
+            if ! [[ "$2" =~ ^[0-9]+$ ]]; then
+                log ERROR "屏蔽时间必须为数字！请检查输入：${STYLE[HIGHLIGHT]}${2}${STYLE[RESET_HIGHLIGHT]}。"
+                exit 1
+            fi
+            temp_block_time="$2"
+            shift 2
+            ;;
         --log-level)
             if [[ -z "$2" ]]; then
                 log ERROR "未指定日志级别！${ARG_TIP}"
@@ -158,6 +171,7 @@ show_help() {
     echo "  -l, --launcher <launcher> 设置原神启动文件（默认：${genshin_launcher}）"
     echo "  -d, --domain <domain>     设置要屏蔽的域名（默认：${temp_block_domain}）"
     echo "  -s, --script <script>     设置本地屏蔽脚本（默认：${local_block_script}）"
+    echo "  -t, --time <time>         设置屏蔽时间（默认：${temp_block_time} 秒）"
     echo "  --log-level <level>       设置日志级别（默认：${log_level}）"
     echo "  -h, --help                显示此帮助信息"
     echo "  -v, --version             显示脚本版本信息"
@@ -219,12 +233,12 @@ get_privilege() {
 block_domain() {
     if [[ -z "$temp_block_domain" ]]; then
         log ERROR "未设置要屏蔽的域名！"
-        exit 101
+        exit 14
     fi
     if [[ ${#temp_block_domain} -lt "$DOMAIN_LENGTH_MIN" ]]; then
         log ERROR "屏蔽域名太短！请检查域名：${STYLE[HIGHLIGHT]}${temp_block_domain}${STYLE[RESET_HIGHLIGHT]}。"
         log NOTE "域名至少有 ${STYLE[HIGHLIGHT]}${DOMAIN_LENGTH_MIN}${STYLE[RESET_HIGHLIGHT]} 个字符，如：d.c。"
-        exit 102
+        exit 14
     fi
     log INFO "正屏蔽域名：${STYLE[HIGHLIGHT]}${temp_block_domain}${STYLE[RESET_HIGHLIGHT]}……"
     log WARN "请在屏蔽域名结束前启动并置顶原神！"
@@ -232,36 +246,36 @@ block_domain() {
     if [[ -n "$local_block_script" ]]; then
         if [[ ! -f "$local_block_script" ]]; then
             log ERROR "不存在本地屏蔽脚本文件：${STYLE[HIGHLIGHT]}${local_block_script}${STYLE[RESET_HIGHLIGHT]}！"
-            exit 103
+            exit 18
         fi
         log INFO "正运行本地脚本：${STYLE[HIGHLIGHT]}${local_block_script}${STYLE[RESET_HIGHLIGHT]}。"
-        sudo bash ${local_block_script} -d ${temp_block_domain} 2>/dev/null
+        sudo bash ${local_block_script} -d ${temp_block_domain} -t ${temp_block_time} 2>/dev/null
         exit_code=$?
         if [[ exit_code -ne 0 ]]; then
             log ERROR "未运行本地脚本！错误代码：${STYLE[HIGHLIGHT]}${exit_code}${STYLE[RESET_HIGHLIGHT]}。"
-            exit 104
+            exit 15
         fi
     else
         log INFO "正运行远程脚本：${STYLE[HIGHLIGHT]}${REMOTE_BLOCK_SCRIPT}${STYLE[RESET_HIGHLIGHT]}。"
-        curl -sS $REMOTE_BLOCK_SCRIPT | sudo bash -s -- -d $temp_block_domain 2>/dev/null
+        curl -sS "$REMOTE_BLOCK_SCRIPT" | sudo bash -s -- -d "$temp_block_domain" -t "$temp_block_time" 2>/dev/null
         exit_code=$?
         if [[ $exit_code -ne 0 ]]; then
             log ERROR "未运行远程脚本！错误代码：${STYLE[HIGHLIGHT]}${exit_code}${STYLE[RESET_HIGHLIGHT]}。"
-            exit 105
+            exit 19
         fi
     fi
     log SUCCESS "已屏蔽域名！"
-    exit 100
+    return 12
 }
 
 start_genshin() {
     if [[ -z "$genshin_launcher" ]]; then
         log ERROR "未设置原神启动文件！"
-        exit 201
+        exit 24
     fi
     if [[ ! -f "$genshin_launcher" ]]; then
         log ERROR "不存在原神启动文件：${STYLE[HIGHLIGHT]}${genshin_launcher}${STYLE[RESET_HIGHLIGHT]}！"
-        exit 202
+        exit 28
     fi
     log INFO "正启动原神：${STYLE[HIGHLIGHT]}${genshin_launcher}${STYLE[RESET_HIGHLIGHT]}……"
     log NOTE "如果原神未启动，请手动启动原神。"
@@ -270,21 +284,22 @@ start_genshin() {
     exit_code=$?
     if [[ $exit_code -ne 0 ]]; then
         log ERROR "未启动原神！错误代码：${STYLE[HIGHLIGHT]}${exit_code}${STYLE[RESET_HIGHLIGHT]}。"
-        exit 203
+        log WARN "请尝试手动启动原神！"
+        return 25
     fi
     log SUCCESS "已启动原神！"
-    exit 200
+    return 22
 }
 
 front_genshin() {
     if [[ -z "$genshin_name" ]]; then
         log ERROR "未设置原神进程名称！"
-        exit 301
+        exit 34
     fi
     if [[ ${#genshin_name} -lt "$NAME_LENGTH_MIN" ]]; then
         log ERROR "原神进程名称太短！请检查名称：${STYLE[HIGHLIGHT]}${genshin_name}${STYLE[RESET_HIGHLIGHT]}。"
         log NOTE "名称至少有 ${STYLE[HIGHLIGHT]}${NAME_LENGTH_MIN}${STYLE[RESET_HIGHLIGHT]} 个字符。太短会导致匹配结果过多，若名称本身就短可以尝试添加路径，如：YS 改为 CrossOver/YS。"
-        exit 302
+        exit 34
     fi
     log INFO "正置顶原神：${STYLE[HIGHLIGHT]}${genshin_name}${STYLE[RESET_HIGHLIGHT]}……"
     log WARN "如果原神未启动，脚本将等待 10 秒直到原神进程出现！"
@@ -292,11 +307,16 @@ front_genshin() {
     local exit_code=0
     local genshin_pid
     local seconds=0
-    while [[ -z "$genshin_pid" || $seconds -lt 10 ]]; do
+    while [[ -z "$genshin_pid" && "$seconds" -le "$temp_block_time" ]]; do
+        log DEBUG "等待原神进程出现，已等待 ${STYLE[HIGHLIGHT]}${seconds}${STYLE[RESET_HIGHLIGHT]} 秒……"
         sleep 1
         genshin_pid=$(pgrep -f "$genshin_name")
         ((seconds++))
     done
+    if [[ -z "$genshin_pid" ]]; then
+        log ERROR "未找到原神进程！"
+        exit 38
+    fi
     log DEBUG "原神进程 ID：${STYLE[HIGHLIGHT]}${genshin_pid}${STYLE[RESET_HIGHLIGHT]}。"
     osascript -e "tell application \"System Events\"
       set frontmost of every process whose unix id is ${genshin_pid} to true
@@ -304,10 +324,11 @@ front_genshin() {
     exit_code=$?
     if [[ $exit_code -ne 0 ]]; then
         log ERROR "未置顶原神！错误代码：${STYLE[HIGHLIGHT]}${exit_code}${STYLE[RESET_HIGHLIGHT]}。"
-        exit 303
+        log WARN "请尝试手动置顶原神！"
+        return 35
     fi
     log SUCCESS "已置顶原神！"
-    exit 300
+    return 32
 }
 
 exit_script() {
@@ -318,11 +339,6 @@ exit_script() {
         log INFO "脚本正常退出！"
         clean_self
         ;;
-    100) log INFO "网络屏蔽脚本正常退出！" ;;
-    200) log INFO "启动原神正常退出！" ;;
-    203) log WARN "未启动原神！请手动启动原神。" ;;
-    300) log INFO "置顶原神正常退出！" ;;
-    303) log WARN "未置顶原神！请手动置顶原神。" ;;
     *)
         log ERROR "脚本异常退出！请检查日志。"
         terminate_block_script
@@ -330,7 +346,7 @@ exit_script() {
         clean_self
         ;;
     esac
-    log DEBUG "进程已退出。"
+    log DEBUG "此退出码 ${STYLE[HIGHLIGHT]}${exit_code}${STYLE[RESET_HIGHLIGHT]} 进程已退出。"
 }
 
 terminate_block_script() {
@@ -370,9 +386,26 @@ main() {
 
     get_privilege
 
-    block_domain &
-    sleep 1 && start_genshin &
-    sleep 2 && front_genshin
+    (block_domain) &
+    local block_pid=$!
+    log DEBUG "已启动屏蔽脚本进程：${STYLE[HIGHLIGHT]}${block_pid}${STYLE[RESET_HIGHLIGHT]}。"
+    (sleep 1 && start_genshin) &
+    local start_pid=$!
+    log DEBUG "已启动启动脚本进程：${STYLE[HIGHLIGHT]}${start_pid}${STYLE[RESET_HIGHLIGHT]}。"
+    (sleep 5 && front_genshin) &
+    local front_pid=$!
+    log DEBUG "已启动置顶脚本进程：${STYLE[HIGHLIGHT]}${front_pid}${STYLE[RESET_HIGHLIGHT]}。"
+
+    while kill -0 "$block_pid" 2>/dev/null ||
+        kill -0 "$start_pid" 2>/dev/null ||
+        kill -0 "$front_pid" 2>/dev/null; do
+        log DEBUG "屏蔽进程状态：${STYLE[HIGHLIGHT]}${block_pid}${STYLE[RESET_HIGHLIGHT]} → ${STYLE[HIGHLIGHT]}$(ps -p ${block_pid} >/dev/null && echo 运行中 || echo 已结束)${STYLE[RESET_HIGHLIGHT]}"
+        log DEBUG "启动进程状态：${STYLE[HIGHLIGHT]}${start_pid}${STYLE[RESET_HIGHLIGHT]} → ${STYLE[HIGHLIGHT]}$(ps -p ${start_pid} >/dev/null && echo 运行中 || echo 已结束)${STYLE[RESET_HIGHLIGHT]}"
+        log DEBUG "置顶进程状态：${STYLE[HIGHLIGHT]}${front_pid}${STYLE[RESET_HIGHLIGHT]} → ${STYLE[HIGHLIGHT]}$(ps -p ${front_pid} >/dev/null && echo 运行中 || echo 已结束)${STYLE[RESET_HIGHLIGHT]}"
+        sleep 1
+    done
+
+    log DEBUG "所有子进程已结束。"
 }
 
 main "$@"
