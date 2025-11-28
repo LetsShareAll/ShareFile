@@ -6,7 +6,7 @@ const fileList = [
     "name": "Let`s Play All with HMCL.zip",
     "type": "压缩文件",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "压缩包"
   },
   {
@@ -14,7 +14,7 @@ const fileList = [
     "name": "Let`s Play All.zip",
     "type": "压缩文件",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "压缩包"
   }
 ]

@@ -6,7 +6,7 @@ const fileList = [
     "name": "PfcCustom.js",
     "type": "JavaScript 文件",
     "version": "-",
-    "date": "2025/04/24",
+    "date": "2025/11/28",
     "description": "JavaScript 脚本"
   }
 ]

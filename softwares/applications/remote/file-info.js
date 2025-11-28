@@ -6,7 +6,7 @@ const fileList = [
     "name": "Parsec.exe",
     "type": "可执行文件",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "应用程序"
   }
 ]

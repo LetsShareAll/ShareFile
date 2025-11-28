@@ -6,7 +6,7 @@ const fileList = [
     "name": "AddPathToSystemEnvironment.ps1",
     "type": "PowerShell 脚本",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "PowerShell 脚本"
   },
   {
@@ -14,15 +14,23 @@ const fileList = [
     "name": "AddProfileToTerminal.ps1",
     "type": "PowerShell 脚本",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "PowerShell 脚本"
+  },
+  {
+    "iconClass": "icon-script",
+    "name": "block-host.sh",
+    "type": "Shell 脚本",
+    "version": "-",
+    "date": "2025/11/28",
+    "description": "Shell 脚本"
   },
   {
     "iconClass": "icon-script",
     "name": "DelPathAtSystemEnvironment.ps1",
     "type": "PowerShell 脚本",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "PowerShell 脚本"
   },
   {
@@ -30,7 +38,7 @@ const fileList = [
     "name": "Fix-AMDMouseCursor.reg",
     "type": "注册表文件",
     "version": "-",
-    "date": "2025/11/26",
+    "date": "2025/11/28",
     "description": "注册表配置"
   },
   {
@@ -38,7 +46,7 @@ const fileList = [
     "name": "install-zsh.sh",
     "type": "Shell 脚本",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "Shell 脚本"
   },
   {
@@ -46,7 +54,7 @@ const fileList = [
     "name": "InstallPyEnv.ps1",
     "type": "PowerShell 脚本",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "PowerShell 脚本"
   },
   {
@@ -54,7 +62,7 @@ const fileList = [
     "name": "Remove-HiddenDevice.ps1",
     "type": "PowerShell 脚本",
     "version": "-",
-    "date": "2025/11/08",
+    "date": "2025/11/28",
     "description": "PowerShell 脚本"
   },
   {
@@ -62,7 +70,7 @@ const fileList = [
     "name": "Remove-UselessNetDevice.ps1",
     "type": "PowerShell 脚本",
     "version": "-",
-    "date": "2025/11/08",
+    "date": "2025/11/28",
     "description": "PowerShell 脚本"
   },
   {
@@ -70,7 +78,15 @@ const fileList = [
     "name": "Reset-AMDMouseCursor.reg",
     "type": "注册表文件",
     "version": "-",
-    "date": "2025/11/26",
+    "date": "2025/11/28",
     "description": "注册表配置"
+  },
+  {
+    "iconClass": "icon-script",
+    "name": "run-genshin.sh",
+    "type": "Shell 脚本",
+    "version": "-",
+    "date": "2025/11/28",
+    "description": "Shell 脚本"
   }
 ]

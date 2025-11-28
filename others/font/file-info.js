@@ -6,7 +6,7 @@ const fileList = [
     "name": "方正兰亭粗黑_GBK.ttf",
     "type": "字体文件",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "字体"
   },
   {
@@ -14,7 +14,7 @@ const fileList = [
     "name": "汉仪文黑-85W_Heavy.ttf",
     "type": "字体文件",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "字体"
   },
   {
@@ -22,7 +22,7 @@ const fileList = [
     "name": "Segoe UI Emoji.ttf",
     "type": "字体文件",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "字体"
   }
 ]

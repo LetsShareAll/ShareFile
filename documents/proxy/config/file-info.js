@@ -6,7 +6,7 @@ const fileList = [
     "name": "PfcCustom.ini",
     "type": "配置文件",
     "version": "-",
-    "date": "2025/04/24",
+    "date": "2025/11/28",
     "description": "配置文件"
   }
 ]

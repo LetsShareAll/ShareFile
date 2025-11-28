@@ -6,7 +6,7 @@ const fileList = [
     "name": "switch",
     "type": "文件夹",
     "version": "-",
-    "date": "2025/10/24",
+    "date": "2025/11/28",
     "description": "Switch"
   },
   {
@@ -14,7 +14,7 @@ const fileList = [
     "name": "wiiu",
     "type": "文件夹",
     "version": "-",
-    "date": "2025/10/24",
+    "date": "2025/11/28",
     "description": "Wii U"
   }
 ]

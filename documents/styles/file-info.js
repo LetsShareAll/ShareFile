@@ -6,7 +6,7 @@ const fileList = [
     "name": "genshin-font.css",
     "type": "样式表文件",
     "version": "-",
-    "date": "2025/04/22",
+    "date": "2025/11/28",
     "description": "样式表"
   }
 ]

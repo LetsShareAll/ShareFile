@@ -6,7 +6,7 @@ const fileList = [
     "name": "PfcAI.list",
     "type": "列表文件",
     "version": "-",
-    "date": "2025/04/24",
+    "date": "2025/11/28",
     "description": "规则列表"
   },
   {
@@ -14,7 +14,7 @@ const fileList = [
     "name": "PfcDirect.list",
     "type": "列表文件",
     "version": "-",
-    "date": "2025/04/24",
+    "date": "2025/11/28",
     "description": "规则列表"
   },
   {
@@ -22,7 +22,7 @@ const fileList = [
     "name": "PfcProxy.list",
     "type": "列表文件",
     "version": "-",
-    "date": "2025/04/24",
+    "date": "2025/11/28",
     "description": "规则列表"
   },
   {
@@ -30,7 +30,7 @@ const fileList = [
     "name": "PfcSteamCommunity.list",
     "type": "列表文件",
     "version": "-",
-    "date": "2025/04/24",
+    "date": "2025/11/28",
     "description": "规则列表"
   }
 ]
