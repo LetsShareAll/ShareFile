@@ -1,4 +1,0 @@
-const redirectFileInfo = {}
-
-const fileList = []
-
