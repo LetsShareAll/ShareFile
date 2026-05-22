@@ -1,6 +1,6 @@
 # ShareFile · 文件分享 网站 / Static File Share
 
-![GitHub Actions](https://github.com/LetsShareAll/ShareFile/actions/workflows/deploy.yml/badge.svg?branch=file)
+![GitHub Actions](https://github.com/LetsShareAll/ShareFile/actions/workflows/deploy-host.yml/badge.svg?branch=file)
 ![Pages](https://img.shields.io/badge/GitHub%20Pages-deploy-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 ![pnpm](https://img.shields.io/badge/pnpm-%3E%3D11-blue)
