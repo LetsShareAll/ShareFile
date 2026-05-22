@@ -30,16 +30,16 @@ jobs:
 
     steps:
       - name: 签出仓库
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: 安装 pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: 安装 NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           cache: 'pnpm'
 
@@ -53,6 +53,11 @@ jobs:
         run: |
           echo "构建输出"
           ls -la ./ || true
+
+      - name: 删除应忽略的文件
+        run: |
+          echo "删除不需要部署的文件..."
+          rm -rf node_modules
 
       - name: 检查更改
         id: git-check
@@ -76,10 +81,10 @@ jobs:
           git push
 
       - name: 上传页面
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: './'
 
       - name: 部署页面
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
