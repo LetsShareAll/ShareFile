@@ -1,0 +1,18 @@
+{
+  "self": {
+    "description": "当前目录",
+    "created_at": "2025-11-28T20:25:27+08:00",
+    "updated_at": "2025-11-28T12:44:31Z"
+  },
+  "children": {
+    "PfcCustom.ini": {
+      "type": "file",
+      "description": "INI 配置文件",
+      "created_at": "2025-04-24T10:49:23.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 7992,
+      "md5": "e9a3f02b72e314e410d6319c6dd8d0f6",
+      "sha256": "65ccec64b2049f3a3a65e9ca6ce27aa6b640872ccbd3e432a7aefe73c74a05b1"
+    }
+  }
+}

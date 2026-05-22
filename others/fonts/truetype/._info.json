@@ -1,0 +1,27 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "foundertype": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "hanyi": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "sarasa": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "segoe": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "smiley": {
+      "type": "folder",
+      "description": "文件夹"
+    }
+  }
+}

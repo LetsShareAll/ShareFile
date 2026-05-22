@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "outDir": "./assets/dist",
+    "rootDir": "./",
+    "types": ["node"]
+  },
+  "include": ["assets/**/*", "src/**/*"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,797 @@
+/* ==========================================================================
+   Apple 风格文件分享 CSS
+   完整覆盖所有常见文件类型的图标颜色，确保视觉一致。
+   ========================================================================== */
+
+/* 自定义字体：等宽代码字体（Sarasa Mono SC Nerd） */
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-bold-nerd-font.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ===== 基础变量（浅色主题） ===== */
+:root {
+  --bg: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --card-hover-bg: rgba(255, 255, 255, 0.9);
+  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+
+  --toolbar-bg: rgba(255, 255, 255, 0.64);
+  --toolbar-border: rgba(0, 0, 0, 0.06);
+  --button-bg: rgba(120, 120, 128, 0.08);
+  --button-hover-bg: rgba(120, 120, 128, 0.15);
+  --button-active-bg: rgba(0, 113, 227, 0.12);
+  --button-active-color: #0071e3;
+
+  --primary: #0071e3;
+  --primary-hover: #0077ed;
+
+  --modal-overlay-bg: rgba(0, 0, 0, 0.3);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --glass-blur: saturate(180%) blur(20px);
+  --modal-blur: saturate(200%) blur(30px);
+
+  --color-folder: #fbc82f;
+  --color-image: #db2777;
+  --color-video: #7c3aed;
+  --color-audio: #059669;
+  --color-document: #2563eb;
+  --color-archive: #9333ea;
+  --color-code: #ea580c;
+  --color-font: #4f46e5;
+  --color-executable: #b91c1c;
+  --color-disk-image: #0891b2;
+  --color-unknown: #8e8e93;
+}
+
+/* 深色模式自动检测 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e;
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+    --card-bg: rgba(44, 44, 46, 0.7);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-hover-bg: rgba(58, 58, 60, 0.8);
+    --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+    --toolbar-bg: rgba(44, 44, 46, 0.6);
+    --toolbar-border: rgba(255, 255, 255, 0.08);
+    --button-bg: rgba(120, 120, 128, 0.15);
+    --button-hover-bg: rgba(120, 120, 128, 0.25);
+    --button-active-bg: rgba(10, 132, 255, 0.2);
+    --button-active-color: #0a84ff;
+    --primary: #0a84ff;
+    --primary-hover: #409cff;
+    --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  }
+}
+
+html[data-theme='dark'] {
+  --bg: #1c1c1e;
+  --text: #f5f5f7;
+  --text-secondary: #98989d;
+  --card-bg: rgba(44, 44, 46, 0.7);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-hover-bg: rgba(58, 58, 60, 0.8);
+  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  --toolbar-bg: rgba(44, 44, 46, 0.6);
+  --toolbar-border: rgba(255, 255, 255, 0.08);
+  --button-bg: rgba(120, 120, 128, 0.15);
+  --button-hover-bg: rgba(120, 120, 128, 0.25);
+  --button-active-bg: rgba(10, 132, 255, 0.2);
+  --button-active-color: #0a84ff;
+  --primary: #0a84ff;
+  --primary-hover: #409cff;
+  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme='light'] {
+  --bg: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --card-hover-bg: rgba(255, 255, 255, 0.9);
+  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --toolbar-bg: rgba(255, 255, 255, 0.64);
+  --toolbar-border: rgba(0, 0, 0, 0.06);
+  --button-bg: rgba(120, 120, 128, 0.08);
+  --button-hover-bg: rgba(120, 120, 128, 0.15);
+  --button-active-bg: rgba(0, 113, 227, 0.12);
+  --button-active-color: #0071e3;
+  --primary: #0071e3;
+  --primary-hover: #0077ed;
+  --modal-overlay-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* 全局重置与排版 */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+/* 头部毛玻璃工具栏 */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--toolbar-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--toolbar-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+kbd {
+  font-family: 'Sarasa Mono SC Nerd', 'SF Mono', 'Fira Code', monospace;
+  background-color: var(--button-bg);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.9em;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin: 0 0.2rem;
+  display: inline-block;
+  line-height: 1;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.view-switch,
+.theme-switch {
+  display: flex;
+  border-radius: var(--radius-sm);
+  background: var(--button-bg);
+  padding: 2px;
+  gap: 2px;
+}
+
+.view-switch button,
+.theme-switch button {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  line-height: 1;
+}
+
+.view-switch button:hover,
+.theme-switch button:hover {
+  background: var(--button-hover-bg);
+}
+
+.view-switch button.active,
+.theme-switch button.active {
+  background: var(--button-active-bg);
+  color: var(--button-active-color);
+  font-weight: 600;
+}
+
+/* 面包屑 */
+#breadcrumb {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.4rem 0;
+}
+
+#breadcrumb a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+#breadcrumb .current {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.directory-description {
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* 文件列表网格 */
+.file-list {
+  list-style: none;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.container.view-icon .file-list {
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+
+.container.view-detail .file-list {
+  grid-template-columns: 1fr;
+}
+
+/* 文件卡片 */
+.file-item {
+  background: var(--card-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.file-item:hover {
+  background: var(--card-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.file-item.hidden-item {
+  opacity: 0.5;
+}
+
+/* 大图标视图 */
+.container.view-icon .file-item {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+}
+
+.container.view-icon .item-icon {
+  font-size: 3.2rem;
+  line-height: 1.1;
+  margin-bottom: 0.2rem;
+}
+
+.container.view-icon .item-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.container.view-icon .item-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+.container.view-icon .item-detail {
+  display: none;
+}
+
+.container.view-icon .item-actions {
+  margin-top: auto;
+  justify-content: center;
+  width: 100%;
+}
+
+/* 详细列表视图 */
+.container.view-detail .file-item {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.2rem;
+  padding: 0.9rem 1.2rem;
+}
+
+.container.view-detail .item-icon {
+  font-size: 1.5rem;
+  flex: 0 0 auto;
+}
+
+.container.view-detail .item-name {
+  flex: 1 1 auto;
+  min-width: 180px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.container.view-detail .item-meta {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 1.2rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.container.view-detail .item-actions {
+  margin-left: auto;
+}
+
+.container.view-detail .item-detail {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.detail-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.detail-label {
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.hash {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  word-break: break-all;
+  opacity: 0.75;
+  user-select: text;
+}
+
+.version-badge {
+  font-size: 0.7em;
+  background: var(--primary);
+  color: white;
+  padding: 0.15em 0.5em;
+  border-radius: 20px;
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+/* 图标颜色 */
+.item-icon {
+  line-height: 1;
+}
+/* 优化：使用彩色圆角背景与白色图标，提高可读性与层次感 */
+.item-icon {
+  line-height: 1;
+}
+.item-icon i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  color: #fff;
+  background: transparent;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+.item-icon {
+  position: relative; /* for badge positioning */
+}
+.container.view-detail .item-icon i {
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+}
+
+/* 徽章样式（仅悬停显示） */
+.icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #111;
+  font-weight: 700;
+  padding: 0.08rem 0.36rem;
+  border-radius: 10px;
+  font-size: 0.62rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transform: translateY(6px) scale(0.9);
+  transition:
+    opacity 0.18s ease,
+    transform 0.2s cubic-bezier(0.2, 0.9, 0.2, 1);
+  pointer-events: none;
+}
+
+/* 悬停触发动效：图标轻微上浮，徽章显现 */
+.file-item:hover .item-icon i {
+  transform: translateY(-6px) scale(1.04);
+  transition: transform 0.22s ease;
+}
+.file-item:hover .icon-badge {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.item-icon.folder i {
+  background: linear-gradient(135deg, var(--color-folder), rgba(0, 0, 0, 0.06));
+}
+.item-icon.image i {
+  background: linear-gradient(135deg, var(--color-image), rgba(0, 0, 0, 0.06));
+}
+.item-icon.video i {
+  background: linear-gradient(135deg, var(--color-video), rgba(0, 0, 0, 0.06));
+}
+.item-icon.audio i {
+  background: linear-gradient(135deg, var(--color-audio), rgba(0, 0, 0, 0.06));
+}
+.item-icon.document i {
+  background: linear-gradient(
+    135deg,
+    var(--color-document),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.archive i {
+  background: linear-gradient(
+    135deg,
+    var(--color-archive),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.code i {
+  background: linear-gradient(135deg, var(--color-code), rgba(0, 0, 0, 0.06));
+}
+.item-icon.font i {
+  background: linear-gradient(135deg, var(--color-font), rgba(0, 0, 0, 0.06));
+}
+.item-icon.executable i {
+  background: linear-gradient(
+    135deg,
+    var(--color-executable),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.disk-image i {
+  background: linear-gradient(
+    135deg,
+    var(--color-disk-image),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.unknown i {
+  background: linear-gradient(
+    135deg,
+    var(--color-unknown),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+
+/* 操作按钮 */
+.item-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.action-btn {
+  background: rgba(120, 120, 128, 0.12);
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text);
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.action-btn:hover {
+  background: rgba(120, 120, 128, 0.22);
+  transform: scale(1.05);
+}
+
+.action-btn i {
+  pointer-events: none;
+}
+
+/* 加载指示器 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+  color: var(--primary);
+  opacity: 0.8;
+}
+.loading-container p {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+/* README 预览区 */
+.preview-section {
+  margin-top: 2.5rem;
+  padding: 2rem;
+  background: var(--card-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--card-shadow);
+}
+.preview-section h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 0.75rem;
+}
+
+/* 统一 Markdown 渲染样式 */
+.rendered-markdown {
+  line-height: 1.7;
+  word-wrap: break-word;
+}
+.rendered-markdown h1,
+.rendered-markdown h2,
+.rendered-markdown h3,
+.rendered-markdown h4,
+.rendered-markdown h5,
+.rendered-markdown h6 {
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.rendered-markdown h1 {
+  font-size: 2em;
+}
+.rendered-markdown h2 {
+  font-size: 1.5em;
+}
+.rendered-markdown h3 {
+  font-size: 1.25em;
+}
+.rendered-markdown p {
+  margin-bottom: 1em;
+}
+.rendered-markdown ul,
+.rendered-markdown ol,
+.rendered-markdown blockquote {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+.rendered-markdown code,
+.rendered-markdown pre {
+  font-family: 'Sarasa Mono SC Nerd', 'Fira Code', monospace;
+  font-size: 0.92em;
+}
+.rendered-markdown pre {
+  background: var(--button-bg);
+  padding: 1.2em;
+  border-radius: 12px;
+  overflow-x: auto;
+  line-height: 1.5;
+  margin: 1.2em 0;
+}
+.rendered-markdown code {
+  background: var(--button-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+.rendered-markdown pre code {
+  background: transparent;
+  padding: 0;
+}
+.rendered-markdown img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 1em 0;
+}
+
+/* 文件预览弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--modal-overlay-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+.modal-content {
+  background: var(--card-bg);
+  backdrop-filter: var(--modal-blur);
+  -webkit-backdrop-filter: var(--modal-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+  width: 90vw;
+  max-width: 960px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal-content {
+  transform: scale(1);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--text);
+  padding: 0.3rem;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+  line-height: 1;
+}
+.modal-close-btn:hover {
+  background: rgba(120, 120, 128, 0.2);
+}
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* 空状态与错误 */
+.empty,
+.error {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+.error {
+  color: #ff3b30;
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1rem;
+    margin: 1rem auto;
+  }
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+  .container.view-icon .file-list {
+    grid-template-columns: 1fr;
+  }
+  .container.view-detail .file-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .container.view-detail .item-detail {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "clean": true,
+  "purify": true,
+  "format": true,
+  "computeHash": true,
+  "useGitTime": true,
+  "updateSize": true,
+  "verbose": false,
+  "sync": true,
+  "force": false,
+  "dryRun": false,
+  "recursive": true,
+  "cleanIgnored": true,
+  "extraIgnorePatterns": ["^dist$", "\\.log$"],
+  "outputFile": ""
+}

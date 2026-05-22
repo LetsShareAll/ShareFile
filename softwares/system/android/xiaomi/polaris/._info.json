@@ -1,0 +1,63 @@
+{
+  "self": {
+    "description": "当前目录",
+    "created_at": "2025-11-28T20:25:27+08:00",
+    "updated_at": "2025-11-28T20:25:27+08:00"
+  },
+  "children": {
+    "Baseband": {
+      "type": "folder",
+      "description": "文件夹",
+      "redirect": {
+        "url": "https://www.123pan.com/s/xdbeVv-FTpvd.html",
+        "type": "confirm",
+        "confirm_message": "即将离开本站，前往 <b>123Pan</b> 下载 <b>Baseband</b>，请复制提取码：<code>GiDh</code>。<br />是否<kbd>继续</kbd>？"
+      }
+    },
+    "Evolution X": {
+      "type": "folder",
+      "description": "文件夹",
+      "redirect": {
+        "url": "https://www.123pan.com/s/xdbeVv-tLxvd.html",
+        "type": "confirm",
+        "confirm_message": "即将离开本站，前往 <b>123Pan</b> 下载 <b>Evolution X</b>，请复制提取码：<code>9oE0</code>。<br />是否<kbd>继续</kbd>？"
+      }
+    },
+    "Kernel": {
+      "type": "folder",
+      "description": "文件夹",
+      "redirect": {
+        "url": "https://www.123pan.com/s/xdbeVv-iLxvd.html",
+        "type": "confirm",
+        "confirm_message": "即将离开本站，前往 <b>123Pan</b> 下载 <b>Kernel</b>，请复制提取码：<code>DNMK</code>。<br />是否<kbd>继续</kbd>？"
+      }
+    },
+    "MIUI": {
+      "type": "folder",
+      "description": "文件夹",
+      "redirect": {
+        "url": "https://www.123pan.com/s/xdbeVv-LLxvd.html",
+        "type": "confirm",
+        "confirm_message": "即将离开本站，前往 <b>123Pan</b> 下载 <b>MIUI</b>，请复制提取码：<code>xitB</code>。<br />是否<kbd>继续</kbd>？"
+      }
+    },
+    "Pixel Experience": {
+      "type": "folder",
+      "description": "文件夹",
+      "redirect": {
+        "url": "https://www.123pan.com/s/xdbeVv-qLxvd.html",
+        "type": "confirm",
+        "confirm_message": "即将离开本站，前往 <b>123Pan</b> 下载 <b>Pixel Experience</b>，请复制提取码：<code>b7NY</code>。<br />是否<kbd>继续</kbd>？"
+      }
+    },
+    "Recovery": {
+      "type": "folder",
+      "description": "文件夹",
+      "redirect": {
+        "url": "https://www.123pan.com/s/xdbeVv-zLxvd.html",
+        "type": "confirm",
+        "confirm_message": "即将离开本站，前往 <b>123Pan</b> 下载 <b>Recovery</b>，请复制提取码：<code>isPe</code>。<br />是否<kbd>继续</kbd>？"
+      }
+    }
+  }
+}
