@@ -66,6 +66,12 @@ function navigateTo(newPath: string): void {
   renderCurrentView();
 }
 
+function renderCurrentView(): Promise<void> {
+  const currentPath = getCurrentPath();
+  renderBreadcrumb(currentPath);
+  return renderContent(currentPath);
+}
+
 window.addEventListener('popstate', () => {
   renderCurrentView();
 });
@@ -351,11 +357,6 @@ async function renderContent(currentPath: string): Promise<void> {
 
   const currentNode = nodeId ? globalShareData.nodes[nodeId] : undefined;
 
-  if (
-    !activeSearchQuery &&
-    currentNode?.description &&
-    currentNode.id !== 'root'
-  ) {
   if (
     !activeSearchQuery &&
     currentNode?.description &&
@@ -660,12 +661,6 @@ async function renderContent(currentPath: string): Promise<void> {
   } else {
     DOM.previewSec.style.display = 'none';
   }
-}
-
-async function renderCurrentView(): Promise<void> {
-  const currentPath = getCurrentPath();
-  renderBreadcrumb(currentPath);
-  await renderContent(currentPath);
 }
 
 // ────────────── 主题与视图切换 ──────────────
