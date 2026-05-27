@@ -222,9 +222,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 25818,
-      "md5": "1059c6daa42d768bc17dbfac995ea17c",
-      "sha256": "d431ed60895fde72f502ee3485df8f9e7293c1f3d107edb94af93db7d9c1f3e1",
+      "size": 25056,
+      "md5": "b4521c79589c3c896c181b503e895d12",
+      "sha256": "de779e8d61e5e01891c24bddec99d3db9415224a27f184da11e959a1eca72437",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/chain/PfcCustom.js"
     },
     "documents/proxy/config": {
@@ -252,9 +252,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 8140,
-      "md5": "4d293d6b6bfa462038cb2e88d64b3498",
-      "sha256": "e31bc6f038dcce59dd9bdbd7996621af548332c69da56e18ee5db912aa8f22ba",
+      "size": 8003,
+      "md5": "b9c8e7a336c2ae87a918158e0a11f4be",
+      "sha256": "99238a99e3ec8a55bab04c305a25dc1f989d4b09f25dcdf735438641876bfb1b",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/config/PfcCustom.ini"
     },
     "documents/proxy/ruleset": {
@@ -285,9 +285,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 124,
-      "md5": "444c4aee232ab34519e24a45c3a19dda",
-      "sha256": "8e8d24e4e0dae306ee25749fe8d34cb495f2c8c997f4e729c6f57b1ec9f5add2",
+      "size": 118,
+      "md5": "c32ddb1244aa90adfe45995d20e9360e",
+      "sha256": "ee8e527e72e5e6b0e7dae16e76b8647edd316c07f7fda442cae9bcf6ff30c46c",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcAI.list"
     },
     "documents/proxy/ruleset/PfcDirect.list": {
@@ -302,9 +302,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 895,
-      "md5": "08397b25ea8aec88b28cef8cd3db1f9d",
-      "sha256": "ee7adb918b099e48d1a0ffa88bd0d1bba7e62966b2d9341cc5652b8a790ee266",
+      "size": 855,
+      "md5": "02612d89f192882da9065a9bccf7634f",
+      "sha256": "835a5c725900f55b6e03f69ae02f53af47b99e2ff0263d44cd0bf89ad9f63d80",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcDirect.list"
     },
     "documents/proxy/ruleset/PfcProxy.list": {
@@ -319,9 +319,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 35,
-      "md5": "8276fd3ea587e20abdcfe6c60a1ba928",
-      "sha256": "60625b8d9cfc4bac40c9eb6526e521e895714b687e6cb2c71367cbf8e1db0be2",
+      "size": 33,
+      "md5": "21b3db343c53833cab1ba0a8d9c49f36",
+      "sha256": "4336d7c13595024ddff66413f53cfaf9215a59662abf75f4299a52b32f43c6f0",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcProxy.list"
     },
     "documents/proxy/ruleset/PfcSteamCommunity.list": {
@@ -336,9 +336,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 43,
-      "md5": "a9b33456b86eb7e0755ff909a0ef8167",
-      "sha256": "84ef026b5df3af3dfc6e8e94eadacaa7b61d2182e94394ed3812e6acdaae0585",
+      "size": 41,
+      "md5": "924bf0148cdfeb445d16f1d81fb50daa",
+      "sha256": "410a7fea48e914563f4ed0d93647b31c8138cf6a88ada5a74038ee9734649afc",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcSteamCommunity.list"
     },
     "documents/scripts": {
@@ -376,9 +376,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 4493,
-      "md5": "bd1b2b552b2774a93a74d22c1f4cc4bf",
-      "sha256": "642820fdbae613b07d42b30e3c47428b9331e9868baae515bb98a0697b0c1d42",
+      "size": 4369,
+      "md5": "cd49e620a87ba8d0bebbf7d311d6697c",
+      "sha256": "af830b1c68c249b702226bb0d40d54f20a0ba7aed71632583aed9bb3d339d6f8",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/AddPathToSystemEnvironment.ps1"
     },
     "documents/scripts/AddProfileToTerminal.ps1": {
@@ -393,9 +393,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 3641,
-      "md5": "4f4168c7027c2ab989a368e635488afb",
-      "sha256": "470af97c2f9d51c3f38cbf90e25c24fa6e7a81633dc7eaed2e7e4cd338e3ac90",
+      "size": 3541,
+      "md5": "ee73378cdedf824747cf941de19b9a81",
+      "sha256": "980a22996a875e232e25f2b306442e9300322663dd28c0689566b67d53bc5f0a",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/AddProfileToTerminal.ps1"
     },
     "documents/scripts/block-host.sh": {
@@ -410,9 +410,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 11143,
-      "md5": "2ab376096cea412f33f0bde163144fd2",
-      "sha256": "0e6adf1c0d5319f81150f252fbca3d067d6533e261c1dba8d4a200e7984bc528",
+      "size": 10760,
+      "md5": "9d63746820d9d5de8d58aa5bf618fb1e",
+      "sha256": "4258d1d33c94f10ebac8b776c383b498052ada8ac3058f872b9d71d00b8b05c4",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/block-host.sh"
     },
     "documents/scripts/DelPathAtSystemEnvironment.ps1": {
@@ -427,9 +427,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 5226,
-      "md5": "d5ded631bee21e3bccf12bc29ce754bd",
-      "sha256": "75128fd7b317fec6c964679c5898031331e1c7ce25161910607910be0c31dda2",
+      "size": 5079,
+      "md5": "44ffec981bd88f51ad943d8c5ef560ea",
+      "sha256": "c645382de8d34d01ee2b272ee271ab55f492fd5a25788f21f9ee62ecf51c4d8a",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/DelPathAtSystemEnvironment.ps1"
     },
     "documents/scripts/Fix-AMDMouseCursor.reg": {
@@ -444,9 +444,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 123,
-      "md5": "4e53c872b431dc8b3f2d65e9fd90853b",
-      "sha256": "a49e9942603fbfd2f63933dc1f3509ba8060d5a437d7fd46450ff899c3ae88ef",
+      "size": 121,
+      "md5": "f9e0719e87c0838fa7c1b6280a890653",
+      "sha256": "2e60878b95a3fa33d980af33218d2919989546aa689ac44d72c9b74f49c940f2",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Fix-AMDMouseCursor.reg"
     },
     "documents/scripts/install-zsh.sh": {
@@ -461,9 +461,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 21199,
-      "md5": "833bbf9f0d3a2f5b5d8d69668883a3f3",
-      "sha256": "9bbf61b019f286edb27b104a5e32b6ea503684c3b6d142a1bdb430604ccbb6e7",
+      "size": 20501,
+      "md5": "5a2a8301ac7314b05baaa04ffbda382c",
+      "sha256": "6c13b2ab0f08f7f33f24877a49ab61801aaad25306292957846228c7dab690e0",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/install-zsh.sh"
     },
     "documents/scripts/InstallPyEnv.ps1": {
@@ -478,9 +478,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 6134,
-      "md5": "065205dff7d4ea9e8de8d0252d1e75fa",
-      "sha256": "a3f8de1ce1b133b49a88d3d03aeedc86fc791904779f06455deaa8ff05565f4d",
+      "size": 5968,
+      "md5": "a50a9cd2e4bc91743b762bc01353b36a",
+      "sha256": "55b2f4f563d838bbf9e82ac71c4cb2aad201aef09adf63182ae9c864b352c903",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/InstallPyEnv.ps1"
     },
     "documents/scripts/Remove-HiddenDevice.ps1": {
@@ -495,9 +495,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 199,
-      "md5": "66ee01fb36ed1a00e060e12ad81760dc",
-      "sha256": "3236081811036be7c123a4e68bb79f7c40773c724c06baf0e992887bdd026625",
+      "size": 195,
+      "md5": "826a27a2723a6d3e44c26ddfbc7b9497",
+      "sha256": "ed612a6185603ba70aac6cee7d617d9cc31b0a208bc6efc074129b0c44a37a1c",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Remove-HiddenDevice.ps1"
     },
     "documents/scripts/Remove-UselessNetDevice.ps1": {
@@ -512,9 +512,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 424,
-      "md5": "9bd1423399c28f9a27def75588bd0ea6",
-      "sha256": "6545542ec216ad5897576cef06c8ded057dd82b1572c7b3a7b13ce38aded4809",
+      "size": 421,
+      "md5": "8a96fbea38f1627f4c81041d3cb42073",
+      "sha256": "4c58b758ba126772c4bdfe5cebffc51ea9290d9246e4e312aeab55b1caebfa7b",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Remove-UselessNetDevice.ps1"
     },
     "documents/scripts/Reset-AMDMouseCursor.reg": {
@@ -529,9 +529,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 110,
-      "md5": "17f54ff7abb1a7c37aebc59dde2c17ad",
-      "sha256": "57bbbbfe9baac40d743f54465b7f19dc2d0036fd74426911a937f7d3183bcb23",
+      "size": 108,
+      "md5": "b7b3e3d09cf34cce0f2e5cbee98c419e",
+      "sha256": "ef6b79ed8f86831a171bb8e3ee414cca47a1842243b7768b9f54971961f33767",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Reset-AMDMouseCursor.reg"
     },
     "documents/scripts/run-genshin.sh": {
@@ -546,9 +546,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 15431,
-      "md5": "1cfde069b8a0d01efdd146ddb0acc95b",
-      "sha256": "209c9d72ae9986c1085b77a9053d4922fccfe4566d7a945e1d92360eb2ca9f66",
+      "size": 15016,
+      "md5": "663dabb8eacd4a8e6f0c7b63e5d32bb5",
+      "sha256": "c8a5f64dffa37abd339129e43d2b06b30733bb1ec38e0f30bb3adebd696a54ea",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/run-genshin.sh"
     },
     "documents/styles": {
@@ -576,9 +576,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 194,
-      "md5": "828a6d6dca3390c2ffc4c443bbeedf3a",
-      "sha256": "6c0c3a316a65d8e73e75374eb4c65e01c5d968333f1490c7297e2a9eb725c48c",
+      "size": 186,
+      "md5": "98587762cc04f651d0888bf5d14d3e55",
+      "sha256": "cc6cac86e5b1013bae7ecb6d669a40a6f4a51121977ea73a8fb210fe30c044ef",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/styles/genshin-font.css"
     },
     "music": {
@@ -1463,9 +1463,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 2618,
-      "md5": "368004f51fd08665aa293dff854c2545",
-      "sha256": "9e23c210fe53152842d05069c4a355b19d5d3deb0a3e2456534f541ba85a25db",
+      "size": 2612,
+      "md5": "0ad869ff3e09587a3ff5437e0e46e1a3",
+      "sha256": "c3b8842b7fa3c2040c2d245dd7a907638dc7005cac5105f2151cd9d86df52fea",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/notes-dark.svg"
     },
     "pictures/notes-light.svg": {
@@ -1480,9 +1480,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 2333,
-      "md5": "eced149b1262e768e38fe9e1549c2112",
-      "sha256": "c0dcecc7064ceb9b9d022b09b8d3100231f9e0824bbf532a1f9c17e179032ac2",
+      "size": 2327,
+      "md5": "63febd64ee174e9696e6a9083fdb2bb3",
+      "sha256": "9ad06e9ccffc00d1a1b44c12b76bbf2776773388c3ee451b04e5771f98ae16ef",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/notes-light.svg"
     },
     "pictures/qq.svg": {
@@ -1497,9 +1497,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 650,
-      "md5": "deefad815976245d69783da27e5e520c",
-      "sha256": "5d42ff9fa7fba7f24258d9822cc2a2cf8575debdb7361a9a5fc5398d33aaf39f",
+      "size": 647,
+      "md5": "61dc1754bcfed311fb9839ea9b02385a",
+      "sha256": "71e444fbfcabadcceb43576e55e0ee042c3962c45c621286932dc4ac63062787",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/qq.svg"
     },
     "pictures/snow-pear-cloud-gradient.svg": {
@@ -1514,9 +1514,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 207113,
-      "md5": "b406cebefc5c467f2ebe3ad2d68b321b",
-      "sha256": "1dd35f315812102916a3c7e5c12d624c28252089c4e7ee7667b1a45a9f5f348d",
+      "size": 207016,
+      "md5": "3dd845df9aa2252f0b6ce17d8b6b8882",
+      "sha256": "4af5b4a75edb39a7990f1652396104048ec076d1225a56e69f2daf274994fa68",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear-cloud-gradient.svg"
     },
     "pictures/snow-pear-cloud.svg": {
@@ -1531,9 +1531,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 1880,
-      "md5": "0e206d3cf7f4d636743a5bab3b78e212",
-      "sha256": "de822c00ad9e9b7ce9402e69307957bcef4519e0cdb9a7529ea9c09741b1c0cb",
+      "size": 1875,
+      "md5": "f9ab29d66b2859d1868ab8c50485f3d1",
+      "sha256": "25dee10b24a1079dde490289c6abea004623f3e46fccbd73c9c73ba262c992fe",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear-cloud.svg"
     },
     "pictures/snow-pear-gradient.svg": {
@@ -1548,9 +1548,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 149657,
-      "md5": "9d3684ab915c4569a00beb1cbe258403",
-      "sha256": "4ddaae49d0c1f90177645ab1b36ccc14ce11659964b13425972a1ea9198042c9",
+      "size": 149585,
+      "md5": "67433d06de89218d6fba3927644098c0",
+      "sha256": "bfbcc6eaa13ca424a7eedb46eb2161c3df6725c887d5a68dbca3a558fc2ac103",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear-gradient.svg"
     },
     "pictures/snow-pear.svg": {
@@ -1565,9 +1565,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 1434,
-      "md5": "860105fa93fd25d56fedb54c48f35bcf",
-      "sha256": "ab55f0348a8ab9c73b6ae50350decd8a088cb304cef3e80ab65465f2a2c01247",
+      "size": 1430,
+      "md5": "17e8b715d6728d4a04d6119400f800b5",
+      "sha256": "e680da67c927b3fae182e453693be3385c7dbb193a122d09a0bbe4dc6912f15c",
       "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear.svg"
     },
     "pictures/video.webp": {
