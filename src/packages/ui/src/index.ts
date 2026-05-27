@@ -356,6 +356,11 @@ async function renderContent(currentPath: string): Promise<void> {
     currentNode?.description &&
     currentNode.id !== 'root'
   ) {
+  if (
+    !activeSearchQuery &&
+    currentNode?.description &&
+    currentNode.id !== 'root'
+  ) {
     const descEl = document.createElement('p');
     descEl.className = 'directory-description';
     descEl.textContent = currentNode.description;
