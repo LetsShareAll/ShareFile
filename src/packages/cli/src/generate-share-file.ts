@@ -17,7 +17,7 @@ import {
   readInfoFileAsync,
 } from '@share-file/types';
 
-import PluginRegistry from './plugins/plugin-registry';
+import PluginRegistry from './utils/plugin-registry';
 const __filename = fileURLToPath(import.meta.url);
 const workspaceRoot = path.resolve(
   path.dirname(__filename),
@@ -253,6 +253,38 @@ async function processDirectory(
 }
 
 /**
+ * 将 ShareFile 转换为 CDN 版本，为符合条件的文件节点添加 CDN URL。
+ *
+ * @param shareFile 原始的 ShareFile 对象
+ * @returns 包含 CDN URL 的新 ShareFile 对象
+ */
+function transformToCdnVersion(shareFile: ShareFile): ShareFile {
+  const CDN_BASE_URL =
+    'https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public';
+
+  const cdnNodes: Record<string, ShareNode> = {};
+
+  for (const [nodeId, node] of Object.entries(shareFile.nodes)) {
+    // 复制节点
+    const cdnNode = { ...node };
+
+    // 只为 type='file' 且没有 redirect_url 的节点添加 url 字段
+    if (node.type === 'file' && !node.redirect_url) {
+      (cdnNode as ShareNode & { url: string }).url =
+        `${CDN_BASE_URL}/${nodeId}`;
+    }
+
+    cdnNodes[nodeId] = cdnNode;
+  }
+
+  return {
+    rootId: shareFile.rootId,
+    pathIndex: { ...shareFile.pathIndex },
+    nodes: cdnNodes,
+  };
+}
+
+/**
  * 构建索引系统 CLI 调用的唯一主入口，承担对控制台初始入参的接收以及触发驱动整个流水线工作。
  */
 async function main(): Promise<void> {
@@ -299,12 +331,19 @@ async function main(): Promise<void> {
     const outputDir = path.dirname(outputPath);
     await fsp.mkdir(outputDir, { recursive: true });
 
+    // 生成原始版本 share-file.json
     const json = JSON.stringify(shareFile, null, 2);
     await fsp.writeFile(outputPath, json, 'utf-8');
-
     logger.success(`成功生成或覆盖: ${outputPath}`);
 
-    // 构建完成后触发插件回调
+    // 生成 CDN 版本 share-file.cdn.json
+    const cdnShareFile = transformToCdnVersion(shareFile);
+    const cdnOutputPath = outputPath.replace('.json', '.cdn.json');
+    const cdnJson = JSON.stringify(cdnShareFile, null, 2);
+    await fsp.writeFile(cdnOutputPath, cdnJson, 'utf-8');
+    logger.success(`成功生成或覆盖: ${cdnOutputPath}`);
+
+    // 构建完成后触发插件回调（只为原始版本触发）
     await registry.runHook('afterBuild', outputPath, shareFile);
 
     logger.printSummary();

@@ -6,9 +6,14 @@
  */
 
 declare const marked: { parse(md: string): string };
+declare const SHARE_FILE_NAME: string;
 
 // ────────────── 类型定义 ──────────────
-import { getFileTypeInfo, previewWithPlugins } from './plugins/pluginRegistry';
+import {
+  previewWithResolvedNodePlugin,
+  resolveNodePlugin,
+  type ResolvedNodePlugin,
+} from './utils/pluginRegistry';
 import { DOM, openModal, closeModal } from './ui';
 import {
   createIcon,
@@ -35,6 +40,7 @@ interface ShareNode {
   readonly redirect_url?: string | null;
   readonly redirect_type?: string | null;
   readonly redirect_confirm_message?: string | null;
+  readonly url?: string;
 }
 
 interface ShareFile {
@@ -68,9 +74,12 @@ window.addEventListener('popstate', () => {
 async function previewFileContent(
   fileName: string,
   fileUrl: string,
+  resolvedNodePlugin: ResolvedNodePlugin,
 ): Promise<void> {
-  const fileTypeInfo = getFileTypeInfo(fileName, 'file');
-  const result = await previewWithPlugins(fileName, fileUrl, fileTypeInfo);
+  const result = await previewWithResolvedNodePlugin(
+    resolvedNodePlugin,
+    fileUrl,
+  );
 
   if (result) {
     openModal(fileName, result);
@@ -342,7 +351,11 @@ async function renderContent(currentPath: string): Promise<void> {
 
   const currentNode = nodeId ? globalShareData.nodes[nodeId] : undefined;
 
-  if (!activeSearchQuery && currentNode?.description && currentNode.id !== 'root') {
+  if (
+    !activeSearchQuery &&
+    currentNode?.description &&
+    currentNode.id !== 'root'
+  ) {
     const descEl = document.createElement('p');
     descEl.className = 'directory-description';
     descEl.textContent = currentNode.description;
@@ -385,13 +398,21 @@ async function renderContent(currentPath: string): Promise<void> {
     listItem.classList.add(`item-${childNode.type}`);
     if (childNode.hidden) listItem.classList.add('hidden-item');
 
-    const typeInfo = getFileTypeInfo(childNode.name, childNode.type);
+    const resolvedNodePlugin = resolveNodePlugin({
+      name: childNode.name,
+      nodeType: childNode.type,
+      node: childNode,
+    });
+    const typeInfo = resolvedNodePlugin.info;
     const filePath = childNode.id.startsWith('/')
       ? childNode.id
       : '/' + childNode.id;
-    const nodePath = childNode.type === 'folder' ? '/' + childNode.id : filePath;
+    const fileUrl = childNode.url || filePath;
+    const nodePath =
+      childNode.type === 'folder' ? '/' + childNode.id : filePath;
     const copyUrl =
       childNode.redirect_url ||
+      childNode.url ||
       new URL(
         childNode.type === 'folder'
           ? `/?path=${encodeURIComponent(nodePath)}`
@@ -472,7 +493,7 @@ async function renderContent(currentPath: string): Promise<void> {
         e.stopPropagation();
 
         const a = document.createElement('a');
-        a.href = filePath;
+        a.href = fileUrl;
         a.download = childNode.name;
         document.body.appendChild(a);
         a.click();
@@ -526,7 +547,7 @@ async function renderContent(currentPath: string): Promise<void> {
           return;
         }
 
-        previewFileContent(childNode.name, filePath);
+        previewFileContent(childNode.name, fileUrl, resolvedNodePlugin);
       };
 
       // 为哈希值添加点击复制事件
@@ -610,13 +631,23 @@ async function renderContent(currentPath: string): Promise<void> {
 
   if (readmeFound) {
     try {
-      const fileUrl =
-        currentPath === '/' ? '/README.md' : `${currentPath}/README.md`;
-      const resp = await fetch(fileUrl);
+      // 从当前目录的 children 中查找 README.md 节点
+      const readmeNodeId = currentNode?.children.find(childId => {
+        const child = globalShareData!.nodes[childId];
+        return child && child.name === 'README.md';
+      });
 
-      if (resp.ok) {
-        DOM.previewContent.innerHTML = marked.parse(await resp.text());
-        DOM.previewSec.style.display = 'block';
+      if (readmeNodeId) {
+        const readmeNode = globalShareData.nodes[readmeNodeId];
+        const readmeUrl =
+          readmeNode.url ||
+          (currentPath === '/' ? '/README.md' : `${currentPath}/README.md`);
+        const resp = await fetch(readmeUrl);
+
+        if (resp.ok) {
+          DOM.previewContent.innerHTML = marked.parse(await resp.text());
+          DOM.previewSec.style.display = 'block';
+        }
       }
     } catch {
       DOM.previewSec.style.display = 'none';
@@ -702,7 +733,7 @@ async function main(): Promise<void> {
   initThemeAndView();
 
   try {
-    const response = await fetch('/assets/data/share-file.json');
+    const response = await fetch(`/assets/data/${SHARE_FILE_NAME}`);
     if (!response.ok) throw new Error('索引服务器异常');
     globalShareData = await response.json();
     DOM.loading.style.display = 'none';

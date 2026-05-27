@@ -3,6 +3,8 @@
    完整覆盖所有常见文件类型的图标颜色，确保视觉一致。
    ========================================================================== */
 
+@import url('/assets/styles/video-js.min.css');
+
 /* 自定义字体：等宽代码字体（Sarasa Mono SC Nerd） */
 @font-face {
   font-family: 'Sarasa Mono SC Nerd';
@@ -891,6 +893,486 @@ kbd {
   margin: 1em 0;
 }
 
+/* 代码预览 */
+.code-preview {
+  min-width: 0;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: rgba(120, 120, 128, 0.08);
+}
+
+.code-preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  border-bottom: 1px solid var(--card-border);
+  background: rgba(120, 120, 128, 0.08);
+}
+
+.code-preview-language {
+  min-width: 0;
+  color: var(--text-secondary);
+  font-family: 'Sarasa Mono SC Nerd', 'Fira Code', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.code-copy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 4.8rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.38rem 0.62rem;
+  background: var(--button-bg);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  line-height: 1;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.code-copy-button:hover {
+  background: var(--button-hover-bg);
+  transform: translateY(-1px);
+}
+
+.code-copy-button i {
+  pointer-events: none;
+}
+
+.code-preview-content {
+  min-width: 0;
+  max-height: min(58vh, 88vh);
+  overflow: auto;
+}
+
+.code-preview-table {
+  width: max-content;
+  min-width: 100%;
+  padding: 0.6rem 0;
+  font-family: 'Sarasa Mono SC Nerd', 'Fira Code', monospace;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.code-preview-line {
+  display: grid;
+  grid-template-columns: 3.4rem max-content;
+  min-width: 100%;
+}
+
+.code-preview-line:hover {
+  background: rgba(120, 120, 128, 0.1);
+}
+
+.code-line-number {
+  display: block;
+  min-width: 3.4rem;
+  padding: 0 0.75rem;
+  border-right: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  text-align: right;
+  user-select: none;
+}
+
+.code-line-content {
+  display: block;
+  width: max-content;
+  padding: 0 1rem;
+  white-space: pre;
+  color: var(--text);
+}
+
+.hljs-keyword,
+.hljs-built_in,
+.hljs-type {
+  color: #c026d3;
+  font-weight: 700;
+}
+
+.hljs-string,
+.hljs-regexp {
+  color: #059669;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet {
+  color: #2563eb;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-selector-tag {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-property,
+.hljs-selector-class,
+.hljs-selector-id {
+  color: #d97706;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-function {
+  color: #0891b2;
+}
+
+.hljs-meta,
+.hljs-doctag {
+  color: #7c3aed;
+}
+
+html[data-theme='dark'] .hljs-keyword,
+html[data-theme='dark'] .hljs-built_in,
+html[data-theme='dark'] .hljs-type {
+  color: #f0abfc;
+}
+
+html[data-theme='dark'] .hljs-string,
+html[data-theme='dark'] .hljs-regexp {
+  color: #86efac;
+}
+
+html[data-theme='dark'] .hljs-number,
+html[data-theme='dark'] .hljs-literal,
+html[data-theme='dark'] .hljs-symbol,
+html[data-theme='dark'] .hljs-bullet {
+  color: #93c5fd;
+}
+
+html[data-theme='dark'] .hljs-tag,
+html[data-theme='dark'] .hljs-name,
+html[data-theme='dark'] .hljs-selector-tag {
+  color: #fca5a5;
+}
+
+html[data-theme='dark'] .hljs-attr,
+html[data-theme='dark'] .hljs-attribute,
+html[data-theme='dark'] .hljs-property,
+html[data-theme='dark'] .hljs-selector-class,
+html[data-theme='dark'] .hljs-selector-id {
+  color: #fcd34d;
+}
+
+html[data-theme='dark'] .hljs-title,
+html[data-theme='dark'] .hljs-section,
+html[data-theme='dark'] .hljs-function {
+  color: #67e8f9;
+}
+
+html[data-theme='dark'] .hljs-meta,
+html[data-theme='dark'] .hljs-doctag {
+  color: #c4b5fd;
+}
+
+/* AmplitudeJS 音频预览 */
+.amplitude-preview {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 1.2rem;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: rgba(120, 120, 128, 0.08);
+}
+
+.amplitude-preview-main {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.amplitude-preview-artwork {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--color-audio), rgba(0, 0, 0, 0.08));
+  color: #fff;
+  font-size: 2.2rem;
+}
+
+.amplitude-preview-artwork img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.amplitude-preview-details {
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.amplitude-preview-header {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  text-align: left;
+}
+
+.amplitude-preview-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amplitude-preview-artist {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amplitude-preview-status {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amplitude-preview-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem 0.8rem;
+  min-width: 0;
+}
+
+.amplitude-preview-meta:empty {
+  display: none;
+}
+
+.amplitude-preview-meta-row {
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr);
+  min-width: 0;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.amplitude-preview-meta-row dt {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.amplitude-preview-meta-row dd {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amplitude-preview-controls {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.amplitude-preview-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.amplitude-preview-play:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.amplitude-preview-play .fa-pause,
+.amplitude-preview-play.amplitude-playing .fa-play {
+  display: none;
+}
+
+.amplitude-preview-play.amplitude-playing .fa-pause {
+  display: inline-block;
+}
+
+.amplitude-preview-timeline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.amplitude-current-time,
+.amplitude-duration-time {
+  color: var(--text-secondary);
+  font-family: 'Sarasa Mono SC Nerd', 'Fira Code', monospace;
+  font-size: 0.78rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.amplitude-song-slider {
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.amplitude-preview-lyrics {
+  min-width: 0;
+  border-top: 1px solid var(--card-border);
+  padding-top: 0.85rem;
+}
+
+.amplitude-preview-lyrics[hidden] {
+  display: none;
+}
+
+.amplitude-preview-lyrics-title {
+  margin-bottom: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.amplitude-preview-lyrics-list {
+  display: grid;
+  gap: 0.2rem;
+  max-height: 14rem;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scroll-padding: 5.5rem 0;
+  padding: 4.8rem 0;
+  border-radius: 8px;
+  cursor: grab;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: none;
+  user-select: none;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 18%,
+    #000 82%,
+    transparent
+  );
+}
+
+.amplitude-preview-lyrics-list::-webkit-scrollbar {
+  display: none;
+}
+
+.amplitude-preview-lyrics-list.dragging {
+  cursor: grabbing;
+}
+
+.amplitude-preview-lyric-row {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.35rem 0.4rem;
+  color: var(--text-secondary);
+  opacity: 0.58;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.amplitude-preview-lyric-row.active {
+  color: var(--text);
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.amplitude-preview-lyric-text,
+.amplitude-preview-lyric-translation {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.amplitude-preview-lyric-text {
+  font-size: 0.96rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.amplitude-preview-lyric-translation {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* Video.js 预览 */
+.videojs-preview {
+  width: min(100%, 900px);
+  margin: 0 auto;
+  outline: none;
+}
+
+.videojs-preview:focus-visible {
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.videojs-preview .video-js {
+  width: 100%;
+  background: #000;
+}
+
+.videojs-preview .vjs-control-bar {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 /* 文件预览弹窗 */
 .modal-overlay {
   position: fixed;
@@ -963,6 +1445,15 @@ kbd {
   padding: 1.5rem;
 }
 
+.modal-body.modal-body-code {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.modal-body.modal-body-code .code-preview {
+  width: 100%;
+}
+
 /* 空状态与错误 */
 .empty,
 .error {
@@ -1023,5 +1514,22 @@ kbd {
   }
   .hash-row {
     margin-left: 0;
+  }
+  .amplitude-preview-main {
+    grid-template-columns: 1fr;
+  }
+  .amplitude-preview-artwork {
+    width: min(100%, 12rem);
+    justify-self: center;
+  }
+  .amplitude-preview-meta {
+    grid-template-columns: 1fr;
+  }
+  .amplitude-preview-controls {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .amplitude-preview-timeline {
+    width: 100%;
   }
 }

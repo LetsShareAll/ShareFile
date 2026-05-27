@@ -224,7 +224,8 @@
       "redirect_confirm_message": null,
       "size": 25818,
       "md5": "1059c6daa42d768bc17dbfac995ea17c",
-      "sha256": "d431ed60895fde72f502ee3485df8f9e7293c1f3d107edb94af93db7d9c1f3e1"
+      "sha256": "d431ed60895fde72f502ee3485df8f9e7293c1f3d107edb94af93db7d9c1f3e1",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/chain/PfcCustom.js"
     },
     "documents/proxy/config": {
       "id": "documents/proxy/config",
@@ -253,7 +254,8 @@
       "redirect_confirm_message": null,
       "size": 8140,
       "md5": "4d293d6b6bfa462038cb2e88d64b3498",
-      "sha256": "e31bc6f038dcce59dd9bdbd7996621af548332c69da56e18ee5db912aa8f22ba"
+      "sha256": "e31bc6f038dcce59dd9bdbd7996621af548332c69da56e18ee5db912aa8f22ba",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/config/PfcCustom.ini"
     },
     "documents/proxy/ruleset": {
       "id": "documents/proxy/ruleset",
@@ -285,7 +287,8 @@
       "redirect_confirm_message": null,
       "size": 124,
       "md5": "444c4aee232ab34519e24a45c3a19dda",
-      "sha256": "8e8d24e4e0dae306ee25749fe8d34cb495f2c8c997f4e729c6f57b1ec9f5add2"
+      "sha256": "8e8d24e4e0dae306ee25749fe8d34cb495f2c8c997f4e729c6f57b1ec9f5add2",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcAI.list"
     },
     "documents/proxy/ruleset/PfcDirect.list": {
       "id": "documents/proxy/ruleset/PfcDirect.list",
@@ -301,7 +304,8 @@
       "redirect_confirm_message": null,
       "size": 895,
       "md5": "08397b25ea8aec88b28cef8cd3db1f9d",
-      "sha256": "ee7adb918b099e48d1a0ffa88bd0d1bba7e62966b2d9341cc5652b8a790ee266"
+      "sha256": "ee7adb918b099e48d1a0ffa88bd0d1bba7e62966b2d9341cc5652b8a790ee266",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcDirect.list"
     },
     "documents/proxy/ruleset/PfcProxy.list": {
       "id": "documents/proxy/ruleset/PfcProxy.list",
@@ -317,7 +321,8 @@
       "redirect_confirm_message": null,
       "size": 35,
       "md5": "8276fd3ea587e20abdcfe6c60a1ba928",
-      "sha256": "60625b8d9cfc4bac40c9eb6526e521e895714b687e6cb2c71367cbf8e1db0be2"
+      "sha256": "60625b8d9cfc4bac40c9eb6526e521e895714b687e6cb2c71367cbf8e1db0be2",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcProxy.list"
     },
     "documents/proxy/ruleset/PfcSteamCommunity.list": {
       "id": "documents/proxy/ruleset/PfcSteamCommunity.list",
@@ -333,7 +338,8 @@
       "redirect_confirm_message": null,
       "size": 43,
       "md5": "a9b33456b86eb7e0755ff909a0ef8167",
-      "sha256": "84ef026b5df3af3dfc6e8e94eadacaa7b61d2182e94394ed3812e6acdaae0585"
+      "sha256": "84ef026b5df3af3dfc6e8e94eadacaa7b61d2182e94394ed3812e6acdaae0585",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/proxy/ruleset/PfcSteamCommunity.list"
     },
     "documents/scripts": {
       "id": "documents/scripts",
@@ -372,7 +378,8 @@
       "redirect_confirm_message": null,
       "size": 4493,
       "md5": "bd1b2b552b2774a93a74d22c1f4cc4bf",
-      "sha256": "642820fdbae613b07d42b30e3c47428b9331e9868baae515bb98a0697b0c1d42"
+      "sha256": "642820fdbae613b07d42b30e3c47428b9331e9868baae515bb98a0697b0c1d42",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/AddPathToSystemEnvironment.ps1"
     },
     "documents/scripts/AddProfileToTerminal.ps1": {
       "id": "documents/scripts/AddProfileToTerminal.ps1",
@@ -388,7 +395,8 @@
       "redirect_confirm_message": null,
       "size": 3641,
       "md5": "4f4168c7027c2ab989a368e635488afb",
-      "sha256": "470af97c2f9d51c3f38cbf90e25c24fa6e7a81633dc7eaed2e7e4cd338e3ac90"
+      "sha256": "470af97c2f9d51c3f38cbf90e25c24fa6e7a81633dc7eaed2e7e4cd338e3ac90",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/AddProfileToTerminal.ps1"
     },
     "documents/scripts/block-host.sh": {
       "id": "documents/scripts/block-host.sh",
@@ -404,7 +412,8 @@
       "redirect_confirm_message": null,
       "size": 11143,
       "md5": "2ab376096cea412f33f0bde163144fd2",
-      "sha256": "0e6adf1c0d5319f81150f252fbca3d067d6533e261c1dba8d4a200e7984bc528"
+      "sha256": "0e6adf1c0d5319f81150f252fbca3d067d6533e261c1dba8d4a200e7984bc528",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/block-host.sh"
     },
     "documents/scripts/DelPathAtSystemEnvironment.ps1": {
       "id": "documents/scripts/DelPathAtSystemEnvironment.ps1",
@@ -420,7 +429,8 @@
       "redirect_confirm_message": null,
       "size": 5226,
       "md5": "d5ded631bee21e3bccf12bc29ce754bd",
-      "sha256": "75128fd7b317fec6c964679c5898031331e1c7ce25161910607910be0c31dda2"
+      "sha256": "75128fd7b317fec6c964679c5898031331e1c7ce25161910607910be0c31dda2",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/DelPathAtSystemEnvironment.ps1"
     },
     "documents/scripts/Fix-AMDMouseCursor.reg": {
       "id": "documents/scripts/Fix-AMDMouseCursor.reg",
@@ -436,7 +446,8 @@
       "redirect_confirm_message": null,
       "size": 123,
       "md5": "4e53c872b431dc8b3f2d65e9fd90853b",
-      "sha256": "a49e9942603fbfd2f63933dc1f3509ba8060d5a437d7fd46450ff899c3ae88ef"
+      "sha256": "a49e9942603fbfd2f63933dc1f3509ba8060d5a437d7fd46450ff899c3ae88ef",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Fix-AMDMouseCursor.reg"
     },
     "documents/scripts/install-zsh.sh": {
       "id": "documents/scripts/install-zsh.sh",
@@ -452,7 +463,8 @@
       "redirect_confirm_message": null,
       "size": 21199,
       "md5": "833bbf9f0d3a2f5b5d8d69668883a3f3",
-      "sha256": "9bbf61b019f286edb27b104a5e32b6ea503684c3b6d142a1bdb430604ccbb6e7"
+      "sha256": "9bbf61b019f286edb27b104a5e32b6ea503684c3b6d142a1bdb430604ccbb6e7",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/install-zsh.sh"
     },
     "documents/scripts/InstallPyEnv.ps1": {
       "id": "documents/scripts/InstallPyEnv.ps1",
@@ -468,7 +480,8 @@
       "redirect_confirm_message": null,
       "size": 6134,
       "md5": "065205dff7d4ea9e8de8d0252d1e75fa",
-      "sha256": "a3f8de1ce1b133b49a88d3d03aeedc86fc791904779f06455deaa8ff05565f4d"
+      "sha256": "a3f8de1ce1b133b49a88d3d03aeedc86fc791904779f06455deaa8ff05565f4d",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/InstallPyEnv.ps1"
     },
     "documents/scripts/Remove-HiddenDevice.ps1": {
       "id": "documents/scripts/Remove-HiddenDevice.ps1",
@@ -484,7 +497,8 @@
       "redirect_confirm_message": null,
       "size": 199,
       "md5": "66ee01fb36ed1a00e060e12ad81760dc",
-      "sha256": "3236081811036be7c123a4e68bb79f7c40773c724c06baf0e992887bdd026625"
+      "sha256": "3236081811036be7c123a4e68bb79f7c40773c724c06baf0e992887bdd026625",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Remove-HiddenDevice.ps1"
     },
     "documents/scripts/Remove-UselessNetDevice.ps1": {
       "id": "documents/scripts/Remove-UselessNetDevice.ps1",
@@ -500,7 +514,8 @@
       "redirect_confirm_message": null,
       "size": 424,
       "md5": "9bd1423399c28f9a27def75588bd0ea6",
-      "sha256": "6545542ec216ad5897576cef06c8ded057dd82b1572c7b3a7b13ce38aded4809"
+      "sha256": "6545542ec216ad5897576cef06c8ded057dd82b1572c7b3a7b13ce38aded4809",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Remove-UselessNetDevice.ps1"
     },
     "documents/scripts/Reset-AMDMouseCursor.reg": {
       "id": "documents/scripts/Reset-AMDMouseCursor.reg",
@@ -516,7 +531,8 @@
       "redirect_confirm_message": null,
       "size": 110,
       "md5": "17f54ff7abb1a7c37aebc59dde2c17ad",
-      "sha256": "57bbbbfe9baac40d743f54465b7f19dc2d0036fd74426911a937f7d3183bcb23"
+      "sha256": "57bbbbfe9baac40d743f54465b7f19dc2d0036fd74426911a937f7d3183bcb23",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/Reset-AMDMouseCursor.reg"
     },
     "documents/scripts/run-genshin.sh": {
       "id": "documents/scripts/run-genshin.sh",
@@ -532,7 +548,8 @@
       "redirect_confirm_message": null,
       "size": 15431,
       "md5": "1cfde069b8a0d01efdd146ddb0acc95b",
-      "sha256": "209c9d72ae9986c1085b77a9053d4922fccfe4566d7a945e1d92360eb2ca9f66"
+      "sha256": "209c9d72ae9986c1085b77a9053d4922fccfe4566d7a945e1d92360eb2ca9f66",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/scripts/run-genshin.sh"
     },
     "documents/styles": {
       "id": "documents/styles",
@@ -561,7 +578,8 @@
       "redirect_confirm_message": null,
       "size": 194,
       "md5": "828a6d6dca3390c2ffc4c443bbeedf3a",
-      "sha256": "6c0c3a316a65d8e73e75374eb4c65e01c5d968333f1490c7297e2a9eb725c48c"
+      "sha256": "6c0c3a316a65d8e73e75374eb4c65e01c5d968333f1490c7297e2a9eb725c48c",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/documents/styles/genshin-font.css"
     },
     "music": {
       "id": "music",
@@ -592,7 +610,8 @@
       "redirect_confirm_message": null,
       "size": 38209644,
       "md5": "c97a92bffad818bc4c60f307fab3a2fb",
-      "sha256": "335e65fce52029b013863d81ffe5a0858ba878844c861dbb6e1f071a85ba952e"
+      "sha256": "335e65fce52029b013863d81ffe5a0858ba878844c861dbb6e1f071a85ba952e",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/music/101. 知更鸟;HOYO-MiX;Chevy - 在银河中孤独摇摆.flac"
     },
     "music/102. 知更鸟;HOYO-MiX;Chevy - 使一颗心免于哀伤.flac": {
       "id": "music/102. 知更鸟;HOYO-MiX;Chevy - 使一颗心免于哀伤.flac",
@@ -608,7 +627,8 @@
       "redirect_confirm_message": null,
       "size": 42882183,
       "md5": "51310ecd125f5beaa4e6a890ee4f2012",
-      "sha256": "7e561f2703067fec7b2b5cb27bff633c9a08082dce49d9e35d702151382e103b"
+      "sha256": "7e561f2703067fec7b2b5cb27bff633c9a08082dce49d9e35d702151382e103b",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/music/102. 知更鸟;HOYO-MiX;Chevy - 使一颗心免于哀伤.flac"
     },
     "music/103. 知更鸟;HOYO-MiX;Chevy - 希望有羽毛和翅膀.flac": {
       "id": "music/103. 知更鸟;HOYO-MiX;Chevy - 希望有羽毛和翅膀.flac",
@@ -624,7 +644,8 @@
       "redirect_confirm_message": null,
       "size": 55550881,
       "md5": "19f3d24e4bdd8b6cf39b80d7bfba68d5",
-      "sha256": "a95ede4142b64c8076fa43ef6bc331fdda70392aeb766de62ea51e0a7b187d26"
+      "sha256": "a95ede4142b64c8076fa43ef6bc331fdda70392aeb766de62ea51e0a7b187d26",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/music/103. 知更鸟;HOYO-MiX;Chevy - 希望有羽毛和翅膀.flac"
     },
     "others": {
       "id": "others",
@@ -709,7 +730,8 @@
       "redirect_confirm_message": null,
       "size": 6873944,
       "md5": "1b7c0da444a2d6fee52faac0190381c0",
-      "sha256": "71b730ea42f19ee53cef582820cc42794b111d24b17e9691b3b9f6a2a87f5882"
+      "sha256": "71b730ea42f19ee53cef582820cc42794b111d24b17e9691b3b9f6a2a87f5882",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/foundertype/方正兰亭粗黑_GBK.ttf"
     },
     "others/fonts/truetype/hanyi": {
       "id": "others/fonts/truetype/hanyi",
@@ -738,7 +760,8 @@
       "redirect_confirm_message": null,
       "size": 11460364,
       "md5": "79a037f7bc9aecc9af796ec9feb4650b",
-      "sha256": "5145895c67b2ef5978e79666fb876f63be26858229c52e8f9e361644ff0672fa"
+      "sha256": "5145895c67b2ef5978e79666fb876f63be26858229c52e8f9e361644ff0672fa",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/hanyi/汉仪文黑-85W_Heavy.ttf"
     },
     "others/fonts/truetype/sarasa": {
       "id": "others/fonts/truetype/sarasa",
@@ -776,7 +799,8 @@
       "redirect_confirm_message": null,
       "size": 28597336,
       "md5": "2f8e0e9ff6ed3ee0ef85a3461b426821",
-      "sha256": "e0cb1eb173f911e4adcfbac721c3e29d78394d53af35285b56bf4123e60f5946"
+      "sha256": "e0cb1eb173f911e4adcfbac721c3e29d78394d53af35285b56bf4123e60f5946",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-bold-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.ttf",
@@ -792,7 +816,8 @@
       "redirect_confirm_message": null,
       "size": 29467728,
       "md5": "3e2197412a17ded36acb9eed4e5aef09",
-      "sha256": "78fadddabd1366fb9db6edfcddd857fb8bf420e684d3b16f30867d88442ac43b"
+      "sha256": "78fadddabd1366fb9db6edfcddd857fb8bf420e684d3b16f30867d88442ac43b",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-extralight-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-extralight-nerd-font.ttf",
@@ -808,7 +833,8 @@
       "redirect_confirm_message": null,
       "size": 28760552,
       "md5": "9f036e95a9ac874a6612f3b08787238f",
-      "sha256": "b3ebf4b7b200b8f87616e71da102b819fdd7dbd0bcfdd1b56b3e1bc926aa46b3"
+      "sha256": "b3ebf4b7b200b8f87616e71da102b819fdd7dbd0bcfdd1b56b3e1bc926aa46b3",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-extralight-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-extralightitalic-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-extralightitalic-nerd-font.ttf",
@@ -824,7 +850,8 @@
       "redirect_confirm_message": null,
       "size": 29625696,
       "md5": "bb238de9da85248e44c0853cc673ae1f",
-      "sha256": "76d2d57bd8ba913f5c35c3413f070731b2d985f6bdae4d94b9723f3064225adf"
+      "sha256": "76d2d57bd8ba913f5c35c3413f070731b2d985f6bdae4d94b9723f3064225adf",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-extralightitalic-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-italic-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-italic-nerd-font.ttf",
@@ -840,7 +867,8 @@
       "redirect_confirm_message": null,
       "size": 29647440,
       "md5": "98a73456c6870333dc5df64971b0423f",
-      "sha256": "aefd524e858dfa242d27142e4cfae5e0506bbfbaa484acbc058596a17d94d655"
+      "sha256": "aefd524e858dfa242d27142e4cfae5e0506bbfbaa484acbc058596a17d94d655",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-italic-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-light-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-light-nerd-font.ttf",
@@ -856,7 +884,8 @@
       "redirect_confirm_message": null,
       "size": 28880656,
       "md5": "21eb58c067ab64e1a8235174855cbe41",
-      "sha256": "bede29df00686a5e53315250301dc59f364b89fb53d57a7e5f86dd896dea720f"
+      "sha256": "bede29df00686a5e53315250301dc59f364b89fb53d57a7e5f86dd896dea720f",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-light-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-lightitalic-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-lightitalic-nerd-font.ttf",
@@ -872,7 +901,8 @@
       "redirect_confirm_message": null,
       "size": 29745540,
       "md5": "61d9767efbe5c5005be3c807b643733c",
-      "sha256": "cc0e39f58431f5f7cfc6342a9b820d9a6be9c3d17a0ed211c423fff43181bcd9"
+      "sha256": "cc0e39f58431f5f7cfc6342a9b820d9a6be9c3d17a0ed211c423fff43181bcd9",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-lightitalic-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-regular-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-regular-nerd-font.ttf",
@@ -888,7 +918,8 @@
       "redirect_confirm_message": null,
       "size": 28780252,
       "md5": "5d4fb63f29980eeca862b16d94feec60",
-      "sha256": "a6a26aad6e98772ce6af147be4caa8023db03134ba884dcedec6a59fdf0ad003"
+      "sha256": "a6a26aad6e98772ce6af147be4caa8023db03134ba884dcedec6a59fdf0ad003",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-regular-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-semibold-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-semibold-nerd-font.ttf",
@@ -904,7 +935,8 @@
       "redirect_confirm_message": null,
       "size": 28677392,
       "md5": "2db12da048f4cfe1be7bc4344df8ddc2",
-      "sha256": "557a1efff8858b949c0ba5c06d1700ac7001bac04ede7fcdc691b582450358df"
+      "sha256": "557a1efff8858b949c0ba5c06d1700ac7001bac04ede7fcdc691b582450358df",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-semibold-nerd-font.ttf"
     },
     "others/fonts/truetype/sarasa/sarasa-mono-sc-semibolditalic-nerd-font.ttf": {
       "id": "others/fonts/truetype/sarasa/sarasa-mono-sc-semibolditalic-nerd-font.ttf",
@@ -920,7 +952,8 @@
       "redirect_confirm_message": null,
       "size": 29557008,
       "md5": "1ed184209d32eb3e0be9d88b88c5a79c",
-      "sha256": "b9f8b725f797ef25dd5505f91e49fa964ced1cee720c32492a22e59842bbd5fa"
+      "sha256": "b9f8b725f797ef25dd5505f91e49fa964ced1cee720c32492a22e59842bbd5fa",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/sarasa/sarasa-mono-sc-semibolditalic-nerd-font.ttf"
     },
     "others/fonts/truetype/segoe": {
       "id": "others/fonts/truetype/segoe",
@@ -949,7 +982,8 @@
       "redirect_confirm_message": null,
       "size": 2838884,
       "md5": "d50758427673578ddf6c9edcdbf367f5",
-      "sha256": "4e3cec7d1995b6d74102c0b4669e4507ac35cbf9a9830a93ac14c6e40dfe36a9"
+      "sha256": "4e3cec7d1995b6d74102c0b4669e4507ac35cbf9a9830a93ac14c6e40dfe36a9",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/segoe/Segoe UI Emoji.ttf"
     },
     "others/fonts/truetype/smiley": {
       "id": "others/fonts/truetype/smiley",
@@ -978,7 +1012,8 @@
       "redirect_confirm_message": null,
       "size": 2629764,
       "md5": "0f7526e2ca815e5e8ffd3bd8a1663144",
-      "sha256": "b447d7e781f08bc95c4c9f23ba71ed2b8ebb639aa7184485c71c4ca5afcd25c4"
+      "sha256": "b447d7e781f08bc95c4c9f23ba71ed2b8ebb639aa7184485c71c4ca5afcd25c4",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/truetype/smiley/SmileySans-Oblique.ttf"
     },
     "others/fonts/webtype": {
       "id": "others/fonts/webtype",
@@ -1030,7 +1065,8 @@
       "redirect_confirm_message": null,
       "size": 9634956,
       "md5": "e8ba98d9d1ab83f0cf836ef293834bbf",
-      "sha256": "acf863ee7015fb9244383dbf596e308a70adb33d19c37a6bf9568349578a0694"
+      "sha256": "acf863ee7015fb9244383dbf596e308a70adb33d19c37a6bf9568349578a0694",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-bold-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2",
@@ -1046,7 +1082,8 @@
       "redirect_confirm_message": null,
       "size": 10048008,
       "md5": "721eaa692ff4ba62ba40754d8c33c032",
-      "sha256": "3a8407da6716688c0d5c5327853322ff0022c693833b1f7912db60cf9aacc3a2"
+      "sha256": "3a8407da6716688c0d5c5327853322ff0022c693833b1f7912db60cf9aacc3a2",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-extralight-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-extralight-nerd-font.woff2",
@@ -1062,7 +1099,8 @@
       "redirect_confirm_message": null,
       "size": 8545176,
       "md5": "4f0d52149eafe8db6221ac69970cd149",
-      "sha256": "a860ffd91c7bc599552ae5074d725219b92cc2886730a7e872ff2e82441f1d4a"
+      "sha256": "a860ffd91c7bc599552ae5074d725219b92cc2886730a7e872ff2e82441f1d4a",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-extralight-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-extralightitalic-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-extralightitalic-nerd-font.woff2",
@@ -1078,7 +1116,8 @@
       "redirect_confirm_message": null,
       "size": 8868544,
       "md5": "979661aa0c776d644cb2286d3b548655",
-      "sha256": "eea71805aebf858b3629ac02912803e38a7c54018fab5a6f86673262921c452f"
+      "sha256": "eea71805aebf858b3629ac02912803e38a7c54018fab5a6f86673262921c452f",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-extralightitalic-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2",
@@ -1094,7 +1133,8 @@
       "redirect_confirm_message": null,
       "size": 9751228,
       "md5": "8370002aaed2fc500d58f95d329f9945",
-      "sha256": "77733a7eb1b1f74db4c26adf6dd26425810b6cc64ee0b25f2d8b18dd15464f8d"
+      "sha256": "77733a7eb1b1f74db4c26adf6dd26425810b6cc64ee0b25f2d8b18dd15464f8d",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-light-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-light-nerd-font.woff2",
@@ -1110,7 +1150,8 @@
       "redirect_confirm_message": null,
       "size": 9171244,
       "md5": "a82e135a84054535ec8b7053ed8181a4",
-      "sha256": "715d4de082f4b6e6585fb14a6d20d1536d3b79eaaa45f702f59e95284bd17dce"
+      "sha256": "715d4de082f4b6e6585fb14a6d20d1536d3b79eaaa45f702f59e95284bd17dce",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-light-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-lightitalic-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-lightitalic-nerd-font.woff2",
@@ -1126,7 +1167,8 @@
       "redirect_confirm_message": null,
       "size": 9532824,
       "md5": "4506966df9c54adb6c157bd570acf04a",
-      "sha256": "d0ccc3de49645a43acb0f342d4670a2b843159e38913fab2cafa5cbcbb6b1945"
+      "sha256": "d0ccc3de49645a43acb0f342d4670a2b843159e38913fab2cafa5cbcbb6b1945",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-lightitalic-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2",
@@ -1142,7 +1184,8 @@
       "redirect_confirm_message": null,
       "size": 9372308,
       "md5": "483caa37e3040f00062c9fd0817699e1",
-      "sha256": "f3eb32b9f68bc641c092daa03c4c4d319d83f893d9f0ff97e7f11489d83339db"
+      "sha256": "f3eb32b9f68bc641c092daa03c4c4d319d83f893d9f0ff97e7f11489d83339db",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-semibold-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-semibold-nerd-font.woff2",
@@ -1158,7 +1201,8 @@
       "redirect_confirm_message": null,
       "size": 9505352,
       "md5": "5b37915e73bcbe0edfbe17881afa3d52",
-      "sha256": "e8172e2e018d32f2d5a2b0ccf6e7a6503d16baffd67d9ee36af9401060a9afaf"
+      "sha256": "e8172e2e018d32f2d5a2b0ccf6e7a6503d16baffd67d9ee36af9401060a9afaf",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-semibold-nerd-font.woff2"
     },
     "others/fonts/webtype/sarasa/sarasa-mono-sc-semibolditalic-nerd-font.woff2": {
       "id": "others/fonts/webtype/sarasa/sarasa-mono-sc-semibolditalic-nerd-font.woff2",
@@ -1174,7 +1218,8 @@
       "redirect_confirm_message": null,
       "size": 9894856,
       "md5": "1f39b9ae03fea1fb597ae6d85f2f0819",
-      "sha256": "223c687e94c9808e76520ee69ff69a4dd9beda3a0c26c1762b75454cb63d9fc6"
+      "sha256": "223c687e94c9808e76520ee69ff69a4dd9beda3a0c26c1762b75454cb63d9fc6",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/sarasa/sarasa-mono-sc-semibolditalic-nerd-font.woff2"
     },
     "others/fonts/webtype/smiley": {
       "id": "others/fonts/webtype/smiley",
@@ -1203,7 +1248,8 @@
       "redirect_confirm_message": null,
       "size": 1150924,
       "md5": "b3120172726aa1dfabc31374923809f6",
-      "sha256": "731f22973349404b15a88a99ef3b5dd4104c0965c23b7e485c1f11e84fea99e2"
+      "sha256": "731f22973349404b15a88a99ef3b5dd4104c0965c23b7e485c1f11e84fea99e2",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/others/fonts/webtype/smiley/SmileySans-Oblique.ttf.woff2"
     },
     "pictures": {
       "id": "pictures",
@@ -1249,7 +1295,8 @@
       "redirect_confirm_message": null,
       "size": 138027,
       "md5": "bd9af2ae911201c2e07499baf9ac4c46",
-      "sha256": "61a4d755f4e7ec7a0f4f813b8a1a3324ad5a86c3012693899a17deaacaad07c3"
+      "sha256": "61a4d755f4e7ec7a0f4f813b8a1a3324ad5a86c3012693899a17deaacaad07c3",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg"
     },
     "pictures/archive.jpg": {
       "id": "pictures/archive.jpg",
@@ -1265,7 +1312,8 @@
       "redirect_confirm_message": null,
       "size": 9759,
       "md5": "ee28cf07eff43cbcf9724f2c401dea0c",
-      "sha256": "45a7f22bb2011ed8eb36868b3ceba86f416423f77dd67975a553d6a5ed5ba59f"
+      "sha256": "45a7f22bb2011ed8eb36868b3ceba86f416423f77dd67975a553d6a5ed5ba59f",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/archive.jpg"
     },
     "pictures/clash-dark.png": {
       "id": "pictures/clash-dark.png",
@@ -1281,7 +1329,8 @@
       "redirect_confirm_message": null,
       "size": 31613,
       "md5": "8b47166a2235f5d55a21986ac636b201",
-      "sha256": "e74f2bf69f19f47b12b1bd70a51e699af13b938c6eda1875eb58aee803a2d2a0"
+      "sha256": "e74f2bf69f19f47b12b1bd70a51e699af13b938c6eda1875eb58aee803a2d2a0",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/clash-dark.png"
     },
     "pictures/clash-light.png": {
       "id": "pictures/clash-light.png",
@@ -1297,7 +1346,8 @@
       "redirect_confirm_message": null,
       "size": 14428,
       "md5": "ab67026231c772c19b923846e6cd65ee",
-      "sha256": "0d48a2ea1ee05ad4579b6e6996889548fa8a61a5ff6c85a32f7622cddfcb5782"
+      "sha256": "0d48a2ea1ee05ad4579b6e6996889548fa8a61a5ff6c85a32f7622cddfcb5782",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/clash-light.png"
     },
     "pictures/directory.png": {
       "id": "pictures/directory.png",
@@ -1313,7 +1363,8 @@
       "redirect_confirm_message": null,
       "size": 5724,
       "md5": "904786592ff04be427ff2179993e8bdf",
-      "sha256": "be1656776793699a1a2e643e79df60e125141b301904a152eb831fdf58ff5e15"
+      "sha256": "be1656776793699a1a2e643e79df60e125141b301904a152eb831fdf58ff5e15",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/directory.png"
     },
     "pictures/executable.png": {
       "id": "pictures/executable.png",
@@ -1329,7 +1380,8 @@
       "redirect_confirm_message": null,
       "size": 1368,
       "md5": "f597eea83d1a2cee7014f9824fafd8c3",
-      "sha256": "dabfe0a9b5c2f29a18f2e23a974ea178beaaaf7d5d295c21c41ba03ee2ca08ca"
+      "sha256": "dabfe0a9b5c2f29a18f2e23a974ea178beaaaf7d5d295c21c41ba03ee2ca08ca",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/executable.png"
     },
     "pictures/font.png": {
       "id": "pictures/font.png",
@@ -1345,7 +1397,8 @@
       "redirect_confirm_message": null,
       "size": 35658,
       "md5": "ee08480e456944d706a2380644e520c8",
-      "sha256": "7f947c85c97799661bdbd15fdbac9dd4b1f4672045e8072d2cabff7e0d8f00cd"
+      "sha256": "7f947c85c97799661bdbd15fdbac9dd4b1f4672045e8072d2cabff7e0d8f00cd",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/font.png"
     },
     "pictures/icon.webp": {
       "id": "pictures/icon.webp",
@@ -1361,7 +1414,8 @@
       "redirect_confirm_message": null,
       "size": 8062,
       "md5": "597d486a8d4b5dfe0689d8ffb21768f0",
-      "sha256": "b352b13c49aefdeb782dc8fd0c21f92dc6e4babe3d322f7ec960edd87b1a8330"
+      "sha256": "b352b13c49aefdeb782dc8fd0c21f92dc6e4babe3d322f7ec960edd87b1a8330",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/icon.webp"
     },
     "pictures/linux.png": {
       "id": "pictures/linux.png",
@@ -1377,7 +1431,8 @@
       "redirect_confirm_message": null,
       "size": 31942,
       "md5": "4205c380fe5f63d660dd949eaa73f120",
-      "sha256": "7f85101a958078b7114aeb9f68dc89bba96c85d03bfcdbccc1dcd310d2d4c0d7"
+      "sha256": "7f85101a958078b7114aeb9f68dc89bba96c85d03bfcdbccc1dcd310d2d4c0d7",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/linux.png"
     },
     "pictures/music.png": {
       "id": "pictures/music.png",
@@ -1393,7 +1448,8 @@
       "redirect_confirm_message": null,
       "size": 8647,
       "md5": "f8c50fd575cc98bf49082be1dc72044d",
-      "sha256": "052a71ede3c627a23681cb8b366e97c0291202dec5851828d27b9cc2d56417c6"
+      "sha256": "052a71ede3c627a23681cb8b366e97c0291202dec5851828d27b9cc2d56417c6",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/music.png"
     },
     "pictures/notes-dark.svg": {
       "id": "pictures/notes-dark.svg",
@@ -1409,7 +1465,8 @@
       "redirect_confirm_message": null,
       "size": 2618,
       "md5": "368004f51fd08665aa293dff854c2545",
-      "sha256": "9e23c210fe53152842d05069c4a355b19d5d3deb0a3e2456534f541ba85a25db"
+      "sha256": "9e23c210fe53152842d05069c4a355b19d5d3deb0a3e2456534f541ba85a25db",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/notes-dark.svg"
     },
     "pictures/notes-light.svg": {
       "id": "pictures/notes-light.svg",
@@ -1425,7 +1482,8 @@
       "redirect_confirm_message": null,
       "size": 2333,
       "md5": "eced149b1262e768e38fe9e1549c2112",
-      "sha256": "c0dcecc7064ceb9b9d022b09b8d3100231f9e0824bbf532a1f9c17e179032ac2"
+      "sha256": "c0dcecc7064ceb9b9d022b09b8d3100231f9e0824bbf532a1f9c17e179032ac2",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/notes-light.svg"
     },
     "pictures/qq.svg": {
       "id": "pictures/qq.svg",
@@ -1441,7 +1499,8 @@
       "redirect_confirm_message": null,
       "size": 650,
       "md5": "deefad815976245d69783da27e5e520c",
-      "sha256": "5d42ff9fa7fba7f24258d9822cc2a2cf8575debdb7361a9a5fc5398d33aaf39f"
+      "sha256": "5d42ff9fa7fba7f24258d9822cc2a2cf8575debdb7361a9a5fc5398d33aaf39f",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/qq.svg"
     },
     "pictures/snow-pear-cloud-gradient.svg": {
       "id": "pictures/snow-pear-cloud-gradient.svg",
@@ -1457,7 +1516,8 @@
       "redirect_confirm_message": null,
       "size": 207113,
       "md5": "b406cebefc5c467f2ebe3ad2d68b321b",
-      "sha256": "1dd35f315812102916a3c7e5c12d624c28252089c4e7ee7667b1a45a9f5f348d"
+      "sha256": "1dd35f315812102916a3c7e5c12d624c28252089c4e7ee7667b1a45a9f5f348d",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear-cloud-gradient.svg"
     },
     "pictures/snow-pear-cloud.svg": {
       "id": "pictures/snow-pear-cloud.svg",
@@ -1473,7 +1533,8 @@
       "redirect_confirm_message": null,
       "size": 1880,
       "md5": "0e206d3cf7f4d636743a5bab3b78e212",
-      "sha256": "de822c00ad9e9b7ce9402e69307957bcef4519e0cdb9a7529ea9c09741b1c0cb"
+      "sha256": "de822c00ad9e9b7ce9402e69307957bcef4519e0cdb9a7529ea9c09741b1c0cb",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear-cloud.svg"
     },
     "pictures/snow-pear-gradient.svg": {
       "id": "pictures/snow-pear-gradient.svg",
@@ -1489,7 +1550,8 @@
       "redirect_confirm_message": null,
       "size": 149657,
       "md5": "9d3684ab915c4569a00beb1cbe258403",
-      "sha256": "4ddaae49d0c1f90177645ab1b36ccc14ce11659964b13425972a1ea9198042c9"
+      "sha256": "4ddaae49d0c1f90177645ab1b36ccc14ce11659964b13425972a1ea9198042c9",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear-gradient.svg"
     },
     "pictures/snow-pear.svg": {
       "id": "pictures/snow-pear.svg",
@@ -1505,7 +1567,8 @@
       "redirect_confirm_message": null,
       "size": 1434,
       "md5": "860105fa93fd25d56fedb54c48f35bcf",
-      "sha256": "ab55f0348a8ab9c73b6ae50350decd8a088cb304cef3e80ab65465f2a2c01247"
+      "sha256": "ab55f0348a8ab9c73b6ae50350decd8a088cb304cef3e80ab65465f2a2c01247",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/snow-pear.svg"
     },
     "pictures/video.webp": {
       "id": "pictures/video.webp",
@@ -1521,7 +1584,8 @@
       "redirect_confirm_message": null,
       "size": 10263,
       "md5": "3c5ba4b705244e85ca326faa8c460f13",
-      "sha256": "bb16ee913175552224d7f9807be790d2f6c928fb9a3814363e05cc9aefb6aaad"
+      "sha256": "bb16ee913175552224d7f9807be790d2f6c928fb9a3814363e05cc9aefb6aaad",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/pictures/video.webp"
     },
     "softwares": {
       "id": "softwares",
@@ -1666,7 +1730,8 @@
       "redirect_confirm_message": null,
       "size": 6028904,
       "md5": "616f32b4ecf6958a4190674db3b4c5af",
-      "sha256": "816227fa874c070c40e12b72ed96c899093d4dc188850a8d595d8d23b953a0b6"
+      "sha256": "816227fa874c070c40e12b72ed96c899093d4dc188850a8d595d8d23b953a0b6",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/softwares/applications/remote/Parsec.exe"
     },
     "softwares/applications/tools": {
       "id": "softwares/applications/tools",
@@ -1708,7 +1773,8 @@
       "redirect_confirm_message": null,
       "size": 2109440,
       "md5": "80efca2743ca7683cc075d91ab0dacd7",
-      "sha256": "4d686c8267dbe4fcec1207cf858e43cbf425b9f3b883d9c33d1cb31e8261fbee"
+      "sha256": "4d686c8267dbe4fcec1207cf858e43cbf425b9f3b883d9c33d1cb31e8261fbee",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/softwares/applications/tools/LibIconv.tar.gz"
     },
     "softwares/applications/tools/OpenCore-AMR.tar.gz": {
       "id": "softwares/applications/tools/OpenCore-AMR.tar.gz",
@@ -1724,7 +1790,8 @@
       "redirect_confirm_message": null,
       "size": 4689920,
       "md5": "23a16c732c3484c68c61f18ee0be5137",
-      "sha256": "060e9e80c1353f6df1957134b9881577a2881fabc92bffc6983063608c2b8af5"
+      "sha256": "060e9e80c1353f6df1957134b9881577a2881fabc92bffc6983063608c2b8af5",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/softwares/applications/tools/OpenCore-AMR.tar.gz"
     },
     "softwares/games": {
       "id": "softwares/games",
@@ -1795,7 +1862,8 @@
       "redirect_confirm_message": null,
       "size": 7187320,
       "md5": "dc14af3c6ffba52ccb928e8e841c5fa2",
-      "sha256": "a7e1d7cf20bf34c75687c51455362097a7072f1fd2e6b6c7f86ae533c683049a"
+      "sha256": "a7e1d7cf20bf34c75687c51455362097a7072f1fd2e6b6c7f86ae533c683049a",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/softwares/games/java/Let`s Play All with HMCL.zip"
     },
     "softwares/games/java/Let`s Play All.zip": {
       "id": "softwares/games/java/Let`s Play All.zip",
@@ -1811,7 +1879,8 @@
       "redirect_confirm_message": null,
       "size": 5854595,
       "md5": "02a69f4b40d0ba78d8abe194099a8975",
-      "sha256": "bf4bab283091f2e2f820a77406aa0de36f55bf7e3a4cf363afeec05eab31d1b2"
+      "sha256": "bf4bab283091f2e2f820a77406aa0de36f55bf7e3a4cf363afeec05eab31d1b2",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/softwares/games/java/Let`s Play All.zip"
     },
     "softwares/games/nintendo": {
       "id": "softwares/games/nintendo",
@@ -2329,7 +2398,8 @@
       "redirect_confirm_message": null,
       "size": 70082833,
       "md5": "3a80f71f5d310e5dc6f8fe1be4151349",
-      "sha256": "d49c7f4a4c6f9833b1f42803433b00fe472f89bf17369632ebe8734115fd54c8"
+      "sha256": "d49c7f4a4c6f9833b1f42803433b00fe472f89bf17369632ebe8734115fd54c8",
+      "url": "https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/videos/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.mp4"
     }
   }
 }

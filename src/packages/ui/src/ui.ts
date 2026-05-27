@@ -14,10 +14,15 @@ export const DOM = {
 export function openModal(title: string, content: HTMLElement | string): void {
   DOM.modalTitle.textContent = title;
   DOM.modalBody.innerHTML = '';
+  DOM.modalBody.classList.remove('modal-body-code');
 
   if (typeof content === 'string') {
     DOM.modalBody.innerHTML = content;
   } else {
+    if (content.classList.contains('code-preview')) {
+      DOM.modalBody.classList.add('modal-body-code');
+    }
+
     DOM.modalBody.appendChild(content);
   }
 
@@ -32,6 +37,7 @@ export function closeModal(): void {
     DOM.modal.style.display = 'none';
     document.body.style.overflow = '';
     DOM.modalBody.innerHTML = '';
+    DOM.modalBody.classList.remove('modal-body-code');
   }, 300);
 }
 

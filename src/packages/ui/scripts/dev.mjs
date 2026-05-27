@@ -3,6 +3,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createConfig } from './esbuild.config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,18 @@ const contentTypes = new Map([
   ['.html', 'text/html; charset=utf-8'],
   ['.js', 'text/javascript; charset=utf-8'],
   ['.json', 'application/json; charset=utf-8'],
+  ['.aac', 'audio/aac'],
+  ['.flac', 'audio/flac'],
+  ['.m4a', 'audio/mp4'],
+  ['.mp3', 'audio/mpeg'],
+  ['.ogg', 'audio/ogg'],
+  ['.wav', 'audio/wav'],
+  ['.avi', 'video/x-msvideo'],
+  ['.flv', 'video/x-flv'],
+  ['.mkv', 'video/x-matroska'],
+  ['.mov', 'video/quicktime'],
+  ['.mp4', 'video/mp4'],
+  ['.webm', 'video/webm'],
   ['.svg', 'image/svg+xml'],
   ['.png', 'image/png'],
   ['.jpg', 'image/jpeg'],
@@ -46,22 +59,69 @@ function resolvePublicPath(requestUrl) {
   return filePath;
 }
 
-function sendFile(filePath, response) {
+function sendFile(filePath, request, response) {
   const contentType =
     contentTypes.get(path.extname(filePath).toLowerCase()) ||
     'application/octet-stream';
+  const fileSize = statSync(filePath).size;
+  const range = request.headers.range;
 
-  response.writeHead(200, { 'Content-Type': contentType });
+  if (range) {
+    const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+
+    if (!match) {
+      response.writeHead(416, {
+        'Content-Range': `bytes */${fileSize}`,
+        'Content-Type': 'text/plain; charset=utf-8',
+      });
+      response.end('Range Not Satisfiable');
+      return;
+    }
+
+    const [, rawStart, rawEnd] = match;
+    let start = rawStart ? Number.parseInt(rawStart, 10) : 0;
+    let end = rawEnd ? Number.parseInt(rawEnd, 10) : fileSize - 1;
+
+    if (!rawStart && rawEnd) {
+      const suffixLength = Number.parseInt(rawEnd, 10);
+      start = Math.max(fileSize - suffixLength, 0);
+      end = fileSize - 1;
+    }
+
+    if (
+      !Number.isInteger(start) ||
+      !Number.isInteger(end) ||
+      start < 0 ||
+      end >= fileSize ||
+      start > end
+    ) {
+      response.writeHead(416, {
+        'Content-Range': `bytes */${fileSize}`,
+        'Content-Type': 'text/plain; charset=utf-8',
+      });
+      response.end('Range Not Satisfiable');
+      return;
+    }
+
+    response.writeHead(206, {
+      'Accept-Ranges': 'bytes',
+      'Content-Length': end - start + 1,
+      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+      'Content-Type': contentType,
+    });
+    createReadStream(filePath, { start, end }).pipe(response);
+    return;
+  }
+
+  response.writeHead(200, {
+    'Accept-Ranges': 'bytes',
+    'Content-Length': fileSize,
+    'Content-Type': contentType,
+  });
   createReadStream(filePath).pipe(response);
 }
 
-const context = await esbuild.context({
-  entryPoints: [path.join(__dirname, '../src/index.ts')],
-  bundle: true,
-  outfile: path.join(publicRoot, 'assets/scripts/index.js'),
-  sourcemap: true,
-  logLevel: 'info',
-});
+const context = await esbuild.context(createConfig({ dev: true }));
 
 await context.watch();
 
@@ -88,7 +148,7 @@ const server = http.createServer((request, response) => {
     return;
   }
 
-  sendFile(filePath, response);
+  sendFile(filePath, request, response);
 });
 
 server.on('error', error => {
