@@ -1,0 +1,19 @@
+{
+  "name": "@share-file/ui",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "lint": "eslint src",
+    "format": "prettier --write .",
+    "dev": "node scripts/dev.mjs",
+    "build": "esbuild src/index.ts --bundle --outfile=../../../public/assets/scripts/index.js --minify"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "marked": "^15.0.0"
+  }
+}

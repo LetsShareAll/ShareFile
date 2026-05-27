@@ -37,27 +37,26 @@ jobs:
 
       - name: 安装 pnpm
         uses: pnpm/action-setup@v6
+        with:
+          version: 11.2.2
 
-      - name: 安装 NodeJS
+      - name: 安装 Node.js
         uses: actions/setup-node@v6
         with:
+          node-version: '26.2.0'
           cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
 
-      - name: 运行生成脚本
+      - name: 生成索引并构建站点
         run: pnpm run build
 
       - name: 列出构建产物（调试）
         run: |
           echo "构建输出"
-          ls -la ./ || true
-
-      - name: 删除应忽略的文件
-        run: |
-          echo "删除不需要部署的文件..."
-          rm -rf node_modules
+          ls -la ./public || true
 
       - name: 检查更改
         id: git-check
@@ -83,7 +82,7 @@ jobs:
       - name: 上传页面
         uses: actions/upload-pages-artifact@v5
         with:
-          path: './'
+          path: './public'
 
       - name: 部署页面
         id: deployment

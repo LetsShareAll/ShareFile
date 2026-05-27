@@ -1,0 +1,21 @@
+{
+  "name": "@share-file/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "lint": "eslint src",
+    "format": "prettier --write .",
+    "generate-info": "tsx src/generate-info.ts ../../../public --sync",
+    "generate-share-file": "tsx src/generate-share-file.ts ../../../public ../../../public/assets/data/share-file.json",
+    "generate": "pnpm run generate-info && pnpm run generate-share-file"
+  },
+  "dependencies": {
+    "@share-file/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
+  }
+}

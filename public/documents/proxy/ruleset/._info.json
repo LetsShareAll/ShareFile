@@ -1,0 +1,45 @@
+{
+  "self": {
+    "description": "当前目录",
+    "created_at": "2025-11-28T20:25:27+08:00",
+    "updated_at": "2025-11-28T12:44:31Z"
+  },
+  "children": {
+    "PfcAI.list": {
+      "type": "file",
+      "description": "纯文本列表",
+      "created_at": "2025-04-24T10:49:23.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 124,
+      "md5": "444c4aee232ab34519e24a45c3a19dda",
+      "sha256": "8e8d24e4e0dae306ee25749fe8d34cb495f2c8c997f4e729c6f57b1ec9f5add2"
+    },
+    "PfcDirect.list": {
+      "type": "file",
+      "description": "纯文本列表",
+      "created_at": "2025-04-24T10:49:23.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 895,
+      "md5": "08397b25ea8aec88b28cef8cd3db1f9d",
+      "sha256": "ee7adb918b099e48d1a0ffa88bd0d1bba7e62966b2d9341cc5652b8a790ee266"
+    },
+    "PfcProxy.list": {
+      "type": "file",
+      "description": "纯文本列表",
+      "created_at": "2025-04-24T10:49:23.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 35,
+      "md5": "8276fd3ea587e20abdcfe6c60a1ba928",
+      "sha256": "60625b8d9cfc4bac40c9eb6526e521e895714b687e6cb2c71367cbf8e1db0be2"
+    },
+    "PfcSteamCommunity.list": {
+      "type": "file",
+      "description": "纯文本列表",
+      "created_at": "2025-04-24T10:49:23.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 43,
+      "md5": "a9b33456b86eb7e0755ff909a0ef8167",
+      "sha256": "84ef026b5df3af3dfc6e8e94eadacaa7b61d2182e94394ed3812e6acdaae0585"
+    }
+  }
+}

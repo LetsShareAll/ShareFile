@@ -1,0 +1,171 @@
+{
+  "self": {
+    "description": "当前目录",
+    "created_at": "2025-11-28T20:25:27+08:00",
+    "updated_at": "2025-11-28T12:44:31Z"
+  },
+  "children": {
+    "《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 138027,
+      "md5": "bd9af2ae911201c2e07499baf9ac4c46",
+      "sha256": "61a4d755f4e7ec7a0f4f813b8a1a3324ad5a86c3012693899a17deaacaad07c3"
+    },
+    "archive.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 9759,
+      "md5": "ee28cf07eff43cbcf9724f2c401dea0c",
+      "sha256": "45a7f22bb2011ed8eb36868b3ceba86f416423f77dd67975a553d6a5ed5ba59f"
+    },
+    "clash-dark.png": {
+      "type": "file",
+      "description": "便携式网络图形图像",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 31613,
+      "md5": "8b47166a2235f5d55a21986ac636b201",
+      "sha256": "e74f2bf69f19f47b12b1bd70a51e699af13b938c6eda1875eb58aee803a2d2a0"
+    },
+    "clash-light.png": {
+      "type": "file",
+      "description": "便携式网络图形图像",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 14428,
+      "md5": "ab67026231c772c19b923846e6cd65ee",
+      "sha256": "0d48a2ea1ee05ad4579b6e6996889548fa8a61a5ff6c85a32f7622cddfcb5782"
+    },
+    "directory.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 5724,
+      "md5": "904786592ff04be427ff2179993e8bdf",
+      "sha256": "be1656776793699a1a2e643e79df60e125141b301904a152eb831fdf58ff5e15"
+    },
+    "executable.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 1368,
+      "md5": "f597eea83d1a2cee7014f9824fafd8c3",
+      "sha256": "dabfe0a9b5c2f29a18f2e23a974ea178beaaaf7d5d295c21c41ba03ee2ca08ca"
+    },
+    "font.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 35658,
+      "md5": "ee08480e456944d706a2380644e520c8",
+      "sha256": "7f947c85c97799661bdbd15fdbac9dd4b1f4672045e8072d2cabff7e0d8f00cd"
+    },
+    "icon.webp": {
+      "type": "file",
+      "description": "WebP 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 8062,
+      "md5": "597d486a8d4b5dfe0689d8ffb21768f0",
+      "sha256": "b352b13c49aefdeb782dc8fd0c21f92dc6e4babe3d322f7ec960edd87b1a8330"
+    },
+    "linux.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 31942,
+      "md5": "4205c380fe5f63d660dd949eaa73f120",
+      "sha256": "7f85101a958078b7114aeb9f68dc89bba96c85d03bfcdbccc1dcd310d2d4c0d7"
+    },
+    "music.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 8647,
+      "md5": "f8c50fd575cc98bf49082be1dc72044d",
+      "sha256": "052a71ede3c627a23681cb8b366e97c0291202dec5851828d27b9cc2d56417c6"
+    },
+    "notes-dark.svg": {
+      "type": "file",
+      "description": "可缩放矢量图形",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 2618,
+      "md5": "368004f51fd08665aa293dff854c2545",
+      "sha256": "9e23c210fe53152842d05069c4a355b19d5d3deb0a3e2456534f541ba85a25db"
+    },
+    "notes-light.svg": {
+      "type": "file",
+      "description": "可缩放矢量图形",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 2333,
+      "md5": "eced149b1262e768e38fe9e1549c2112",
+      "sha256": "c0dcecc7064ceb9b9d022b09b8d3100231f9e0824bbf532a1f9c17e179032ac2"
+    },
+    "qq.svg": {
+      "type": "file",
+      "description": "可缩放矢量图形",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 650,
+      "md5": "deefad815976245d69783da27e5e520c",
+      "sha256": "5d42ff9fa7fba7f24258d9822cc2a2cf8575debdb7361a9a5fc5398d33aaf39f"
+    },
+    "snow-pear-cloud-gradient.svg": {
+      "type": "file",
+      "description": "可缩放矢量图形",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 207113,
+      "md5": "b406cebefc5c467f2ebe3ad2d68b321b",
+      "sha256": "1dd35f315812102916a3c7e5c12d624c28252089c4e7ee7667b1a45a9f5f348d"
+    },
+    "snow-pear-cloud.svg": {
+      "type": "file",
+      "description": "可缩放矢量图形",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 1880,
+      "md5": "0e206d3cf7f4d636743a5bab3b78e212",
+      "sha256": "de822c00ad9e9b7ce9402e69307957bcef4519e0cdb9a7529ea9c09741b1c0cb"
+    },
+    "snow-pear-gradient.svg": {
+      "type": "file",
+      "description": "可缩放矢量图形",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 149657,
+      "md5": "9d3684ab915c4569a00beb1cbe258403",
+      "sha256": "4ddaae49d0c1f90177645ab1b36ccc14ce11659964b13425972a1ea9198042c9"
+    },
+    "snow-pear.svg": {
+      "type": "file",
+      "description": "可缩放矢量图形",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2025-11-28T12:25:27.000Z",
+      "size": 1434,
+      "md5": "860105fa93fd25d56fedb54c48f35bcf",
+      "sha256": "ab55f0348a8ab9c73b6ae50350decd8a088cb304cef3e80ab65465f2a2c01247"
+    },
+    "video.webp": {
+      "type": "file",
+      "description": "WebP 图像",
+      "created_at": "2024-07-03T12:57:58.000Z",
+      "updated_at": "2026-05-22T13:44:29.000Z",
+      "size": 10263,
+      "md5": "3c5ba4b705244e85ca326faa8c460f13",
+      "sha256": "bb16ee913175552224d7f9807be790d2f6c928fb9a3814363e05cc9aefb6aaad"
+    }
+  }
+}

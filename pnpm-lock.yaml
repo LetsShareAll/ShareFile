@@ -23,9 +23,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.59.4
         version: 8.59.4(eslint@10.4.0)(typescript@6.0.3)
-      esbuild:
-        specifier: ^0.28.0
-        version: 0.28.0
       eslint:
         specifier: ^10.4.0
         version: 10.4.0
@@ -38,9 +35,41 @@ importers:
       prettier:
         specifier: ^3.8.3
         version: 3.8.3
+
+  src/packages/cli:
+    dependencies:
+      '@share-file/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^25.9.1
+        version: 25.9.1
       tsx:
         specifier: ^4.22.3
         version: 4.22.3
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
+  src/packages/types:
+    devDependencies:
+      '@types/node':
+        specifier: ^25.9.1
+        version: 25.9.1
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
+  src/packages/ui:
+    dependencies:
+      marked:
+        specifier: ^15.0.0
+        version: 15.0.12
+    devDependencies:
+      esbuild:
+        specifier: ^0.28.0
+        version: 0.28.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -555,6 +584,11 @@ packages:
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
+
+  marked@15.0.12:
+    resolution: {integrity: sha512-8dD6FusOQSrpv9Z1rdNMdlSgQOIP880DHqnohobOmYLElGEqAL/JvxvuxZO16r4HtjTlfPRDC1hbvxC9dPN2nA==}
+    engines: {node: '>= 18'}
+    hasBin: true
 
   minimatch@10.2.5:
     resolution: {integrity: sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==}
@@ -1148,6 +1182,8 @@ snapshots:
   locate-path@6.0.0:
     dependencies:
       p-locate: 5.0.0
+
+  marked@15.0.12: {}
 
   minimatch@10.2.5:
     dependencies:
