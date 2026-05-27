@@ -259,8 +259,7 @@ async function processDirectory(
  * @returns 包含 CDN URL 的新 ShareFile 对象
  */
 function transformToCdnVersion(shareFile: ShareFile): ShareFile {
-  const CDN_BASE_URL =
-    'https://fastly.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public';
+  const CDN_BASE_URL = 'https://share-file-cdn.shuery.workers.dev/public';
 
   const cdnNodes: Record<string, ShareNode> = {};
 
