@@ -10,10 +10,13 @@ const publicRoot = path.join(repoRoot, 'public');
  * 创建 esbuild 配置
  * @param {Object} options - 配置选项
  * @param {boolean} options.dev - 是否为开发模式
+ * @param {boolean} options.useCdn - 是否使用 CDN 索引数据
  * @returns {Object} esbuild 配置对象
  */
 export function createConfig(options = {}) {
   const isDev = options.dev || false;
+  const useCdn = options.useCdn ?? !isDev;
+  const shareFileName = useCdn ? 'share-file.cdn.json' : 'share-file.json';
 
   return {
     entryPoints: [path.join(__dirname, '../src/index.ts')],
@@ -22,7 +25,7 @@ export function createConfig(options = {}) {
     sourcemap: isDev,
     minify: !isDev,
     define: {
-      SHARE_FILE_NAME: isDev ? '"share-file.json"' : '"share-file.cdn.json"',
+      SHARE_FILE_NAME: JSON.stringify(shareFileName),
     },
     logLevel: isDev ? 'info' : 'warning',
   };
