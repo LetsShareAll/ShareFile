@@ -26,6 +26,15 @@ const workspaceRoot = path.resolve(
   '..',
   '..',
 );
+const DEFAULT_CDN_BASE_URL =
+  'https://cdn-file.lssa.fun/github.com/LetsShareAll/ShareFile/blob/file/public';
+
+interface GenerateShareOptions {
+  rootDir: string;
+  outputPath: string;
+  verbose: boolean;
+  cdnBaseUrl: string;
+}
 
 // ────────────── 日志系统扩展 ──────────────
 
@@ -256,11 +265,13 @@ async function processDirectory(
  * 将 ShareFile 转换为 CDN 版本，为符合条件的文件节点添加 CDN URL。
  *
  * @param shareFile 原始的 ShareFile 对象
+ * @param cdnBaseUrl CDN 文件访问基础 URL
  * @returns 包含 CDN URL 的新 ShareFile 对象
  */
-function transformToCdnVersion(shareFile: ShareFile): ShareFile {
-  const CDN_BASE_URL = 'https://share-file-cdn.shuery.workers.dev/public';
-
+function transformToCdnVersion(
+  shareFile: ShareFile,
+  cdnBaseUrl: string,
+): ShareFile {
   const cdnNodes: Record<string, ShareNode> = {};
 
   for (const [nodeId, node] of Object.entries(shareFile.nodes)) {
@@ -269,8 +280,7 @@ function transformToCdnVersion(shareFile: ShareFile): ShareFile {
 
     // 只为 type='file' 且没有 redirect_url 的节点添加 url 字段
     if (node.type === 'file' && !node.redirect_url) {
-      (cdnNode as ShareNode & { url: string }).url =
-        `${CDN_BASE_URL}/${nodeId}`;
+      (cdnNode as ShareNode & { url: string }).url = `${cdnBaseUrl}/${nodeId}`;
     }
 
     cdnNodes[nodeId] = cdnNode;
@@ -283,24 +293,96 @@ function transformToCdnVersion(shareFile: ShareFile): ShareFile {
   };
 }
 
-/**
- * 构建索引系统 CLI 调用的唯一主入口，承担对控制台初始入参的接收以及触发驱动整个流水线工作。
- */
-async function main(): Promise<void> {
-  const args = process.argv.slice(2);
-  const verbose = args.includes('--verbose');
-  const logger = new GenShareLogger(verbose);
+function printHelp(): void {
+  console.log(`
+用法: pnpm --filter @share-file/cli run generate-share-file -- [目录] [输出文件] [选项]
 
-  // 初始化插件注册表并加载可选的运行时 plugins 目录
-  const registry = new PluginRegistry(logger);
-  const pluginsDir = path.join(path.dirname(__filename), 'plugins', 'runtime');
-  await registry.loadFromDir(pluginsDir, { logger });
-  await registry.runHook('init');
+生成 share-file.json，并同步生成 share-file.cdn.json。
 
-  const rootDir =
-    args[0] && !args[0].startsWith('--')
-      ? path.resolve(args[0])
-      : process.cwd();
+选项:
+  --cdn-url <url>     设置 CDN 文件访问基础 URL
+  --verbose           输出详细调试日志
+  --help, -h          显示此帮助信息
+
+环境变量:
+  SHARE_FILE_CDN_URL  未传 --cdn-url 时使用的 CDN 文件访问基础 URL
+`);
+}
+
+function normalizeCdnBaseUrl(value: string): string {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    console.error('CDN URL 不能为空。');
+    process.exit(1);
+  }
+
+  try {
+    const url = new URL(trimmed);
+
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      console.error(`CDN URL 必须使用 http 或 https: ${trimmed}`);
+      process.exit(1);
+    }
+  } catch {
+    console.error(`CDN URL 不是合法 URL: ${trimmed}`);
+    process.exit(1);
+  }
+
+  return trimmed.replace(/\/+$/, '');
+}
+
+function parseArguments(args: string[]): GenerateShareOptions {
+  const positional: string[] = [];
+  let verbose = false;
+  let cdnBaseUrl = process.env.SHARE_FILE_CDN_URL || DEFAULT_CDN_BASE_URL;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg === '--help' || arg === '-h') {
+      printHelp();
+      process.exit(0);
+    }
+
+    if (arg === '--verbose') {
+      verbose = true;
+      continue;
+    }
+
+    if (arg === '--cdn-url') {
+      const value = args[++i];
+
+      if (!value || value.startsWith('--')) {
+        console.error('--cdn-url 需要提供 URL。');
+        process.exit(1);
+      }
+
+      cdnBaseUrl = value;
+      continue;
+    }
+
+    if (arg.startsWith('--cdn-url=')) {
+      cdnBaseUrl = arg.slice('--cdn-url='.length);
+      continue;
+    }
+
+    if (arg.startsWith('--')) {
+      console.error(`未知选项: ${arg}`);
+      printHelp();
+      process.exit(1);
+    }
+
+    positional.push(arg);
+  }
+
+  if (positional.length > 2) {
+    console.error(`位置参数过多: ${positional.slice(2).join(' ')}`);
+    printHelp();
+    process.exit(1);
+  }
+
+  const rootDir = positional[0] ? path.resolve(positional[0]) : process.cwd();
   const defaultOutput = path.join(
     workspaceRoot,
     'public',
@@ -308,10 +390,31 @@ async function main(): Promise<void> {
     'data',
     'share-file.json',
   );
-  const outputPath =
-    args[1] && !args[1].startsWith('--')
-      ? path.resolve(args[1])
-      : defaultOutput;
+  const outputPath = positional[1]
+    ? path.resolve(positional[1])
+    : defaultOutput;
+
+  return {
+    rootDir,
+    outputPath,
+    verbose,
+    cdnBaseUrl: normalizeCdnBaseUrl(cdnBaseUrl),
+  };
+}
+
+/**
+ * 构建索引系统 CLI 调用的唯一主入口，承担对控制台初始入参的接收以及触发驱动整个流水线工作。
+ */
+async function main(): Promise<void> {
+  const options = parseArguments(process.argv.slice(2));
+  const { rootDir, outputPath, verbose, cdnBaseUrl } = options;
+  const logger = new GenShareLogger(verbose);
+
+  // 初始化插件注册表并加载可选的运行时 plugins 目录
+  const registry = new PluginRegistry(logger);
+  const pluginsDir = path.join(path.dirname(__filename), 'plugins', 'runtime');
+  await registry.loadFromDir(pluginsDir, { logger });
+  await registry.runHook('init');
 
   logger.info(`开始生成全局分享索引，根节点: ${rootDir}`);
 
@@ -336,7 +439,7 @@ async function main(): Promise<void> {
     logger.success(`成功生成或覆盖: ${outputPath}`);
 
     // 生成 CDN 版本 share-file.cdn.json
-    const cdnShareFile = transformToCdnVersion(shareFile);
+    const cdnShareFile = transformToCdnVersion(shareFile, cdnBaseUrl);
     const cdnOutputPath = outputPath.replace('.json', '.cdn.json');
     const cdnJson = JSON.stringify(cdnShareFile, null, 2);
     await fsp.writeFile(cdnOutputPath, cdnJson, 'utf-8');
