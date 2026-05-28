@@ -1,0 +1,16 @@
+{
+  "rootId": "root",
+  "pathIndex": {
+    "/": "root"
+  },
+  "nodes": {
+    "root": {
+      "id": "root",
+      "name": "/",
+      "type": "folder",
+      "parent": null,
+      "children": [],
+      "description": "当前目录"
+    }
+  }
+}
