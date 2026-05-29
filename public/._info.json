@@ -7,6 +7,10 @@
       "type": "folder",
       "description": "文件夹"
     },
+    "softwares": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "test-mount": {
       "type": "folder",
       "description": "文件夹"

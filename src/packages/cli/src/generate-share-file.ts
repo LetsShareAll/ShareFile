@@ -9,10 +9,7 @@
 import * as fsp from 'fs/promises';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import {
-  DirectoryNode,
-  FileNode,
-} from '@share-file/types';
+import { DirectoryNode, FileNode } from '@share-file/types';
 import {
   Logger,
   getErrorMessage,

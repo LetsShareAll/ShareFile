@@ -1,0 +1,11 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "applications": {
+      "type": "folder",
+      "description": "文件夹"
+    }
+  }
+}
