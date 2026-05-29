@@ -160,7 +160,12 @@ async function runShareFileGenerate(reason) {
 
   generateRunning = true;
   console.log(`Generating share-file indexes (${reason})...`);
-  const code = await runPnpm(['--filter', '@share-file/cli', 'run', 'generate']);
+  const code = await runPnpm([
+    '--filter',
+    '@share-file/cli',
+    'run',
+    'generate',
+  ]);
   generateRunning = false;
 
   if (code === 0) {
@@ -269,10 +274,8 @@ const context = await esbuild.context(config);
 await context.watch();
 
 const server = http.createServer(async (request, response) => {
-  const requestPath = new URL(
-    request.url || '/',
-    `http://${host}:${port}`,
-  ).pathname;
+  const requestPath = new URL(request.url || '/', `http://${host}:${port}`)
+    .pathname;
 
   if (requestPath === devEventsPath) {
     handleDevEvents(request, response);
