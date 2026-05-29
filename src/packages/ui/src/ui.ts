@@ -9,6 +9,7 @@ export const DOM = {
   modalBody: document.getElementById('modal-body') as HTMLElement,
   modalClose: document.getElementById('modal-close') as HTMLElement,
   searchInput: document.getElementById('site-search') as HTMLInputElement,
+  refreshBtn: document.getElementById('btn-refresh-external') as HTMLButtonElement,
 };
 
 export function openModal(title: string, content: HTMLElement | string): void {

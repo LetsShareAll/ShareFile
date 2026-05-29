@@ -126,16 +126,16 @@ generate -> check -> format -> lint -> ui build
 
 ## 常用脚本
 
-| 命令                           | 说明                                       |
-| ------------------------------ | ------------------------------------------ |
+| 命令                           | 说明                                           |
+| ------------------------------ | ---------------------------------------------- |
 | `pnpm run dev`                 | 启动静态文件服务器，生成一次索引并监听 UI 重建 |
-| `pnpm run generate`            | 生成 `._info.json` 与前端索引              |
-| `pnpm run generate-info`       | 只同步目录级元数据                         |
-| `pnpm run generate-share-file` | 只生成扁平化前端索引                       |
-| `pnpm run check`               | 对所有 workspace 包执行 TypeScript 检查    |
-| `pnpm run lint`                | 对所有 workspace 包执行 ESLint             |
-| `pnpm run format`              | 对所有 workspace 包执行 Prettier 写入      |
-| `pnpm run build`               | 完整生成、检查、格式化、lint 并构建 UI     |
+| `pnpm run generate`            | 生成 `._info.json` 与前端索引                  |
+| `pnpm run generate-info`       | 只同步目录级元数据                             |
+| `pnpm run generate-share-file` | 只生成扁平化前端索引                           |
+| `pnpm run check`               | 对所有 workspace 包执行 TypeScript 检查        |
+| `pnpm run lint`                | 对所有 workspace 包执行 ESLint                 |
+| `pnpm run format`              | 对所有 workspace 包执行 Prettier 写入          |
+| `pnpm run build`               | 完整生成、检查、格式化、lint 并构建 UI         |
 
 ## 元数据格式
 
@@ -408,6 +408,105 @@ README 变更被 `paths-ignore` 排除，不会单独触发部署。
 - Git 时间戳只对 Git 已追踪文件有效；未追踪文件可能没有 `created_at` / `updated_at`。
 - `public/assets/data/share-file.cdn.json` 会根据 CDN 基础 URL 改写文件 URL。
 - 生产 UI 默认读取 `share-file.cdn.json`；若不需要 CDN，请执行 UI 构建时传 `--no-cdn`。
+
+## 外部挂载功能
+
+ShareFile 支持从其他 GitHub 仓库动态加载文件索引，实现跨仓库的文件聚合展示。
+
+### 配置外部挂载源
+
+在 `._info.json` 中为目录节点添加 `mount_source` 字段：
+
+```json
+{
+  "children": {
+    "external-scripts": {
+      "type": "folder",
+      "description": "外部脚本仓库",
+      "mount_source": {
+        "provider": "github",
+        "repository": "user/repo",
+        "branch": "main",
+        "subPath": "/scripts",
+        "access_cdn": "jsdelivr",
+        "use_cdn_index": true
+      }
+    }
+  }
+}
+```
+
+### 字段说明
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `provider` | 是 | 存储提供商，当前仅支持 `"github"` |
+| `repository` | 是 | 仓库标识，格式 `"owner/repo"` |
+| `branch` | 否 | 分支名，默认尝试 `main` 后回退到 `master` |
+| `subPath` | 否 | 挂载外部仓库的子目录，默认为根目录 `"/"` |
+| `access_cdn` | 否 | 访问索引文件的方式：`"jsdelivr"`（默认）、`"raw"`、或自定义 CDN URL |
+| `use_cdn_index` | 否 | 是否优先加载 `share-file.cdn.json`，默认 `false` |
+
+### 工作原理
+
+1. 前端加载本地 `share-file.json`
+2. 检测到 `mount_source` 配置后，异步加载外部仓库的 `share-file.json`
+3. 根据 `subPath` 过滤外部节点
+4. 重写节点 ID 和路径，添加挂载点前缀
+5. 合并到本地索引（本地节点优先）
+6. 缓存到 localStorage（12 小时 TTL）
+
+### 外部仓库准备
+
+外部仓库需要在根目录（或 `subPath` 指定的目录）包含 `share-file.json`。
+
+**生成方式 1：使用 Python 工具**
+
+```bash
+# 下载工具
+wget https://your-site.com/softwares/applications/tools/generate-info-linux
+wget https://your-site.com/softwares/applications/tools/generate-share-file-linux
+chmod +x generate-*
+
+# 生成索引
+./generate-info-linux ./public
+./generate-share-file-linux ./public ./public/share-file.json
+```
+
+**生成方式 2：使用 TypeScript CLI**
+
+```bash
+pnpm install
+pnpm run generate
+```
+
+### 视觉区分
+
+外部节点在前端会有特殊标识：
+
+- 蓝色左边框
+- 图标右下角显示链接徽章 🔗
+- 面包屑中显示链接图标
+- 悬停时背景色变化
+
+### 刷新外部源
+
+点击页面顶部的刷新按钮 🔄 可以清除缓存并重新加载所有外部源。
+
+### Python 工具
+
+ShareFile 提供独立的 Python 工具，适合没有 Node.js 环境的用户：
+
+- **generate-info.py**：扫描目录生成 `._info.json`
+- **generate-share-file.py**：构建 `share-file.json` 索引
+
+详见 [Python 工具文档](src/packages/python/README.md)。
+
+**下载预编译版本：**
+
+- Linux: `/softwares/applications/tools/generate-info-linux`
+- Windows: `/softwares/applications/tools/generate-info.exe`
+- macOS: `/softwares/applications/tools/generate-info-macos`
 
 ## 许可证
 

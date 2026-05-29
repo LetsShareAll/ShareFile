@@ -1613,3 +1613,88 @@ html[data-theme='dark'] .hljs-doctag {
     width: 100%;
   }
 }
+
+/* ===== 外部节点样式 ===== */
+
+/* 外部节点列表项 */
+.external-item {
+  border-left: 3px solid var(--external-accent, #2196f3);
+}
+
+.external-item:hover {
+  background: var(--external-hover-bg, rgba(33, 150, 243, 0.05));
+}
+
+/* 外部节点图标徽章 */
+.external-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 10px;
+  color: var(--external-accent, #2196f3);
+  background: var(--card-bg);
+  border-radius: 50%;
+  padding: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 外部节点面包屑 */
+.external-breadcrumb {
+  color: var(--external-accent, #2196f3) !important;
+  position: relative;
+}
+
+.external-breadcrumb::before {
+  content: '\f0c1';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.75em;
+  margin-right: 4px;
+  opacity: 0.7;
+}
+
+/* 暗色主题下的外部节点样式 */
+[data-theme='dark'] {
+  --external-accent: #64b5f6;
+  --external-hover-bg: rgba(100, 181, 246, 0.08);
+}
+
+[data-theme='dark'] .external-badge {
+  background: var(--card-bg);
+}
+
+/* 刷新按钮样式 */
+.refresh-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: var(--card-hover-bg);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-btn i {
+  transition: transform 0.3s;
+}
+
+.refresh-btn:hover:not(:disabled) i {
+  transform: rotate(180deg);
+}
+
+

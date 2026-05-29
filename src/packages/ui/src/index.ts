@@ -24,31 +24,9 @@ import {
   getRelativeTime,
 } from './utils';
 
-interface ShareNode {
-  readonly id: string;
-  readonly name: string;
-  readonly type: 'file' | 'folder';
-  readonly parent: string | null;
-  readonly children: string[];
-  readonly description?: string;
-  readonly hidden?: boolean;
-  readonly size?: number;
-  readonly version?: string;
-  readonly created_at?: string;
-  readonly updated_at?: string;
-  readonly md5?: string;
-  readonly sha256?: string;
-  readonly redirect_url?: string | null;
-  readonly redirect_type?: string | null;
-  readonly redirect_confirm_message?: string | null;
-  readonly url?: string;
-}
-
-interface ShareFile {
-  readonly rootId: string;
-  readonly pathIndex: Record<string, string>;
-  readonly nodes: Record<string, ShareNode>;
-}
+import type { ShareNode, ShareFile, MountSourceInfo } from '@share-file/types';
+import { loadAllExternalSources, clearAllExternalCache, refreshMountPoint } from './externalSourceLoader';
+import { showError, showSuccess, showInfo } from './notifications';
 
 // ────────────── 全局状态 ──────────────
 let globalShareData: ShareFile | null = null;
@@ -127,6 +105,13 @@ function renderBreadcrumb(path: string): void {
       const current = document.createElement('span');
       current.textContent = segment;
       current.className = 'current';
+
+      // 检查是否为外部节点
+      const nodeId = globalShareData?.pathIndex[accumulatedPath];
+      if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
+        current.classList.add('external-breadcrumb');
+      }
+
       DOM.breadcrumb.appendChild(current);
     } else {
       // ⚠️ 修复闭包陷阱：用 const 保存当前路径
@@ -135,6 +120,13 @@ function renderBreadcrumb(path: string): void {
       link.href = 'javascript:void(0)';
       link.textContent = segment;
       link.onclick = () => navigateTo(targetPath);
+
+      // 检查是否为外部节点
+      const nodeId = globalShareData?.pathIndex[targetPath];
+      if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
+        link.classList.add('external-breadcrumb');
+      }
+
       DOM.breadcrumb.appendChild(link);
     }
   });
@@ -458,7 +450,7 @@ async function renderContent(currentPath: string): Promise<void> {
   list.className = 'file-list';
   let readmeFound = false;
 
-  childIds.forEach(childId => {
+  childIds.forEach((childId: string) => {
     const childNode = globalShareData!.nodes[childId];
     if (!childNode) return;
 
@@ -470,6 +462,11 @@ async function renderContent(currentPath: string): Promise<void> {
     listItem.className = 'file-item';
     listItem.classList.add(`item-${childNode.type}`);
     if (childNode.hidden) listItem.classList.add('hidden-item');
+
+    // 为外部节点添加特殊样式
+    if (childNode.source === 'external') {
+      listItem.classList.add('external-item');
+    }
 
     const resolvedNodePlugin = resolveNodePlugin({
       name: childNode.name,
@@ -494,6 +491,14 @@ async function renderContent(currentPath: string): Promise<void> {
     const iconSpan = document.createElement('span');
     iconSpan.className = `item-icon ${typeInfo.className}`;
     iconSpan.appendChild(createIcon(typeInfo.iconClass));
+
+    // 为外部节点添加链接图标徽章
+    if (childNode.source === 'external') {
+      const linkBadge = document.createElement('i');
+      linkBadge.className = 'fas fa-link external-badge';
+      linkBadge.title = `来自外部源: ${childNode.mount_point || ''}`;
+      iconSpan.appendChild(linkBadge);
+    }
 
     const nameSpan = document.createElement('span');
     nameSpan.className = 'item-name';
@@ -787,17 +792,90 @@ function initThemeAndView(): void {
   });
 }
 
+// ────────────── 刷新外部源 ──────────────
+
+let hasExternalSources = false;
+
+/**
+ * 刷新所有外部源
+ */
+async function refreshAllExternalSources(): Promise<void> {
+  if (!globalShareData) return;
+
+  const refreshBtn = DOM.refreshBtn;
+  const icon = refreshBtn.querySelector('i');
+
+  // 禁用按钮并显示加载动画
+  refreshBtn.disabled = true;
+  icon?.classList.add('fa-spin');
+
+  try {
+    showInfo('正在刷新外部源...');
+
+    // 清除所有缓存
+    clearAllExternalCache();
+
+    // 重新加载
+    const mergedData = await loadAllExternalSources(globalShareData);
+    globalShareData = mergedData;
+
+    // 重新渲染当前视图
+    await renderCurrentView();
+
+    showSuccess('外部源刷新成功');
+  } catch (error) {
+    showError(`刷新失败: ${getErrorMessage(error)}`);
+  } finally {
+    refreshBtn.disabled = false;
+    icon?.classList.remove('fa-spin');
+  }
+}
+
 // ────────────── 启动入口 ──────────────
 async function main(): Promise<void> {
   initThemeAndView();
 
   try {
+    // 加载本地 share-file.json
     const response = await fetch(`/assets/data/${SHARE_FILE_NAME}`);
     if (!response.ok) throw new Error('索引服务器异常');
-    globalShareData = await response.json();
+    const localData: ShareFile = await response.json();
+
+    // 检查是否有外部挂载源
+    hasExternalSources = Object.values(localData.nodes).some(
+      (node: ShareNode) => node.type === 'folder' && (node as unknown as { mount_source?: MountSourceInfo }).mount_source
+    );
+
+    // 如果有外部源，显示刷新按钮
+    if (hasExternalSources) {
+      DOM.refreshBtn.style.display = 'block';
+      DOM.refreshBtn.addEventListener('click', refreshAllExternalSources);
+    }
+
+    // 先显示本地数据
+    globalShareData = localData;
     DOM.loading.style.display = 'none';
     DOM.content.style.display = 'block';
     await renderCurrentView();
+
+    // 后台异步加载外部源
+    if (hasExternalSources) {
+      loadAllExternalSources(localData)
+        .then(mergedData => {
+          globalShareData = mergedData;
+          // 如果当前路径包含外部挂载点，重新渲染
+          const currentPath = getCurrentPath();
+          const currentNodeId = globalShareData.pathIndex[currentPath];
+          if (currentNodeId && globalShareData.nodes[currentNodeId]?.source === 'external') {
+            renderCurrentView();
+          }
+        })
+        .catch(error => {
+          console.error('外部源加载失败:', error);
+          showError(`外部源加载异常: ${getErrorMessage(error)}`);
+        });
+    }
+
   } catch (error) {
     DOM.loading.style.display = 'none';
     DOM.content.style.display = 'block';
