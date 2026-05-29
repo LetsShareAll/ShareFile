@@ -1,6 +1,7 @@
 import videojs from 'video.js';
 import zhCN from 'video.js/dist/lang/zh-CN.json';
 import { createNodePlugin } from '../../utils/nodePluginFactory';
+import { createPreviewLoadingState } from '../../utils/previewRenderers';
 import { NodePluginPreviewInput } from './types';
 
 videojs.addLanguage('zh-CN', zhCN);
@@ -157,16 +158,28 @@ function disposeWhenDetached(
 
 function renderVideoPreview(input: NodePluginPreviewInput): HTMLElement {
   const wrapper = document.createElement('div');
+  const loadingState = createPreviewLoadingState('正在加载视频...');
+  const loadingText = loadingState.querySelector('.preview-loading-text');
   const video = document.createElement('video');
   const sourceType = input.nodeTypeInfo.mime || 'video/mp4';
 
-  wrapper.className = 'videojs-preview';
+  function finishLoading(): void {
+    wrapper.classList.remove('is-loading');
+    wrapper.classList.add('is-loaded');
+  }
+
+  function failLoading(): void {
+    if (loadingText) loadingText.textContent = '视频加载失败';
+  }
+
+  wrapper.className = 'videojs-preview preview-load-frame is-loading';
   video.className = 'video-js vjs-default-skin vjs-big-play-centered';
+  video.classList.add('preview-load-target');
   video.controls = true;
   video.muted = false;
   video.preload = 'metadata';
   video.volume = 1;
-  wrapper.appendChild(video);
+  wrapper.append(loadingState, video);
 
   requestAnimationFrame(() => {
     const player = videojs(video, {
@@ -193,6 +206,8 @@ function renderVideoPreview(input: NodePluginPreviewInput): HTMLElement {
       player.volume(1);
       wrapper.focus();
     });
+    player.one('loadedmetadata', finishLoading);
+    player.one('error', failLoading);
     disposeWhenDetached(player, wrapper, bindKeyboardControls(player, wrapper));
   });
 

@@ -14,6 +14,7 @@ import {
   resolveNodePlugin,
   type ResolvedNodePlugin,
 } from './utils/pluginRegistry';
+import { createPreviewLoadingState } from './utils/previewRenderers';
 import { DOM, openModal, closeModal } from './ui';
 import {
   createIcon,
@@ -52,6 +53,7 @@ interface ShareFile {
 // ────────────── 全局状态 ──────────────
 let globalShareData: ShareFile | null = null;
 let searchQuery = '';
+let previewRequestId = 0;
 const DEFAULT_NODE_DESCRIPTION = '我也不知道这个文件是啥呢！(lll￢ω￢)';
 
 // ────────────── SPA 路由 ──────────────
@@ -82,16 +84,23 @@ async function previewFileContent(
   fileUrl: string,
   resolvedNodePlugin: ResolvedNodePlugin,
 ): Promise<void> {
+  const requestId = ++previewRequestId;
+
+  openModal(fileName, createPreviewLoadingState('正在加载预览...'));
+
   const result = await previewWithResolvedNodePlugin(
     resolvedNodePlugin,
     fileUrl,
   );
+
+  if (requestId !== previewRequestId) return;
 
   if (result) {
     openModal(fileName, result);
     return;
   }
 
+  closeModal();
   window.open(fileUrl, '_blank');
 }
 

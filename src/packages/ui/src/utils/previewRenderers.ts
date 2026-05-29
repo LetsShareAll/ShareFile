@@ -2,6 +2,49 @@ import { NodePluginPreviewInput } from '../plugins/node/types';
 
 declare const marked: { parse(md: string): string };
 
+export function createPreviewLoadingState(message: string): HTMLElement {
+  const state = document.createElement('div');
+  const spinner = document.createElement('span');
+  const text = document.createElement('span');
+
+  state.className = 'preview-loading-state';
+  state.setAttribute('role', 'status');
+  state.setAttribute('aria-live', 'polite');
+  spinner.className = 'preview-loading-spinner';
+  spinner.setAttribute('aria-hidden', 'true');
+  text.className = 'preview-loading-text';
+  text.textContent = message;
+  state.append(spinner, text);
+
+  return state;
+}
+
+function createPreviewLoadFrame(
+  target: HTMLElement,
+  message: string,
+): HTMLElement {
+  const wrapper = document.createElement('div');
+  const loadingState = createPreviewLoadingState(message);
+  const loadingText = loadingState.querySelector('.preview-loading-text');
+
+  function finishLoading(): void {
+    wrapper.classList.remove('is-loading');
+    wrapper.classList.add('is-loaded');
+  }
+
+  function failLoading(): void {
+    if (loadingText) loadingText.textContent = '预览加载失败';
+  }
+
+  wrapper.className = 'preview-load-frame is-loading';
+  target.classList.add('preview-load-target');
+  target.addEventListener('load', finishLoading, { once: true });
+  target.addEventListener('error', failLoading, { once: true });
+  wrapper.append(loadingState, target);
+
+  return wrapper;
+}
+
 export async function fetchPreviewText(
   input: NodePluginPreviewInput,
 ): Promise<string> {
@@ -93,22 +136,29 @@ export async function renderMarkdownPreview(
 
 export function renderImagePreview(fileUrl: string): HTMLElement {
   const img = document.createElement('img');
+  const wrapper = createPreviewLoadFrame(img, '正在加载图片...');
 
-  img.src = fileUrl;
   img.style.maxWidth = '100%';
   img.style.display = 'block';
   img.style.margin = '0 auto';
+  img.src = fileUrl;
 
-  return img;
+  if (img.complete) {
+    wrapper.classList.remove('is-loading');
+    wrapper.classList.add('is-loaded');
+  }
+
+  return wrapper;
 }
 
 export function renderPdfPreview(fileUrl: string): HTMLElement {
   const iframe = document.createElement('iframe');
+  const wrapper = createPreviewLoadFrame(iframe, '正在加载 PDF...');
 
-  iframe.src = fileUrl;
   iframe.style.width = '100%';
   iframe.style.height = '70vh';
   iframe.style.border = 'none';
+  iframe.src = fileUrl;
 
-  return iframe;
+  return wrapper;
 }
