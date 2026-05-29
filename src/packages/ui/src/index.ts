@@ -343,6 +343,59 @@ function createCopyLinkButton(url: string): HTMLButtonElement {
   return linkBtn;
 }
 
+function getNodeFilePath(node: ShareNode): string {
+  return node.id.startsWith('/') ? node.id : '/' + node.id;
+}
+
+function getNodeFileUrl(node: ShareNode): string {
+  return node.url || getNodeFilePath(node);
+}
+
+function triggerFileDownload(node: ShareNode): void {
+  const a = document.createElement('a');
+  a.href = getNodeFileUrl(node);
+  a.download = node.name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function renderDirectFileRoute(node: ShareNode): void {
+  DOM.previewSec.style.display = 'none';
+
+  if (node.redirect_url) {
+    if (node.redirect_type === 'confirm' && node.redirect_confirm_message) {
+      showHtmlConfirm('跳转提示', node.redirect_confirm_message, () => {
+        window.location.href = node.redirect_url!;
+      });
+    } else {
+      window.location.href = node.redirect_url;
+    }
+
+    return;
+  }
+
+  DOM.content.innerHTML = '';
+
+  const state = document.createElement('div');
+  state.className = 'direct-download-state';
+
+  const message = document.createElement('p');
+  message.className = 'empty direct-download-message';
+  message.innerHTML = '<i class="fas fa-download"></i> 正在下载文件';
+
+  const fallbackLink = document.createElement('a');
+  fallbackLink.className = 'action-btn direct-download-link';
+  fallbackLink.href = getNodeFileUrl(node);
+  fallbackLink.download = node.name;
+  fallbackLink.innerHTML =
+    '<i class="fas fa-download"></i><span>如果下载未开始，请点击这里</span>';
+
+  state.append(message, fallbackLink);
+  DOM.content.appendChild(state);
+  requestAnimationFrame(() => triggerFileDownload(node));
+}
+
 async function renderContent(currentPath: string): Promise<void> {
   if (!globalShareData) return;
   DOM.content.innerHTML = '';
@@ -356,6 +409,11 @@ async function renderContent(currentPath: string): Promise<void> {
   }
 
   const currentNode = nodeId ? globalShareData.nodes[nodeId] : undefined;
+
+  if (!activeSearchQuery && currentNode?.type === 'file') {
+    renderDirectFileRoute(currentNode);
+    return;
+  }
 
   if (
     !activeSearchQuery &&
@@ -410,10 +468,8 @@ async function renderContent(currentPath: string): Promise<void> {
       node: childNode,
     });
     const typeInfo = resolvedNodePlugin.info;
-    const filePath = childNode.id.startsWith('/')
-      ? childNode.id
-      : '/' + childNode.id;
-    const fileUrl = childNode.url || filePath;
+    const filePath = getNodeFilePath(childNode);
+    const fileUrl = getNodeFileUrl(childNode);
     const nodePath =
       childNode.type === 'folder' ? '/' + childNode.id : filePath;
     const copyUrl =
@@ -497,13 +553,7 @@ async function renderContent(currentPath: string): Promise<void> {
 
       downloadBtn.onclick = (e: MouseEvent) => {
         e.stopPropagation();
-
-        const a = document.createElement('a');
-        a.href = fileUrl;
-        a.download = childNode.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        triggerFileDownload(childNode);
       };
 
       itemActions.appendChild(downloadBtn);

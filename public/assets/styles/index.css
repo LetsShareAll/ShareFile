@@ -1466,6 +1466,29 @@ html[data-theme='dark'] .hljs-doctag {
   color: #ff3b30;
 }
 
+.direct-download-state {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 3rem;
+}
+
+.direct-download-message {
+  padding: 0;
+}
+
+.direct-download-link {
+  display: inline-flex;
+  gap: 0.45rem;
+  width: fit-content;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.direct-download-link:hover {
+  text-decoration: none;
+}
+
 /* 响应式 */
 @media (max-width: 640px) {
   .container {
