@@ -1,7 +1,11 @@
 {
   "rootId": "root",
   "pathIndex": {
-    "/": "root"
+    "/": "root",
+    "/documents": "documents",
+    "/documents/scripts": "documents/scripts",
+    "/documents/scripts/cloudflare-worker.js": "documents/scripts/cloudflare-worker.js",
+    "/test-mount": "test-mount"
   },
   "nodes": {
     "root": {
@@ -9,8 +13,65 @@
       "name": "/",
       "type": "folder",
       "parent": null,
-      "children": [],
+      "children": [
+        "documents",
+        "test-mount"
+      ],
       "description": "当前目录"
+    },
+    "documents": {
+      "id": "documents",
+      "name": "documents",
+      "type": "folder",
+      "parent": "root",
+      "children": [
+        "documents/scripts"
+      ],
+      "description": "文件夹",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null
+    },
+    "documents/scripts": {
+      "id": "documents/scripts",
+      "name": "scripts",
+      "type": "folder",
+      "parent": "documents",
+      "children": [
+        "documents/scripts/cloudflare-worker.js"
+      ],
+      "description": "文件夹",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null
+    },
+    "documents/scripts/cloudflare-worker.js": {
+      "id": "documents/scripts/cloudflare-worker.js",
+      "name": "cloudflare-worker.js",
+      "type": "file",
+      "parent": "documents/scripts",
+      "children": [],
+      "description": "JavaScript 脚本",
+      "created_at": "2026-05-29T14:41:06Z",
+      "updated_at": "2026-05-29T14:41:06Z",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null,
+      "size": 8544,
+      "md5": "0f0ff0a3a5eea184b2e12b63f7a7dca6",
+      "sha256": "306b1da29e2c169183dac38bfcdf71a7de0cb9c55e45a905fd943a007c135aa8",
+      "url": "https://cdn-file.lssa.fun/github.com/LetsShareAll/ShareFile/blob/file/public/documents/scripts/cloudflare-worker.js"
+    },
+    "test-mount": {
+      "id": "test-mount",
+      "name": "test-mount",
+      "type": "folder",
+      "parent": "root",
+      "children": [],
+      "description": "文件夹",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null
     }
   }
 }

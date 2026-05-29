@@ -44,8 +44,17 @@ interface LoadExternalResult {
 /**
  * 根据 mount_source 配置构建外部 share-file.json 的 URL
  */
-function buildExternalUrl(mountSource: MountSourceInfo, useCdn: boolean): string {
-  const { provider, repository, branch = 'main', subPath = '/', access_cdn } = mountSource;
+function buildExternalUrl(
+  mountSource: MountSourceInfo,
+  useCdn: boolean,
+): string {
+  const {
+    provider,
+    repository,
+    branch = 'main',
+    subPath = '/',
+    access_cdn,
+  } = mountSource;
 
   if (provider !== 'github') {
     throw new Error(`不支持的存储提供商: ${provider}`);
@@ -80,13 +89,16 @@ async function fetchWithBranchFallback(
   mountSource: MountSourceInfo,
   useCdn: boolean,
 ): Promise<Response> {
-  const branches = mountSource.branch ? [mountSource.branch] : ['main', 'master'];
+  const branches = mountSource.branch
+    ? [mountSource.branch]
+    : ['main', 'master'];
 
   for (const branch of branches) {
     const url = buildExternalUrl({ ...mountSource, branch }, useCdn);
 
     try {
       const response = await fetch(url);
+
       if (response.ok) {
         return response;
       }
@@ -170,7 +182,10 @@ function saveToCache(
 /**
  * 清除指定挂载点的缓存
  */
-export function clearMountPointCache(mountPoint: string, mountSource: MountSourceInfo): void {
+export function clearMountPointCache(
+  mountPoint: string,
+  mountSource: MountSourceInfo,
+): void {
   const cacheKey = getCacheKey(mountPoint, mountSource);
   localStorage.removeItem(cacheKey);
   console.log(`已清除缓存: ${cacheKey}`);
@@ -204,6 +219,7 @@ async function loadExternalShareFile(
   // 尝试从缓存加载
   if (useCache) {
     const cached = loadFromCache(cacheKey);
+
     if (cached) {
       return { success: true, data: cached, fromCache: true };
     }
@@ -280,7 +296,6 @@ function rewriteExternalNodes(
   externalNodes: Record<string, ShareNode>,
   externalRootId: string,
   mountPointPath: string,
-  mountSource: MountSourceInfo,
 ): { nodes: Record<string, ShareNode>; pathIndex: Record<string, string> } {
   const rewrittenNodes: Record<string, ShareNode> = {};
   const pathIndex: Record<string, string> = {};
@@ -306,8 +321,13 @@ function rewriteExternalNodes(
     const rewrittenNode: ShareNode = {
       ...node,
       id: newId,
-      parent: newParentId === mountPointPath ? mountPointPath.split('/').slice(0, -1).join('/') || 'root' : newParentId,
-      children: node.children.map((childId: string) => idMapping[childId] || childId),
+      parent:
+        newParentId === mountPointPath
+          ? mountPointPath.split('/').slice(0, -1).join('/') || 'root'
+          : newParentId,
+      children: node.children.map(
+        (childId: string) => idMapping[childId] || childId,
+      ),
       source: 'external',
       mount_point: mountPointPath,
     };
@@ -327,7 +347,10 @@ function rewriteExternalNodes(
  */
 function mergeExternalNodes(
   localData: ShareFile,
-  externalResult: { nodes: Record<string, ShareNode>; pathIndex: Record<string, string> },
+  externalResult: {
+    nodes: Record<string, ShareNode>;
+    pathIndex: Record<string, string>;
+  },
   mountPointId: string,
 ): ShareFile {
   const mergedNodes = { ...localData.nodes };
@@ -344,7 +367,10 @@ function mergeExternalNodes(
 
   // 合并路径索引
   Object.entries(externalResult.pathIndex).forEach(([path, nodeId]) => {
-    if (mergedPathIndex[path] && mergedNodes[mergedPathIndex[path]]?.source === 'local') {
+    if (
+      mergedPathIndex[path] &&
+      mergedNodes[mergedPathIndex[path]]?.source === 'local'
+    ) {
       console.warn(`路径冲突，本地优先: ${path}`);
     } else {
       mergedPathIndex[path] = nodeId;
@@ -353,6 +379,7 @@ function mergeExternalNodes(
 
   // 更新挂载点节点的 children
   const mountPointNode = mergedNodes[mountPointId];
+
   if (mountPointNode) {
     const externalRootChildren = Object.values(externalResult.nodes)
       .filter(node => node.parent === mountPointId)
@@ -361,7 +388,9 @@ function mergeExternalNodes(
     // 创建新的节点对象以避免修改只读属性
     mergedNodes[mountPointId] = {
       ...mountPointNode,
-      children: [...new Set([...mountPointNode.children, ...externalRootChildren])],
+      children: [
+        ...new Set([...mountPointNode.children, ...externalRootChildren]),
+      ],
     };
   }
 
@@ -384,9 +413,12 @@ export async function loadAllExternalSources(
   const mountPoints: MountPointInfo[] = [];
 
   Object.entries(localData.nodes).forEach(([nodeId, node]) => {
-    if (node.type === 'folder' && (node as unknown as { mount_source?: MountSourceInfo }).mount_source) {
-      const mountSource = (node as unknown as { mount_source: MountSourceInfo }).mount_source;
-      const mountPath = `/${nodeId}`.replace(/\/+/g, '/');
+    if (
+      node.type === 'folder' &&
+      (node as unknown as { mount_source?: MountSourceInfo }).mount_source
+    ) {
+      const mountSource = (node as unknown as { mount_source: MountSourceInfo })
+        .mount_source;
 
       mountPoints.push({
         mountPointId: nodeId,
@@ -409,7 +441,7 @@ export async function loadAllExternalSources(
   let mergedData = localData;
 
   // 并行加载所有外部源
-  const loadPromises = mountPoints.map(async (mountPoint) => {
+  const loadPromises = mountPoints.map(async mountPoint => {
     const result = await loadExternalShareFile(
       mountPoint.mountPointPath,
       mountPoint.mountSource,
@@ -417,7 +449,11 @@ export async function loadAllExternalSources(
     );
 
     if (!result.success || !result.data) {
-      updateExternalSourceStatus(mountPoint.mountPointPath, 'error', result.error);
+      updateExternalSourceStatus(
+        mountPoint.mountPointPath,
+        'error',
+        result.error,
+      );
       return null;
     }
 
@@ -428,7 +464,11 @@ export async function loadAllExternalSources(
     );
 
     if (!filtered) {
-      updateExternalSourceStatus(mountPoint.mountPointPath, 'error', '子路径不存在');
+      updateExternalSourceStatus(
+        mountPoint.mountPointPath,
+        'error',
+        '子路径不存在',
+      );
       return null;
     }
 
@@ -437,7 +477,6 @@ export async function loadAllExternalSources(
       filtered.nodes,
       filtered.rootNodeId,
       mountPoint.mountPointPath,
-      mountPoint.mountSource,
     );
 
     updateExternalSourceStatus(mountPoint.mountPointPath, 'success');
@@ -453,7 +492,11 @@ export async function loadAllExternalSources(
   // 合并所有成功加载的外部源
   results.forEach(result => {
     if (result) {
-      mergedData = mergeExternalNodes(mergedData, result.rewritten, result.mountPointId);
+      mergedData = mergeExternalNodes(
+        mergedData,
+        result.rewritten,
+        result.mountPointId,
+      );
     }
   });
 
@@ -470,11 +513,17 @@ export async function refreshMountPoint(
 ): Promise<ShareFile> {
   const mountPointNode = localData.nodes[mountPointId];
 
-  if (!mountPointNode || !(mountPointNode as unknown as { mount_source?: MountSourceInfo }).mount_source) {
+  if (
+    !mountPointNode ||
+    !(mountPointNode as unknown as { mount_source?: MountSourceInfo })
+      .mount_source
+  ) {
     throw new Error(`节点不是挂载点: ${mountPointId}`);
   }
 
-  const mountSource = (mountPointNode as unknown as { mount_source: MountSourceInfo }).mount_source;
+  const mountSource = (
+    mountPointNode as unknown as { mount_source: MountSourceInfo }
+  ).mount_source;
 
   // 清除缓存
   clearMountPointCache(mountPointId, mountSource);
@@ -488,6 +537,7 @@ export async function refreshMountPoint(
 
   // 过滤和重写节点
   const filtered = filterExternalNodes(result.data, mountSource.subPath || '/');
+
   if (!filtered) {
     throw new Error('子路径不存在');
   }
@@ -496,7 +546,6 @@ export async function refreshMountPoint(
     filtered.nodes,
     filtered.rootNodeId,
     mountPointId,
-    mountSource,
   );
 
   // 合并到本地数据

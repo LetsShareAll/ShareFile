@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
-import { Logger } from '@share-file/types';
+import { Logger } from '@share-file/types/logger';
 
 // --- 插件类型定义 ---
 export type HookHandler = (...args: unknown[]) => unknown | Promise<unknown>;

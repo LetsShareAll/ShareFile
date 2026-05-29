@@ -18,13 +18,15 @@ import {
   FileNode,
   HoldInfo,
   InfoFile,
-  Logger,
   SelfInfo,
   VirtualDirectoryNode,
   VirtualFileNode,
+} from '@share-file/types';
+import {
+  Logger,
   getErrorMessage,
   readInfoFileAsync,
-} from '@share-file/types';
+} from '@share-file/types/logger';
 
 const execFileAsync = promisify(execFile);
 const __filename = fileURLToPath(import.meta.url);

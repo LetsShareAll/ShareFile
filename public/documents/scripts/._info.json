@@ -1,0 +1,16 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "cloudflare-worker.js": {
+      "type": "file",
+      "description": "JavaScript 脚本",
+      "created_at": "2026-05-29T14:41:06.000Z",
+      "updated_at": "2026-05-29T14:41:06.000Z",
+      "size": 8544,
+      "md5": "0f0ff0a3a5eea184b2e12b63f7a7dca6",
+      "sha256": "306b1da29e2c169183dac38bfcdf71a7de0cb9c55e45a905fd943a007c135aa8"
+    }
+  }
+}

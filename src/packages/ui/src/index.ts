@@ -25,7 +25,10 @@ import {
 } from './utils';
 
 import type { ShareNode, ShareFile, MountSourceInfo } from '@share-file/types';
-import { loadAllExternalSources, clearAllExternalCache, refreshMountPoint } from './externalSourceLoader';
+import {
+  loadAllExternalSources,
+  clearAllExternalCache,
+} from './externalSourceLoader';
 import { showError, showSuccess, showInfo } from './notifications';
 
 // ────────────── 全局状态 ──────────────
@@ -108,6 +111,7 @@ function renderBreadcrumb(path: string): void {
 
       // 检查是否为外部节点
       const nodeId = globalShareData?.pathIndex[accumulatedPath];
+
       if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
         current.classList.add('external-breadcrumb');
       }
@@ -123,6 +127,7 @@ function renderBreadcrumb(path: string): void {
 
       // 检查是否为外部节点
       const nodeId = globalShareData?.pathIndex[targetPath];
+
       if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
         link.classList.add('external-breadcrumb');
       }
@@ -843,7 +848,9 @@ async function main(): Promise<void> {
 
     // 检查是否有外部挂载源
     hasExternalSources = Object.values(localData.nodes).some(
-      (node: ShareNode) => node.type === 'folder' && (node as unknown as { mount_source?: MountSourceInfo }).mount_source
+      (node: ShareNode) =>
+        node.type === 'folder' &&
+        (node as unknown as { mount_source?: MountSourceInfo }).mount_source,
     );
 
     // 如果有外部源，显示刷新按钮
@@ -863,10 +870,15 @@ async function main(): Promise<void> {
       loadAllExternalSources(localData)
         .then(mergedData => {
           globalShareData = mergedData;
+
           // 如果当前路径包含外部挂载点，重新渲染
           const currentPath = getCurrentPath();
           const currentNodeId = globalShareData.pathIndex[currentPath];
-          if (currentNodeId && globalShareData.nodes[currentNodeId]?.source === 'external') {
+
+          if (
+            currentNodeId &&
+            globalShareData.nodes[currentNodeId]?.source === 'external'
+          ) {
             renderCurrentView();
           }
         })
@@ -875,7 +887,6 @@ async function main(): Promise<void> {
           showError(`外部源加载异常: ${getErrorMessage(error)}`);
         });
     }
-
   } catch (error) {
     DOM.loading.style.display = 'none';
     DOM.content.style.display = 'block';

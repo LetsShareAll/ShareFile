@@ -3,11 +3,7 @@
     "description": "当前目录"
   },
   "children": {
-    "documents": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "test-mount": {
+    "scripts": {
       "type": "folder",
       "description": "文件夹"
     }

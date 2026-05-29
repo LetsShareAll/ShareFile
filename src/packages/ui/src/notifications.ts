@@ -109,7 +109,10 @@ function createNotificationElement(notification: Notification): HTMLElement {
   };
 
   // 颜色映射
-  const colors: Record<NotificationType, { bg: string; border: string; text: string }> = {
+  const colors: Record<
+    NotificationType,
+    { bg: string; border: string; text: string }
+  > = {
     info: { bg: '#e3f2fd', border: '#2196f3', text: '#1565c0' },
     success: { bg: '#e8f5e9', border: '#4caf50', text: '#2e7d32' },
     warning: { bg: '#fff3e0', border: '#ff9800', text: '#e65100' },
@@ -170,6 +173,7 @@ function createNotificationElement(notification: Notification): HTMLElement {
  */
 export function dismissNotification(id: string): void {
   const notificationEl = document.getElementById(`notification-${id}`);
+
   if (notificationEl) {
     notificationEl.style.animation = 'slideOut 0.3s ease-out';
     setTimeout(() => {
@@ -200,7 +204,10 @@ export function showWarning(message: string, autoClose: number = 5000): string {
   return showNotification(message, 'warning', { autoClose });
 }
 
-export function showError(message: string, dismissible: boolean = true): string {
+export function showError(
+  message: string,
+  dismissible: boolean = true,
+): string {
   return showNotification(message, 'error', { dismissible });
 }
 
@@ -250,7 +257,10 @@ export function updateExternalSourceStatus(
     externalSourceStatus.loaded++;
   } else {
     externalSourceStatus.failed++;
-    externalSourceStatus.errors.push({ mountPoint, error: error || '未知错误' });
+    externalSourceStatus.errors.push({
+      mountPoint,
+      error: error || '未知错误',
+    });
   }
 
   const { total, loaded, failed } = externalSourceStatus;
@@ -279,6 +289,7 @@ export function updateExternalSourceStatus(
       const errorList = externalSourceStatus.errors
         .map(e => `<li><strong>${e.mountPoint}</strong>: ${e.error}</li>`)
         .join('');
+
       showError(
         `所有外部源加载失败 (${failed}/${total})<br><ul style="margin: 8px 0 0 0; padding-left: 20px;">${errorList}</ul>`,
       );
@@ -286,6 +297,7 @@ export function updateExternalSourceStatus(
       const errorList = externalSourceStatus.errors
         .map(e => `<li><strong>${e.mountPoint}</strong>: ${e.error}</li>`)
         .join('');
+
       showWarning(
         `部分外部源加载失败 (成功: ${loaded}, 失败: ${failed})<br><ul style="margin: 8px 0 0 0; padding-left: 20px;">${errorList}</ul>`,
       );

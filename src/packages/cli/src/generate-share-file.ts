@@ -12,10 +12,12 @@ import { fileURLToPath } from 'url';
 import {
   DirectoryNode,
   FileNode,
+} from '@share-file/types';
+import {
   Logger,
   getErrorMessage,
   readInfoFileAsync,
-} from '@share-file/types';
+} from '@share-file/types/logger';
 
 import PluginRegistry from './utils/plugin-registry';
 const __filename = fileURLToPath(import.meta.url);

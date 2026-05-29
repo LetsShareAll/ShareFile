@@ -9,10 +9,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
+    "rootDir": "./src",
     "outDir": "./dist"
   },
-  "include": ["src/**/*"],
-  "references": [
-    { "path": "../types" }
-  ]
+  "include": ["src/**/*"]
 }

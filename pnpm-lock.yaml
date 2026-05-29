@@ -63,6 +63,9 @@ importers:
 
   src/packages/ui:
     dependencies:
+      '@share-file/types':
+        specifier: workspace:*
+        version: link:../types
       amplitudejs:
         specifier: ^5.3.2
         version: 5.3.2
