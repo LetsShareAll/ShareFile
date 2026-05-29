@@ -1,19 +1,43 @@
 {
   "self": {
-    "description": "当前目录"
+    "description": "ShareFile - 静态文件分享站点"
   },
   "children": {
     "documents": {
       "type": "folder",
-      "description": "文件夹"
+      "description": "文档文件",
+      "mount_source": {
+        "provider": "github",
+        "repository": "LetsShareAll/ShareFile",
+        "branch": "file",
+        "subPath": "/documents",
+        "access_cdn": "https://cdn-file.lssa.fun",
+        "use_cdn_index": true
+      }
     },
     "softwares": {
       "type": "folder",
-      "description": "文件夹"
+      "description": "软件文件",
+      "mount_source": {
+        "provider": "github",
+        "repository": "LetsShareAll/ShareFile",
+        "branch": "file",
+        "subPath": "/softwares",
+        "access_cdn": "https://cdn-file.lssa.fun",
+        "use_cdn_index": true
+      }
     },
     "test-mount": {
       "type": "folder",
-      "description": "文件夹"
+      "description": "测试挂载",
+      "mount_source": {
+        "provider": "github",
+        "repository": "LetsShareAll/ShareFile",
+        "branch": "file",
+        "subPath": "/test-mount",
+        "access_cdn": "https://cdn-file.lssa.fun",
+        "use_cdn_index": true
+      }
     }
   }
 }
