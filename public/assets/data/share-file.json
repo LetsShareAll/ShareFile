@@ -2,16 +2,12 @@
   "rootId": "root",
   "pathIndex": {
     "/": "root",
-    "/documents": "documents",
-    "/documents/scripts": "documents/scripts",
-    "/documents/scripts/cloudflare-worker.js": "documents/scripts/cloudflare-worker.js",
     "/softwares": "softwares",
     "/softwares/applications": "softwares/applications",
     "/softwares/applications/tools": "softwares/applications/tools",
     "/softwares/applications/tools/config.yaml.example": "softwares/applications/tools/config.yaml.example",
     "/softwares/applications/tools/generate-info-linux": "softwares/applications/tools/generate-info-linux",
-    "/softwares/applications/tools/generate-share-file-linux": "softwares/applications/tools/generate-share-file-linux",
-    "/test-mount": "test-mount"
+    "/softwares/applications/tools/generate-share-file-linux": "softwares/applications/tools/generate-share-file-linux"
   },
   "nodes": {
     "root": {
@@ -20,53 +16,9 @@
       "type": "folder",
       "parent": null,
       "children": [
-        "documents",
-        "softwares",
-        "test-mount"
+        "softwares"
       ],
-      "description": "当前目录"
-    },
-    "documents": {
-      "id": "documents",
-      "name": "documents",
-      "type": "folder",
-      "parent": "root",
-      "children": [
-        "documents/scripts"
-      ],
-      "description": "文件夹",
-      "redirect_url": null,
-      "redirect_type": null,
-      "redirect_confirm_message": null
-    },
-    "documents/scripts": {
-      "id": "documents/scripts",
-      "name": "scripts",
-      "type": "folder",
-      "parent": "documents",
-      "children": [
-        "documents/scripts/cloudflare-worker.js"
-      ],
-      "description": "文件夹",
-      "redirect_url": null,
-      "redirect_type": null,
-      "redirect_confirm_message": null
-    },
-    "documents/scripts/cloudflare-worker.js": {
-      "id": "documents/scripts/cloudflare-worker.js",
-      "name": "cloudflare-worker.js",
-      "type": "file",
-      "parent": "documents/scripts",
-      "children": [],
-      "description": "JavaScript 脚本",
-      "created_at": "2026-05-29T14:41:06Z",
-      "updated_at": "2026-05-29T14:41:06Z",
-      "redirect_url": null,
-      "redirect_type": null,
-      "redirect_confirm_message": null,
-      "size": 8233,
-      "md5": "9e5726f7e31dd5bc21259fb6926b9a87",
-      "sha256": "4d4b14a5d92c249cbd815e386192b38a2763c85d36b981cd80814b881a1263b1"
+      "description": "ShareFile - 静态文件分享站点"
     },
     "softwares": {
       "id": "softwares",
@@ -76,7 +28,7 @@
       "children": [
         "softwares/applications"
       ],
-      "description": "文件夹",
+      "description": "软件文件",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null
@@ -116,6 +68,8 @@
       "parent": "softwares/applications/tools",
       "children": [],
       "description": "EXAMPLE 文件",
+      "created_at": "2026-05-29T14:41:06Z",
+      "updated_at": "2026-05-29T15:55:26Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
@@ -130,12 +84,14 @@
       "parent": "softwares/applications/tools",
       "children": [],
       "description": "文件",
+      "created_at": "2026-05-29T15:55:26Z",
+      "updated_at": "2026-05-29T15:55:26Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 20779936,
-      "md5": "1173b2294519488e0dbce3b2b85c7ace",
-      "sha256": "ba323a7d37fd4c41b2ff83b5ba4923a41c88e980469b0a6b7da9484fea84f166"
+      "size": 20780048,
+      "md5": "42e0422c1c85aea9786e367b00e1f1f4",
+      "sha256": "00b2bc43bca6bd61c8b68158dc5763f06fb0948b20bf7fd52d4a40270ab02c6a"
     },
     "softwares/applications/tools/generate-share-file-linux": {
       "id": "softwares/applications/tools/generate-share-file-linux",
@@ -144,23 +100,14 @@
       "parent": "softwares/applications/tools",
       "children": [],
       "description": "文件",
+      "created_at": "2026-05-29T15:55:26Z",
+      "updated_at": "2026-05-29T15:55:26Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 20778800,
-      "md5": "7c9da9ecfd17f64a6823316125fee222",
-      "sha256": "a2b79a75e3990c6e15269b42df1cbe5072a511a6000135f283cd419430d80fa6"
-    },
-    "test-mount": {
-      "id": "test-mount",
-      "name": "test-mount",
-      "type": "folder",
-      "parent": "root",
-      "children": [],
-      "description": "文件夹",
-      "redirect_url": null,
-      "redirect_type": null,
-      "redirect_confirm_message": null
+      "size": 20778912,
+      "md5": "718676e58417cb3a8b457d5d2549b433",
+      "sha256": "87a7931a67196c7386fb626800f92d6911b7af27a2801d9f5a4fae0d107bf754"
     }
   }
 }
