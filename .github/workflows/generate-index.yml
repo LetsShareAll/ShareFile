@@ -1,0 +1,65 @@
+name: 生成文件索引
+
+on:
+  push:
+    branches:
+      - 'file'
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 签出 file 分支
+        uses: actions/checkout@v6
+        with:
+          ref: file
+          fetch-depth: 0
+
+      - name: 获取生成工具
+        run: |
+          git fetch origin main
+          git checkout origin/main -- public/softwares/applications/tools/generate-info-linux
+          git checkout origin/main -- public/softwares/applications/tools/generate-share-file-linux
+          chmod +x public/softwares/applications/tools/generate-info-linux
+          chmod +x public/softwares/applications/tools/generate-share-file-linux
+
+      - name: 生成目录元数据
+        run: |
+          ./public/softwares/applications/tools/generate-info-linux . --recursive
+
+      - name: 生成文件索引
+        run: |
+          ./public/softwares/applications/tools/generate-share-file-linux . ./share-file.json --cdn-url "https://cdn-file.lssa.fun"
+
+      - name: 清理工具文件
+        run: |
+          rm -rf public/
+
+      - name: 检查更改
+        id: git-check
+        run: |
+          echo "检查是否有文件被修改..."
+          if git diff --quiet; then
+            echo "没有检测到更改"
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "检测到文件更改"
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 提交更改
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "🐎 ci(file): 自动生成文件索引 [skip ci]"
+          git push
