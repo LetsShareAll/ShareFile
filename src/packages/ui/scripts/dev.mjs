@@ -1,5 +1,7 @@
 import esbuild from 'esbuild';
+import { spawn } from 'node:child_process';
 import { createReadStream, existsSync, statSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +13,7 @@ const repoRoot = path.resolve(__dirname, '../../../..');
 const publicRoot = path.join(repoRoot, 'public');
 const port = Number.parseInt(process.env.PORT || '4173', 10);
 const host = process.env.HOST || '127.0.0.1';
+const devEventsPath = '/__share-file/dev-events';
 
 if (!Number.isInteger(port) || port <= 0 || port > 65535) {
   console.error(`Invalid PORT: ${process.env.PORT}`);
@@ -42,6 +45,19 @@ const contentTypes = new Map([
   ['.woff2', 'font/woff2'],
 ]);
 
+const liveReloadClient = `
+<script type="module">
+  const source = new EventSource('${devEventsPath}');
+  source.addEventListener('reload', event => {
+    const data = event.data ? JSON.parse(event.data) : {};
+    console.info('[share-file dev] reload:', data.reason || 'change');
+    window.location.reload();
+  });
+</script>`;
+
+const devClients = new Set();
+let generateRunning = false;
+
 function resolvePublicPath(requestUrl) {
   const url = new URL(requestUrl, `http://${host}:${port}`);
   const pathname = decodeURIComponent(url.pathname);
@@ -59,12 +75,129 @@ function resolvePublicPath(requestUrl) {
   return filePath;
 }
 
-function sendFile(filePath, request, response) {
+function sendDevEvent(response, event, data) {
+  response.write(`event: ${event}\n`);
+  response.write(`data: ${JSON.stringify(data)}\n\n`);
+}
+
+function broadcastDevEvent(event, data) {
+  const payload = { ...data, at: new Date().toISOString() };
+
+  for (const response of devClients) {
+    sendDevEvent(response, event, payload);
+  }
+}
+
+function handleDevEvents(request, response) {
+  response.writeHead(200, {
+    'Cache-Control': 'no-cache, no-transform',
+    Connection: 'keep-alive',
+    'Content-Type': 'text/event-stream; charset=utf-8',
+    'X-Accel-Buffering': 'no',
+  });
+  response.write('retry: 1000\n\n');
+  sendDevEvent(response, 'connected', { ok: true });
+
+  devClients.add(response);
+  request.on('close', () => {
+    devClients.delete(response);
+  });
+}
+
+function createReloadPlugin() {
+  let isInitialBuild = true;
+
+  return {
+    name: 'share-file-dev-reload',
+    setup(build) {
+      build.onEnd(result => {
+        if (isInitialBuild) {
+          isInitialBuild = false;
+          return;
+        }
+
+        if (result.errors.length === 0) {
+          broadcastDevEvent('reload', { reason: 'UI source rebuilt' });
+        }
+      });
+    },
+  };
+}
+
+function runPnpm(args) {
+  const command = process.env.npm_execpath ? process.execPath : 'pnpm';
+  const commandArgs = process.env.npm_execpath
+    ? [process.env.npm_execpath, ...args]
+    : args;
+
+  return new Promise(resolve => {
+    let child;
+
+    try {
+      child = spawn(command, commandArgs, {
+        cwd: repoRoot,
+        shell: !process.env.npm_execpath && process.platform === 'win32',
+        stdio: 'inherit',
+      });
+    } catch (error) {
+      console.error(`Failed to start ${command}:`, error);
+      resolve(1);
+      return;
+    }
+
+    child.on('error', error => {
+      console.error(`Failed to start ${command}:`, error);
+      resolve(1);
+    });
+    child.on('close', code => resolve(code ?? 1));
+  });
+}
+
+async function runShareFileGenerate(reason) {
+  if (generateRunning) {
+    return 0;
+  }
+
+  generateRunning = true;
+  console.log(`Generating share-file indexes (${reason})...`);
+  const code = await runPnpm(['--filter', '@share-file/cli', 'run', 'generate']);
+  generateRunning = false;
+
+  if (code === 0) {
+    console.log('share-file indexes generated');
+  } else {
+    console.error(`share-file generation failed with exit code ${code}`);
+  }
+
+  return code;
+}
+
+async function sendHtmlWithLiveReload(filePath, response) {
+  const html = await readFile(filePath, 'utf-8');
+  const body = html.includes('</body>')
+    ? html.replace('</body>', `${liveReloadClient}\n  </body>`)
+    : `${html}\n${liveReloadClient}`;
+  const bodyBuffer = Buffer.from(body);
+
+  response.writeHead(200, {
+    'Cache-Control': 'no-store',
+    'Content-Length': bodyBuffer.byteLength,
+    'Content-Type': 'text/html; charset=utf-8',
+  });
+  response.end(bodyBuffer);
+}
+
+async function sendFile(filePath, request, response) {
   const contentType =
     contentTypes.get(path.extname(filePath).toLowerCase()) ||
     'application/octet-stream';
   const fileSize = statSync(filePath).size;
   const range = request.headers.range;
+
+  if (!range && path.extname(filePath).toLowerCase() === '.html') {
+    await sendHtmlWithLiveReload(filePath, response);
+    return;
+  }
 
   if (range) {
     const match = /^bytes=(\d*)-(\d*)$/.exec(range);
@@ -115,17 +248,37 @@ function sendFile(filePath, request, response) {
 
   response.writeHead(200, {
     'Accept-Ranges': 'bytes',
+    'Cache-Control': 'no-store',
     'Content-Length': fileSize,
     'Content-Type': contentType,
   });
   createReadStream(filePath).pipe(response);
 }
 
-const context = await esbuild.context(createConfig({ dev: true }));
+const initialGenerateCode = await runShareFileGenerate('startup');
+
+if (initialGenerateCode !== 0) {
+  process.exit(initialGenerateCode);
+}
+
+const config = createConfig({ dev: true });
+config.plugins = [...(config.plugins || []), createReloadPlugin()];
+
+const context = await esbuild.context(config);
 
 await context.watch();
 
-const server = http.createServer((request, response) => {
+const server = http.createServer(async (request, response) => {
+  const requestPath = new URL(
+    request.url || '/',
+    `http://${host}:${port}`,
+  ).pathname;
+
+  if (requestPath === devEventsPath) {
+    handleDevEvents(request, response);
+    return;
+  }
+
   const filePath = resolvePublicPath(request.url || '/');
 
   if (!filePath) {
@@ -148,7 +301,21 @@ const server = http.createServer((request, response) => {
     return;
   }
 
-  sendFile(filePath, request, response);
+  try {
+    await sendFile(filePath, request, response);
+  } catch (error) {
+    console.error('Failed to serve file:', error);
+
+    if (!response.headersSent) {
+      response.writeHead(500, {
+        'Content-Type': 'text/plain; charset=utf-8',
+      });
+      response.end('Internal Server Error');
+      return;
+    }
+
+    response.destroy();
+  }
 });
 
 server.on('error', error => {

@@ -92,9 +92,10 @@ pnpm run generate
 
 ```bash
 pnpm install
-pnpm run generate
 pnpm run dev
 ```
+
+`pnpm run dev` 会在启动时先生成一次 `share-file.json`，然后监听 UI 源码并在重建后自动刷新页面。
 
 开发服务器默认监听：
 
@@ -127,7 +128,7 @@ generate -> check -> format -> lint -> ui build
 
 | 命令                           | 说明                                       |
 | ------------------------------ | ------------------------------------------ |
-| `pnpm run dev`                 | 构建并监听 UI 源码，同时启动静态文件服务器 |
+| `pnpm run dev`                 | 启动静态文件服务器，生成一次索引并监听 UI 重建 |
 | `pnpm run generate`            | 生成 `._info.json` 与前端索引              |
 | `pnpm run generate-info`       | 只同步目录级元数据                         |
 | `pnpm run generate-share-file` | 只生成扁平化前端索引                       |
