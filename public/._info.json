@@ -2,30 +2,5 @@
   "self": {
     "description": "当前目录"
   },
-  "children": {
-    "documents": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "music": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "others": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "pictures": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "softwares": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "videos": {
-      "type": "folder",
-      "description": "文件夹"
-    }
-  }
+  "children": {}
 }

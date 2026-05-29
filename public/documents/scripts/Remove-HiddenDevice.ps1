@@ -1,5 +1,0 @@
-$hiddenDevices = Get-PnpDevice -PresentOnly:$false 
-foreach ($device in $hiddenDevices) {
-    Write-Output "Hidden device: $($device.FriendlyName)"
-	&"pnputil" /remove-device $device.InstanceId
-}
