@@ -2,12 +2,12 @@ name: 通过 GitHub Pages 部署网站
 on:
   push:
     branches:
-      - 'file'
+      - 'main'
     paths-ignore:
       - 'README.md'
   pull_request:
     branches:
-      - 'file'
+      - 'main'
     paths-ignore:
       - 'README.md'
   workflow_dispatch:
