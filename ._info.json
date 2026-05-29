@@ -3,15 +3,27 @@
     "description": "当前目录"
   },
   "children": {
-    "documents": {
-      "type": "folder",
-      "description": "文件夹"
-    },
     "softwares": {
       "type": "folder",
       "description": "文件夹"
     },
     "test-mount": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "public": {
+      "type": "folder"
+    },
+    "README.md": {
+      "type": "file",
+      "description": "Markdown 文档",
+      "created_at": "2024-07-03T20:57:58+08:00",
+      "updated_at": "2026-05-30T00:28:31+08:00",
+      "size": 16624,
+      "md5": "bf49d7a283c5f33566ab1e76ba1ab6c1",
+      "sha256": "889996270b687a811027843e8e9b36ab7dab9a48f5af87eeb95fedaa662ce48c"
+    },
+    "documents": {
       "type": "folder",
       "description": "文件夹"
     }

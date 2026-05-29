@@ -1,0 +1,260 @@
+{
+  "rootId": "root",
+  "pathIndex": {
+    "/": "root",
+    "/softwares": "softwares",
+    "softwares": "softwares",
+    "/softwares/applications": "softwares/applications",
+    "softwares/applications": "softwares/applications",
+    "/softwares/applications/tools": "softwares/applications/tools",
+    "softwares/applications/tools": "softwares/applications/tools",
+    "/softwares/applications/tools/config.yaml.example": "softwares/applications/tools/config.yaml.example",
+    "/softwares/applications/tools/generate-share-file-linux": "softwares/applications/tools/generate-share-file-linux",
+    "/softwares/applications/tools/generate-info-linux": "softwares/applications/tools/generate-info-linux",
+    "/test-mount": "test-mount",
+    "test-mount": "test-mount",
+    "/public": "public",
+    "public": "public",
+    "/public/softwares": "public/softwares",
+    "public/softwares": "public/softwares",
+    "/public/softwares/applications": "public/softwares/applications",
+    "public/softwares/applications": "public/softwares/applications",
+    "/public/softwares/applications/tools": "public/softwares/applications/tools",
+    "public/softwares/applications/tools": "public/softwares/applications/tools",
+    "/public/softwares/applications/tools/generate-share-file-linux": "public/softwares/applications/tools/generate-share-file-linux",
+    "/public/softwares/applications/tools/generate-info-linux": "public/softwares/applications/tools/generate-info-linux",
+    "/README.md": "README.md",
+    "/documents": "documents",
+    "documents": "documents",
+    "/documents/scripts": "documents/scripts",
+    "documents/scripts": "documents/scripts",
+    "/documents/scripts/cloudflare-worker.js": "documents/scripts/cloudflare-worker.js"
+  },
+  "nodes": {
+    "root": {
+      "id": "root",
+      "name": "/",
+      "type": "folder",
+      "parent": null,
+      "children": [
+        "softwares",
+        "test-mount",
+        "public",
+        "README.md",
+        "documents"
+      ],
+      "source": "local",
+      "description": "当前目录"
+    },
+    "softwares": {
+      "id": "softwares",
+      "name": "softwares",
+      "type": "folder",
+      "parent": "root",
+      "children": [
+        "softwares/applications"
+      ],
+      "source": "local",
+      "description": "当前目录"
+    },
+    "softwares/applications": {
+      "id": "softwares/applications",
+      "name": "applications",
+      "type": "folder",
+      "parent": "softwares",
+      "children": [
+        "softwares/applications/tools"
+      ],
+      "source": "local",
+      "description": "当前目录"
+    },
+    "softwares/applications/tools": {
+      "id": "softwares/applications/tools",
+      "name": "tools",
+      "type": "folder",
+      "parent": "softwares/applications",
+      "children": [
+        "softwares/applications/tools/config.yaml.example",
+        "softwares/applications/tools/generate-share-file-linux",
+        "softwares/applications/tools/generate-info-linux"
+      ],
+      "source": "local",
+      "description": "当前目录"
+    },
+    "softwares/applications/tools/config.yaml.example": {
+      "id": "softwares/applications/tools/config.yaml.example",
+      "name": "config.yaml.example",
+      "type": "file",
+      "parent": "softwares/applications/tools",
+      "children": [],
+      "source": "local",
+      "description": "EXAMPLE 文件",
+      "created_at": "2026-05-30T01:17:05+08:00",
+      "updated_at": "2026-05-30T01:17:05+08:00",
+      "size": 1590,
+      "md5": "cfedf686eee4b8a27ff1f684c1274bd2",
+      "sha256": "ffb1f3a43df06e672fddf8f510ab2d9c24690cdd12b2aa354f25041ac9cdc588",
+      "url": "/softwares/applications/tools/config.yaml.example"
+    },
+    "softwares/applications/tools/generate-share-file-linux": {
+      "id": "softwares/applications/tools/generate-share-file-linux",
+      "name": "generate-share-file-linux",
+      "type": "file",
+      "parent": "softwares/applications/tools",
+      "children": [],
+      "source": "local",
+      "description": "文件",
+      "created_at": "2026-05-30T01:17:05+08:00",
+      "updated_at": "2026-05-30T01:17:05+08:00",
+      "size": 20778800,
+      "md5": "7c9da9ecfd17f64a6823316125fee222",
+      "sha256": "a2b79a75e3990c6e15269b42df1cbe5072a511a6000135f283cd419430d80fa6",
+      "url": "/softwares/applications/tools/generate-share-file-linux"
+    },
+    "softwares/applications/tools/generate-info-linux": {
+      "id": "softwares/applications/tools/generate-info-linux",
+      "name": "generate-info-linux",
+      "type": "file",
+      "parent": "softwares/applications/tools",
+      "children": [],
+      "source": "local",
+      "description": "文件",
+      "created_at": "2026-05-30T01:17:05+08:00",
+      "updated_at": "2026-05-30T01:17:05+08:00",
+      "size": 20779936,
+      "md5": "1173b2294519488e0dbce3b2b85c7ace",
+      "sha256": "ba323a7d37fd4c41b2ff83b5ba4923a41c88e980469b0a6b7da9484fea84f166",
+      "url": "/softwares/applications/tools/generate-info-linux"
+    },
+    "test-mount": {
+      "id": "test-mount",
+      "name": "test-mount",
+      "type": "folder",
+      "parent": "root",
+      "children": [],
+      "source": "local",
+      "description": "当前目录"
+    },
+    "public": {
+      "id": "public",
+      "name": "public",
+      "type": "folder",
+      "parent": "root",
+      "children": [
+        "public/softwares"
+      ],
+      "source": "local"
+    },
+    "public/softwares": {
+      "id": "public/softwares",
+      "name": "softwares",
+      "type": "folder",
+      "parent": "public",
+      "children": [
+        "public/softwares/applications"
+      ],
+      "source": "local"
+    },
+    "public/softwares/applications": {
+      "id": "public/softwares/applications",
+      "name": "applications",
+      "type": "folder",
+      "parent": "public/softwares",
+      "children": [
+        "public/softwares/applications/tools"
+      ],
+      "source": "local"
+    },
+    "public/softwares/applications/tools": {
+      "id": "public/softwares/applications/tools",
+      "name": "tools",
+      "type": "folder",
+      "parent": "public/softwares/applications",
+      "children": [
+        "public/softwares/applications/tools/generate-share-file-linux",
+        "public/softwares/applications/tools/generate-info-linux"
+      ],
+      "source": "local"
+    },
+    "public/softwares/applications/tools/generate-share-file-linux": {
+      "id": "public/softwares/applications/tools/generate-share-file-linux",
+      "name": "generate-share-file-linux",
+      "type": "file",
+      "parent": "public/softwares/applications/tools",
+      "children": [],
+      "source": "local",
+      "created_at": "2026-05-29T15:55:26Z",
+      "updated_at": "2026-05-30T01:17:05+08:00",
+      "size": 20778800,
+      "md5": "7c9da9ecfd17f64a6823316125fee222",
+      "sha256": "a2b79a75e3990c6e15269b42df1cbe5072a511a6000135f283cd419430d80fa6",
+      "url": "/public/softwares/applications/tools/generate-share-file-linux"
+    },
+    "public/softwares/applications/tools/generate-info-linux": {
+      "id": "public/softwares/applications/tools/generate-info-linux",
+      "name": "generate-info-linux",
+      "type": "file",
+      "parent": "public/softwares/applications/tools",
+      "children": [],
+      "source": "local",
+      "created_at": "2026-05-29T15:55:26Z",
+      "updated_at": "2026-05-30T01:17:05+08:00",
+      "size": 20779936,
+      "md5": "1173b2294519488e0dbce3b2b85c7ace",
+      "sha256": "ba323a7d37fd4c41b2ff83b5ba4923a41c88e980469b0a6b7da9484fea84f166",
+      "url": "/public/softwares/applications/tools/generate-info-linux"
+    },
+    "README.md": {
+      "id": "README.md",
+      "name": "README.md",
+      "type": "file",
+      "parent": "root",
+      "children": [],
+      "source": "local",
+      "description": "Markdown 文档",
+      "created_at": "2024-07-03T20:57:58+08:00",
+      "updated_at": "2026-05-30T00:28:31+08:00",
+      "size": 16624,
+      "md5": "bf49d7a283c5f33566ab1e76ba1ab6c1",
+      "sha256": "889996270b687a811027843e8e9b36ab7dab9a48f5af87eeb95fedaa662ce48c",
+      "url": "/README.md"
+    },
+    "documents": {
+      "id": "documents",
+      "name": "documents",
+      "type": "folder",
+      "parent": "root",
+      "children": [
+        "documents/scripts"
+      ],
+      "source": "local",
+      "description": "当前目录"
+    },
+    "documents/scripts": {
+      "id": "documents/scripts",
+      "name": "scripts",
+      "type": "folder",
+      "parent": "documents",
+      "children": [
+        "documents/scripts/cloudflare-worker.js"
+      ],
+      "source": "local",
+      "description": "当前目录"
+    },
+    "documents/scripts/cloudflare-worker.js": {
+      "id": "documents/scripts/cloudflare-worker.js",
+      "name": "cloudflare-worker.js",
+      "type": "file",
+      "parent": "documents/scripts",
+      "children": [],
+      "source": "local",
+      "description": "JavaScript 脚本",
+      "created_at": "2026-05-29T14:41:06.000Z",
+      "updated_at": "2026-05-30T01:17:05+08:00",
+      "size": 8233,
+      "md5": "9e5726f7e31dd5bc21259fb6926b9a87",
+      "sha256": "4d4b14a5d92c249cbd815e386192b38a2763c85d36b981cd80814b881a1263b1",
+      "url": "/documents/scripts/cloudflare-worker.js"
+    }
+  }
+}
