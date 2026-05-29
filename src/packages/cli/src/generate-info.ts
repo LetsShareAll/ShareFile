@@ -317,13 +317,13 @@ async function hasPhysicalEntityAsync(
 }
 
 /**
- * 评估给定的节点对象是否是一个包含 redirect 配置的虚拟节点。
+ * 评估给定的节点对象是否是一个虚拟节点（包含 redirect 或 mount_source 配置）。
  *
  * @param node 需要判定的节点对象。
- * @returns 包含 redirect 属性时返回 true，否则 false。
+ * @returns 包含 redirect 或 mount_source 属性时返回 true，否则 false。
  */
 function isVirtualNode(node?: FileNode | DirectoryNode): boolean {
-  return node?.redirect !== undefined;
+  return node?.redirect !== undefined || node?.mount_source !== undefined;
 }
 
 /**
