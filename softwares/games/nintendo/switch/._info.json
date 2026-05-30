@@ -5,7 +5,19 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
+    "The Legend of Zelda Breath of the Wild": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "ACA NEOGEO METAL SLUG": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "The Legend of Zelda Tears of the Kingdom": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "Xenoblade Chronicles 3": {
       "type": "folder",
       "description": "文件夹"
     },
@@ -13,7 +25,11 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "Hyrule Warriors Age of Calamity": {
+    "Mario Kart 8 Deluxe": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "Leyendas Pokemon Arceus": {
       "type": "folder",
       "description": "文件夹"
     },
@@ -25,23 +41,7 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "Leyendas Pokemon Arceus": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "Mario Kart 8 Deluxe": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "The Legend of Zelda Breath of the Wild": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "The Legend of Zelda Tears of the Kingdom": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "Xenoblade Chronicles 3": {
+    "Hyrule Warriors Age of Calamity": {
       "type": "folder",
       "description": "文件夹"
     }

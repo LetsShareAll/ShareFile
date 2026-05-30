@@ -5,19 +5,19 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
-    "code": {
-      "type": "folder",
-      "description": "文件夹"
-    },
     "music": {
       "type": "folder",
       "description": "文件夹"
     },
-    "network": {
+    "remote": {
       "type": "folder",
       "description": "文件夹"
     },
-    "remote": {
+    "code": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "network": {
       "type": "folder",
       "description": "文件夹"
     },

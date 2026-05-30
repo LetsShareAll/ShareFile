@@ -5,15 +5,15 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
+    "webtype": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "opentype": {
       "type": "folder",
       "description": "文件夹"
     },
     "truetype": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "webtype": {
       "type": "folder",
       "description": "文件夹"
     }

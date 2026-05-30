@@ -5,11 +5,7 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
-    "android": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "java": {
+    "windows": {
       "type": "folder",
       "description": "文件夹"
     },
@@ -17,11 +13,15 @@
       "type": "folder",
       "description": "文件夹"
     },
+    "android": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "sony": {
       "type": "folder",
       "description": "文件夹"
     },
-    "windows": {
+    "java": {
       "type": "folder",
       "description": "文件夹"
     }

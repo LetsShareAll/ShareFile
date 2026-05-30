@@ -5,11 +5,11 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
-    "chain": {
+    "config": {
       "type": "folder",
       "description": "文件夹"
     },
-    "config": {
+    "chain": {
       "type": "folder",
       "description": "文件夹"
     },

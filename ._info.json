@@ -3,13 +3,39 @@
     "description": "当前目录"
   },
   "children": {
+    "music": {
+      "type": "folder"
+    },
+    "others": {
+      "type": "folder"
+    },
     "softwares": {
       "type": "folder",
       "description": "文件夹"
     },
-    "test-mount": {
-      "type": "folder",
-      "description": "文件夹"
+    "pictures": {
+      "type": "folder"
+    },
+    "share-file.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-05-29T17:18:48Z",
+      "updated_at": "2026-05-29T17:18:48Z",
+      "size": 9196,
+      "md5": "052e9647a354bdd08892dce0e8867737",
+      "sha256": "27b7dcb8935d5cbbbf1e0ee8d3fba343fcb1eff619219c9e0fc0d9823f2a7dcd"
+    },
+    "videos": {
+      "type": "folder"
+    },
+    "share-file.cdn.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-05-29T17:18:48Z",
+      "updated_at": "2026-05-29T17:18:48Z",
+      "size": 9371,
+      "md5": "6a51c5fa6e4b22fc9d74fa8103775add",
+      "sha256": "837494bd232c2a3c40dc935a5e916ebe1e4429d0fd1f1499f017b6ff1a67b0b0"
     },
     "public": {
       "type": "folder"
@@ -18,10 +44,10 @@
       "type": "file",
       "description": "Markdown 文档",
       "created_at": "2024-07-03T20:57:58+08:00",
-      "updated_at": "2026-05-30T00:28:31+08:00",
-      "size": 16624,
-      "md5": "bf49d7a283c5f33566ab1e76ba1ab6c1",
-      "sha256": "889996270b687a811027843e8e9b36ab7dab9a48f5af87eeb95fedaa662ce48c"
+      "updated_at": "2026-05-31T01:10:52+08:00",
+      "size": 4555,
+      "md5": "332f73f154bc8f95bd0f03ccf21e648a",
+      "sha256": "4e29317764caf02d890c657b6fbf104fb29ff71021880aad9c064ea7e98c30e4"
     },
     "documents": {
       "type": "folder",

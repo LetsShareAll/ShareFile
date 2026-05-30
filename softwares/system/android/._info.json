@@ -5,6 +5,10 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
+    "xiaomi": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "Windows Subsystem for Android": {
       "type": "folder",
       "description": "文件夹",
@@ -13,10 +17,6 @@
         "type": "confirm",
         "confirm_message": "即将离开本站，前往 <b>123Pan</b> 下载 <b>Windows Subsystem for Android</b>，请复制提取码：<code>EfT5</code>。<br />是否<kbd>继续</kbd>？"
       }
-    },
-    "xiaomi": {
-      "type": "folder",
-      "description": "文件夹"
     }
   }
 }
