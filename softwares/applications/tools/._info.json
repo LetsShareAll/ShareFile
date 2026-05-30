@@ -1,34 +1,35 @@
 {
   "self": {
-    "description": "当前目录"
+    "description": "当前目录",
+    "created_at": "2025-11-28T20:25:27+08:00",
+    "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
-    "config.yaml.example": {
+    "FFmpeg.tar.gz": {
       "type": "file",
-      "description": "EXAMPLE 文件",
-      "created_at": "2026-05-30T01:17:05+08:00",
-      "updated_at": "2026-05-30T01:17:05+08:00",
-      "size": 1590,
-      "md5": "cfedf686eee4b8a27ff1f684c1274bd2",
-      "sha256": "ffb1f3a43df06e672fddf8f510ab2d9c24690cdd12b2aa354f25041ac9cdc588"
+      "description": "源代码压缩包",
+      "redirect": {
+        "url": "https://github.com/LetsShareAll/file/releases/download/applications/FFmpeg.tar.gz",
+        "type": "direct"
+      }
     },
-    "generate-share-file-linux": {
+    "LibIconv.tar.gz": {
       "type": "file",
-      "description": "文件",
-      "created_at": "2026-05-30T01:17:05+08:00",
-      "updated_at": "2026-05-30T01:17:05+08:00",
-      "size": 20778800,
-      "md5": "7c9da9ecfd17f64a6823316125fee222",
-      "sha256": "a2b79a75e3990c6e15269b42df1cbe5072a511a6000135f283cd419430d80fa6"
+      "description": "GZip 压缩归档",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 2109440,
+      "md5": "80efca2743ca7683cc075d91ab0dacd7",
+      "sha256": "4d686c8267dbe4fcec1207cf858e43cbf425b9f3b883d9c33d1cb31e8261fbee"
     },
-    "generate-info-linux": {
+    "OpenCore-AMR.tar.gz": {
       "type": "file",
-      "description": "文件",
-      "created_at": "2026-05-30T01:17:05+08:00",
-      "updated_at": "2026-05-30T01:17:05+08:00",
-      "size": 20779936,
-      "md5": "1173b2294519488e0dbce3b2b85c7ace",
-      "sha256": "ba323a7d37fd4c41b2ff83b5ba4923a41c88e980469b0a6b7da9484fea84f166"
+      "description": "GZip 压缩归档",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 4689920,
+      "md5": "23a16c732c3484c68c61f18ee0be5137",
+      "sha256": "060e9e80c1353f6df1957134b9881577a2881fabc92bffc6983063608c2b8af5"
     }
   }
 }

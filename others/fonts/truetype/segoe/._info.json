@@ -1,0 +1,16 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "Segoe UI Emoji.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 2838884,
+      "md5": "d50758427673578ddf6c9edcdbf367f5",
+      "sha256": "4e3cec7d1995b6d74102c0b4669e4507ac35cbf9a9830a93ac14c6e40dfe36a9"
+    }
+  }
+}

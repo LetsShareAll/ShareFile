@@ -1,0 +1,97 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "sarasa-mono-sc-bold-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 28597336,
+      "md5": "2f8e0e9ff6ed3ee0ef85a3461b426821",
+      "sha256": "e0cb1eb173f911e4adcfbac721c3e29d78394d53af35285b56bf4123e60f5946"
+    },
+    "sarasa-mono-sc-bolditalic-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 29467728,
+      "md5": "3e2197412a17ded36acb9eed4e5aef09",
+      "sha256": "78fadddabd1366fb9db6edfcddd857fb8bf420e684d3b16f30867d88442ac43b"
+    },
+    "sarasa-mono-sc-extralight-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 28760552,
+      "md5": "9f036e95a9ac874a6612f3b08787238f",
+      "sha256": "b3ebf4b7b200b8f87616e71da102b819fdd7dbd0bcfdd1b56b3e1bc926aa46b3"
+    },
+    "sarasa-mono-sc-extralightitalic-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 29625696,
+      "md5": "bb238de9da85248e44c0853cc673ae1f",
+      "sha256": "76d2d57bd8ba913f5c35c3413f070731b2d985f6bdae4d94b9723f3064225adf"
+    },
+    "sarasa-mono-sc-italic-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 29647440,
+      "md5": "98a73456c6870333dc5df64971b0423f",
+      "sha256": "aefd524e858dfa242d27142e4cfae5e0506bbfbaa484acbc058596a17d94d655"
+    },
+    "sarasa-mono-sc-light-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 28880656,
+      "md5": "21eb58c067ab64e1a8235174855cbe41",
+      "sha256": "bede29df00686a5e53315250301dc59f364b89fb53d57a7e5f86dd896dea720f"
+    },
+    "sarasa-mono-sc-lightitalic-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 29745540,
+      "md5": "61d9767efbe5c5005be3c807b643733c",
+      "sha256": "cc0e39f58431f5f7cfc6342a9b820d9a6be9c3d17a0ed211c423fff43181bcd9"
+    },
+    "sarasa-mono-sc-regular-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 28780252,
+      "md5": "5d4fb63f29980eeca862b16d94feec60",
+      "sha256": "a6a26aad6e98772ce6af147be4caa8023db03134ba884dcedec6a59fdf0ad003"
+    },
+    "sarasa-mono-sc-semibold-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 28677392,
+      "md5": "2db12da048f4cfe1be7bc4344df8ddc2",
+      "sha256": "557a1efff8858b949c0ba5c06d1700ac7001bac04ede7fcdc691b582450358df"
+    },
+    "sarasa-mono-sc-semibolditalic-nerd-font.ttf": {
+      "type": "file",
+      "description": "TrueType 字体",
+      "created_at": "2024-07-03T13:26:50.000Z",
+      "updated_at": "2026-05-27T12:43:23.000Z",
+      "size": 29557008,
+      "md5": "1ed184209d32eb3e0be9d88b88c5a79c",
+      "sha256": "b9f8b725f797ef25dd5505f91e49fa964ced1cee720c32492a22e59842bbd5fa"
+    }
+  }
+}

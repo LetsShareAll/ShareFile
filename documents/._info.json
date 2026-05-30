@@ -1,9 +1,19 @@
 {
   "self": {
-    "description": "当前目录"
+    "description": "当前目录",
+    "created_at": "2025-11-28T20:33:09+08:00",
+    "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
+    "proxy": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "scripts": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "styles": {
       "type": "folder",
       "description": "文件夹"
     }
