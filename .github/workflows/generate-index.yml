@@ -15,6 +15,9 @@ permissions:
 jobs:
   generate-index:
     runs-on: ubuntu-latest
+    concurrency:
+      group: file-index
+      cancel-in-progress: false
 
     steps:
       - name: 签出 file 分支
@@ -24,35 +27,38 @@ jobs:
           fetch-depth: 0
 
       - name: 获取生成工具
+        id: tools
         run: |
+          set -euo pipefail
+          tools_dir="$RUNNER_TEMP/sharefile-tools"
+          mkdir -p "$tools_dir"
+
           git fetch origin main
-          git checkout origin/main -- public/softwares/applications/tools/generate-info-linux
-          git checkout origin/main -- public/softwares/applications/tools/generate-share-file-linux
-          chmod +x public/softwares/applications/tools/generate-info-linux
-          chmod +x public/softwares/applications/tools/generate-share-file-linux
+          git show origin/main:public/softwares/applications/tools/generate-info-linux > "$tools_dir/generate-info-linux"
+          git show origin/main:public/softwares/applications/tools/generate-share-file-linux > "$tools_dir/generate-share-file-linux"
+
+          chmod +x "$tools_dir"/generate-*
+          ls -lh "$tools_dir"
+          echo "dir=$tools_dir" >> "$GITHUB_OUTPUT"
 
       - name: 生成目录元数据
         run: |
-          ./public/softwares/applications/tools/generate-info-linux . --recursive
+          "${{ steps.tools.outputs.dir }}/generate-info-linux" . --recursive
 
       - name: 生成文件索引
         run: |
-          ./public/softwares/applications/tools/generate-share-file-linux . ./share-file.json --cdn-url "https://cdn-file.lssa.fun"
-
-      - name: 清理工具文件
-        run: |
-          rm -rf public/
+          "${{ steps.tools.outputs.dir }}/generate-share-file-linux" . ./share-file.json --cdn-url "https://cdn-file.lssa.fun"
 
       - name: 检查更改
         id: git-check
         run: |
           echo "检查是否有文件被修改..."
-          if git diff --quiet; then
-            echo "没有检测到更改"
-            echo "changes=false" >> $GITHUB_OUTPUT
-          else
+          if git status --porcelain | grep -q .; then
             echo "检测到文件更改"
             echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "没有检测到更改"
+            echo "changes=false" >> $GITHUB_OUTPUT
           fi
 
       - name: 提交更改
