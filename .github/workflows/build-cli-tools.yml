@@ -1,0 +1,79 @@
+name: 构建 CLI 工具
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: CLI 工具 artifact 名称
+        required: false
+        type: string
+        default: sharefile-cli-tools
+  workflow_dispatch:
+    inputs:
+      artifact-name:
+        description: CLI 工具 artifact 名称
+        required: false
+        type: string
+        default: sharefile-cli-tools
+
+jobs:
+  build-cli-tools:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 签出仓库
+        uses: actions/checkout@v6
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.2.2
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '26.2.0'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建 CLI 可执行文件
+        run: pnpm --filter @share-file/cli run build:sea
+
+      - name: 验证 CLI 可执行文件
+        run: |
+          set -euo pipefail
+          ./src/packages/cli/dist/sea/generate-info-linux --help
+          ./src/packages/cli/dist/sea/generate-share-file-linux --help
+
+          fixture="$(mktemp -d)"
+          mkdir -p "$fixture/docs"
+          printf 'hello\n' > "$fixture/docs/readme.txt"
+
+          ./src/packages/cli/dist/sea/generate-info-linux "$fixture" --no-git --no-hash
+          ./src/packages/cli/dist/sea/generate-share-file-linux "$fixture" "$fixture/share-file.json"
+          test -f "$fixture/._info.json"
+          test -f "$fixture/docs/._info.json"
+          test -f "$fixture/share-file.json"
+          test ! -f "$fixture/share-file.cdn.json"
+
+          ./src/packages/cli/dist/sea/generate-share-file-linux "$fixture" "$fixture/share-file.json" --cdn-url https://cdn.example.com/files
+          test -f "$fixture/share-file.cdn.json"
+
+      - name: 打包 CLI 工具 artifact
+        run: |
+          mkdir -p cli-tools
+          cp src/packages/cli/dist/sea/generate-info-linux cli-tools/generate-info-linux
+          cp src/packages/cli/dist/sea/generate-share-file-linux cli-tools/generate-share-file-linux
+          cp src/packages/cli/config.example.json cli-tools/config.example.json
+          chmod +x cli-tools/generate-*
+          ls -lh cli-tools/
+
+      - name: 上传 CLI 工具 artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ inputs['artifact-name'] || 'sharefile-cli-tools' }}
+          path: cli-tools/
+          if-no-files-found: error

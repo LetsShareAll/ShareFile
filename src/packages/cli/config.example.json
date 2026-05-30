@@ -1,0 +1,24 @@
+{
+  "generate_info": {
+    "root_dir": ".",
+    "output_filename": "._info.json",
+    "recursive": true,
+    "calculate_hash": true,
+    "use_git_history": true,
+    "update_size": true,
+    "clean_invalid": true,
+    "clean_ignored": true,
+    "purify_folders": true,
+    "format_output": true,
+    "force_update": false,
+    "dry_run": false,
+    "verbose": false,
+    "ignore_patterns": ["^\\.tmp$", "^\\.cache$"]
+  },
+  "generate_share_file": {
+    "root_dir": ".",
+    "output_file": "./share-file.json",
+    "cdn_base_url": "",
+    "verbose": false
+  }
+}

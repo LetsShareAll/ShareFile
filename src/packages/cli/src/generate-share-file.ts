@@ -21,23 +21,21 @@ import {
   readInfoFileAsync,
 } from '@share-file/types/logger';
 
+import {
+  getBoolean,
+  getConfigSection,
+  getString,
+  loadJsonConfig,
+  resolveConfigPath,
+} from './utils/config';
 import PluginRegistry from './utils/plugin-registry';
 const __filename = fileURLToPath(import.meta.url);
-const workspaceRoot = path.resolve(
-  path.dirname(__filename),
-  '..',
-  '..',
-  '..',
-  '..',
-);
-const DEFAULT_CDN_BASE_URL =
-  'https://cdn-file.lssa.fun/github.com/LetsShareAll/ShareFile/blob/file/public';
 
 interface GenerateShareOptions {
   rootDir: string;
   outputPath: string;
   verbose: boolean;
-  cdnBaseUrl: string;
+  cdnBaseUrl?: string;
 }
 
 // ────────────── 日志系统扩展 ──────────────
@@ -339,11 +337,12 @@ function transformToCdnVersion(
 
 function printHelp(): void {
   console.log(`
-用法: pnpm --filter @share-file/cli run generate-share-file -- [目录] [输出文件] [选项]
+用法: generate-share-file [目录] [输出文件] [选项]
 
-生成 share-file.json，并同步生成 share-file.cdn.json。
+生成 share-file.json。如果提供 CDN URL，则同步生成 share-file.cdn.json。
 
 选项:
+  --config <file>    从 JSON 配置加载选项
   --cdn-url <url>     设置 CDN 文件访问基础 URL
   --verbose           输出详细调试日志
   --help, -h          显示此帮助信息
@@ -378,8 +377,56 @@ function normalizeCdnBaseUrl(value: string): string {
 
 function parseArguments(args: string[]): GenerateShareOptions {
   const positional: string[] = [];
+  let configPath: string | undefined;
   let verbose = false;
-  let cdnBaseUrl = process.env.SHARE_FILE_CDN_URL || DEFAULT_CDN_BASE_URL;
+  let cdnBaseUrl = process.env.SHARE_FILE_CDN_URL || undefined;
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--config') {
+      const value = args[++i];
+
+      if (!value || value.startsWith('--')) {
+        console.error('--config 需要提供 JSON 配置文件路径。');
+        process.exit(1);
+      }
+
+      configPath = value;
+      continue;
+    }
+
+    if (args[i]?.startsWith('--config=')) {
+      configPath = args[i].slice('--config='.length);
+      continue;
+    }
+  }
+
+  let loadedConfig:
+    | {
+        section?: Record<string, unknown>;
+        dir: string;
+      }
+    | undefined;
+
+  if (configPath) {
+    try {
+      const config = loadJsonConfig(configPath);
+      loadedConfig = {
+        section: getConfigSection(config, 'generate_share_file'),
+        dir: config.dir,
+      };
+    } catch (error) {
+      console.error(getErrorMessage(error));
+      process.exit(1);
+    }
+  }
+
+  if (loadedConfig?.section) {
+    const configVerbose = getBoolean(loadedConfig.section, 'verbose');
+    const configCdnBaseUrl = getString(loadedConfig.section, 'cdn_base_url');
+
+    verbose = configVerbose ?? verbose;
+    cdnBaseUrl = configCdnBaseUrl !== undefined ? configCdnBaseUrl : cdnBaseUrl;
+  }
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -391,6 +438,15 @@ function parseArguments(args: string[]): GenerateShareOptions {
 
     if (arg === '--verbose') {
       verbose = true;
+      continue;
+    }
+
+    if (arg === '--config') {
+      i++;
+      continue;
+    }
+
+    if (arg.startsWith('--config=')) {
       continue;
     }
 
@@ -426,23 +482,30 @@ function parseArguments(args: string[]): GenerateShareOptions {
     process.exit(1);
   }
 
-  const rootDir = positional[0] ? path.resolve(positional[0]) : process.cwd();
-  const defaultOutput = path.join(
-    workspaceRoot,
-    'public',
-    'assets',
-    'data',
-    'share-file.json',
+  const configRootDir = resolveConfigPath(
+    getString(loadedConfig?.section, 'root_dir'),
+    loadedConfig?.dir,
+  );
+  const rootDir = positional[0]
+    ? path.resolve(positional[0])
+    : (configRootDir ?? process.cwd());
+  const defaultOutput = path.join(rootDir, 'share-file.json');
+  const configOutputPath = resolveConfigPath(
+    getString(loadedConfig?.section, 'output_file'),
+    loadedConfig?.dir,
   );
   const outputPath = positional[1]
     ? path.resolve(positional[1])
-    : defaultOutput;
+    : (configOutputPath ?? defaultOutput);
+  const normalizedCdnBaseUrl = cdnBaseUrl
+    ? normalizeCdnBaseUrl(cdnBaseUrl)
+    : undefined;
 
   return {
     rootDir,
     outputPath,
     verbose,
-    cdnBaseUrl: normalizeCdnBaseUrl(cdnBaseUrl),
+    cdnBaseUrl: normalizedCdnBaseUrl,
   };
 }
 
@@ -456,8 +519,18 @@ async function main(): Promise<void> {
 
   // 初始化插件注册表并加载可选的运行时 plugins 目录
   const registry = new PluginRegistry(logger);
-  const pluginsDir = path.join(path.dirname(__filename), 'plugins', 'runtime');
-  await registry.loadFromDir(pluginsDir, { logger });
+  const shouldLoadRuntimePlugins =
+    process.env.SHARE_FILE_LOAD_RUNTIME_PLUGINS === '1';
+
+  if (shouldLoadRuntimePlugins) {
+    const pluginsDir = path.join(
+      path.dirname(__filename),
+      'plugins',
+      'runtime',
+    );
+    await registry.loadFromDir(pluginsDir, { logger });
+  }
+
   await registry.runHook('init');
 
   logger.info(`开始生成全局分享索引，根节点: ${rootDir}`);
@@ -482,12 +555,14 @@ async function main(): Promise<void> {
     await fsp.writeFile(outputPath, json, 'utf-8');
     logger.success(`成功生成或覆盖: ${outputPath}`);
 
-    // 生成 CDN 版本 share-file.cdn.json
-    const cdnShareFile = transformToCdnVersion(shareFile, cdnBaseUrl);
-    const cdnOutputPath = outputPath.replace('.json', '.cdn.json');
-    const cdnJson = JSON.stringify(cdnShareFile, null, 2);
-    await fsp.writeFile(cdnOutputPath, cdnJson, 'utf-8');
-    logger.success(`成功生成或覆盖: ${cdnOutputPath}`);
+    if (cdnBaseUrl) {
+      // 生成 CDN 版本 share-file.cdn.json
+      const cdnShareFile = transformToCdnVersion(shareFile, cdnBaseUrl);
+      const cdnOutputPath = outputPath.replace('.json', '.cdn.json');
+      const cdnJson = JSON.stringify(cdnShareFile, null, 2);
+      await fsp.writeFile(cdnOutputPath, cdnJson, 'utf-8');
+      logger.success(`成功生成或覆盖: ${cdnOutputPath}`);
+    }
 
     // 构建完成后触发插件回调（只为原始版本触发）
     await registry.runHook('afterBuild', outputPath, shareFile);
@@ -499,13 +574,7 @@ async function main(): Promise<void> {
   }
 }
 
-// 当模块为主入口触发时（非引用导入时）自动启动程序并执行兜底崩溃拦截。
-if (
-  process.argv[1] &&
-  path.resolve(process.argv[1]) === path.resolve(__filename)
-) {
-  main().catch(err => {
-    console.error('不可恢复的致命错误:', err);
-    process.exit(1);
-  });
-}
+main().catch(err => {
+  console.error('不可恢复的致命错误:', err);
+  process.exit(1);
+});

@@ -11,7 +11,6 @@ import * as fs from 'fs';
 import * as fsp from 'fs/promises';
 import * as path from 'path';
 import { promisify } from 'util';
-import { fileURLToPath } from 'url';
 
 import {
   DirectoryNode,
@@ -28,15 +27,16 @@ import {
   readInfoFileAsync,
 } from '@share-file/types/logger';
 
+import {
+  getBoolean,
+  getConfigSection,
+  getString,
+  getStringArray,
+  loadJsonConfig,
+  resolveConfigPath,
+} from './utils/config';
+
 const execFileAsync = promisify(execFile);
-const __filename = fileURLToPath(import.meta.url);
-const workspaceRoot = path.resolve(
-  path.dirname(__filename),
-  '..',
-  '..',
-  '..',
-  '..',
-);
 
 // ────────────── 日志系统扩展 ──────────────
 
@@ -259,7 +259,7 @@ const FILE_SPECIFIC_FIELD_ORDER = ['version', 'size', 'md5', 'sha256'] as const;
  */
 function printHelp(): void {
   console.log(`
-用法: pnpm --filter @share-file/cli run generate-info -- [目录] [选项]
+用法: generate-info [目录] [选项]
 
 生成或更新 ._info.json 文件。
 注意：默认情况下（即 sync 模式），脚本会递归处理所有子目录。
@@ -571,68 +571,6 @@ function isFieldLocked(
 }
 
 // ────────────── 配置加载与核心逻辑 ──────────────
-
-/**
- * 从本地磁盘寻找并解析用户定义的 JSON 选项配置文件。
- *
- * @param configPath 系统中存在的配置文件路径地址。
- * @returns 从该文件解析剥离得到的对象数据，仅截取 GenerateOptions 所支持的字段。
- */
-function loadConfigFile(configPath: string): Partial<GenerateOptions> {
-  if (!fs.existsSync(configPath)) {
-    return {};
-  }
-
-  let raw: string;
-
-  try {
-    raw = fs.readFileSync(configPath, 'utf-8');
-  } catch {
-    console.warn(`警告：无法读取配置文件 ${configPath}。`);
-    return {};
-  }
-
-  let parsed: unknown;
-
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    console.error(`错误：配置文件 ${configPath} 不是合法的 JSON。`);
-    process.exit(1);
-  }
-
-  const config = parsed as Record<string, unknown>;
-  const options: Partial<GenerateOptions> = {};
-
-  if (typeof config.clean === 'boolean') options.clean = config.clean;
-  if (typeof config.purify === 'boolean') options.purify = config.purify;
-  if (typeof config.format === 'boolean') options.format = config.format;
-  if (typeof config.computeHash === 'boolean')
-    options.computeHash = config.computeHash;
-  if (typeof config.useGitTime === 'boolean')
-    options.useGitTime = config.useGitTime;
-  if (typeof config.updateSize === 'boolean')
-    options.updateSize = config.updateSize;
-  if (typeof config.verbose === 'boolean') options.verbose = config.verbose;
-  if (typeof config.force === 'boolean') options.force = config.force;
-  if (typeof config.dryRun === 'boolean') options.dryRun = config.dryRun;
-  if (typeof config.recursive === 'boolean')
-    options.recursive = config.recursive;
-  if (typeof config.sync === 'boolean') options.sync = config.sync;
-  if (typeof config.cleanIgnored === 'boolean')
-    options.cleanIgnored = config.cleanIgnored;
-
-  if (Array.isArray(config.extraIgnorePatterns)) {
-    options.extraIgnorePatterns = config.extraIgnorePatterns.filter(
-      (item): item is string => typeof item === 'string',
-    );
-  }
-
-  if (typeof config.outputFile === 'string')
-    options.outputFile = config.outputFile;
-
-  return options;
-}
 
 /**
  * 扫描传入的绝对目录路径，将未被忽略正则拦截的节点构建为内存字典。
@@ -1074,49 +1012,81 @@ function parseArguments(argv: string[]): GenerateOptions {
   let configPath: string | undefined;
 
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === '--config' && i + 1 < argv.length) {
-      configPath = argv[i + 1];
-      break;
+    if (argv[i] === '--config') {
+      const value = argv[++i];
+
+      if (!value || value.startsWith('--')) {
+        console.error('--config 需要提供 JSON 配置文件路径。');
+        process.exit(1);
+      }
+
+      configPath = value;
+      continue;
+    }
+
+    if (argv[i]?.startsWith('--config=')) {
+      configPath = argv[i].slice('--config='.length);
+      continue;
     }
   }
 
-  if (!configPath) {
-    const defaultConfigPath = path.join(
-      workspaceRoot,
-      'public',
-      'assets',
-      'data',
-      'generate-info.config.json',
-    );
-    if (fs.existsSync(defaultConfigPath)) configPath = defaultConfigPath;
-  }
+  let configSection: Record<string, unknown> | undefined;
+  let configDir: string | undefined;
 
-  const fileConfig = configPath ? loadConfigFile(configPath) : {};
+  if (configPath) {
+    try {
+      const config = loadJsonConfig(configPath);
+      configSection = getConfigSection(config, 'generate_info');
+      configDir = config.dir;
+    } catch (error) {
+      console.error(getErrorMessage(error));
+      process.exit(1);
+    }
+  }
 
   const defaultOptions: GenerateOptions = {
     dirPath: process.cwd(),
-    clean: true,
-    cleanIgnored: true,
-    purify: true,
-    format: true,
-    computeHash: true,
-    useGitTime: true,
-    updateSize: true,
-    extraIgnorePatterns: [],
-    verbose: false,
+    clean: getBoolean(configSection, 'clean_invalid') ?? true,
+    cleanIgnored: getBoolean(configSection, 'clean_ignored') ?? true,
+    purify: getBoolean(configSection, 'purify_folders') ?? true,
+    format: getBoolean(configSection, 'format_output') ?? true,
+    computeHash: getBoolean(configSection, 'calculate_hash') ?? true,
+    useGitTime: getBoolean(configSection, 'use_git_history') ?? true,
+    updateSize: getBoolean(configSection, 'update_size') ?? true,
+    extraIgnorePatterns: getStringArray(configSection, 'ignore_patterns') ?? [],
+    verbose: getBoolean(configSection, 'verbose') ?? false,
     sync: true,
-    force: false,
-    dryRun: false,
-    recursive: true,
-    ...fileConfig,
+    force: getBoolean(configSection, 'force_update') ?? false,
+    dryRun: getBoolean(configSection, 'dry_run') ?? false,
+    recursive: getBoolean(configSection, 'recursive') ?? true,
   };
 
   const options = { ...defaultOptions };
+  const configRootDir = resolveConfigPath(
+    getString(configSection, 'root_dir'),
+    configDir,
+  );
+
+  const outputFilename = getString(configSection, 'output_filename');
+
+  if (configRootDir) {
+    options.dirPath = configRootDir;
+  }
+
+  if (outputFilename && outputFilename !== '._info.json') {
+    options.outputFile = resolveConfigPath(outputFilename, configDir);
+  }
 
   let i = 0;
+  let consumedPositional = false;
 
   while (i < argv.length) {
     const arg = argv[i];
+
+    if (arg.startsWith('--config=')) {
+      i++;
+      continue;
+    }
 
     switch (arg) {
       case '--help':
@@ -1178,8 +1148,11 @@ function parseArguments(argv: string[]): GenerateOptions {
         if (i + 1 < argv.length) options.outputFile = argv[++i];
         break;
       default:
-        if (!arg.startsWith('-') && i === 0)
+        if (!arg.startsWith('-') && !consumedPositional) {
           options.dirPath = path.resolve(arg);
+          consumedPositional = true;
+        }
+
         break;
     }
 
@@ -1224,12 +1197,7 @@ async function main(): Promise<void> {
   }
 }
 
-if (
-  process.argv[1] &&
-  path.resolve(process.argv[1]) === path.resolve(__filename)
-) {
-  main().catch(err => {
-    console.error('致命执行错误:', err);
-    process.exit(1);
-  });
-}
+main().catch(err => {
+  console.error('致命执行错误:', err);
+  process.exit(1);
+});
