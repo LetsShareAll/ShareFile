@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 const packageRoot = path.resolve(__dirname, '..');
 const distRoot = path.join(packageRoot, 'dist', 'sea');
 const bundleOnly = process.argv.includes('--bundle-only');
+const maxExecutableSizeBytes = 95 * 1024 * 1024;
 const executableSuffix =
   process.platform === 'win32'
     ? '-windows.exe'
@@ -38,6 +39,53 @@ function run(command, args) {
 
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
+  }
+}
+
+function formatSize(bytes) {
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function getFileSize(filePath) {
+  return fs.statSync(filePath).size;
+}
+
+function stripExecutable(filePath) {
+  if (process.platform === 'win32') return;
+
+  const args =
+    process.platform === 'darwin'
+      ? ['-x', filePath]
+      : ['--strip-all', filePath];
+  const beforeSize = getFileSize(filePath);
+  const result = spawnSync('strip', args, {
+    cwd: packageRoot,
+    stdio: 'inherit',
+    shell: false,
+  });
+
+  if (result.status !== 0) {
+    console.warn(
+      `strip 不可用或执行失败，保留未剥离产物: ${path.basename(filePath)}`,
+    );
+    return;
+  }
+
+  const afterSize = getFileSize(filePath);
+  console.log(
+    `stripped ${path.basename(filePath)}: ${formatSize(beforeSize)} -> ${formatSize(afterSize)}`,
+  );
+}
+
+function assertExecutableSize(filePath) {
+  const size = getFileSize(filePath);
+
+  if (size > maxExecutableSizeBytes) {
+    throw new Error(
+      `${path.basename(filePath)} 为 ${formatSize(size)}，超过 ${formatSize(
+        maxExecutableSizeBytes,
+      )} 的提交上限预警。请压缩/剥离产物后再发布。`,
+    );
   }
 }
 
@@ -71,6 +119,9 @@ async function buildExecutable(target, bundlePath) {
 
   await fsp.writeFile(seaConfigPath, JSON.stringify(seaConfig, null, 2));
   run(process.execPath, ['--build-sea', seaConfigPath]);
+
+  stripExecutable(outputPath);
+  assertExecutableSize(outputPath);
 
   if (process.platform !== 'win32') {
     fs.chmodSync(outputPath, 0o755);
