@@ -41,45 +41,81 @@ interface LoadExternalResult {
 
 // ────────────── URL 构建 ──────────────
 
+function trimUrlSegment(segment: string): string {
+  return segment.replace(/^\/+|\/+$/g, '');
+}
+
+function joinUrl(baseUrl: string, ...segments: string[]): string {
+  const normalizedBase = baseUrl.replace(/\/+$/g, '');
+  const normalizedSegments = segments.map(trimUrlSegment).filter(Boolean);
+
+  return [normalizedBase, ...normalizedSegments].join('/');
+}
+
 /**
- * 根据 mount_source 配置构建外部 share-file.json 的 URL
+ * 根据 mountSource 配置构建外部仓库根目录下的 share-file.json URL。
  */
-function buildExternalUrl(
+function buildExternalIndexUrl(
   mountSource: MountSourceInfo,
-  useCdn: boolean,
+  useCdnIndex: boolean,
 ): string {
-  const {
-    provider,
-    repository,
-    branch = 'main',
-    subPath = '/',
-    access_cdn,
-  } = mountSource;
+  const { provider, repository, branch = 'main', accessCdn } = mountSource;
 
   if (provider !== 'github') {
     throw new Error(`不支持的存储提供商: ${provider}`);
   }
 
-  const fileName = useCdn ? 'share-file.cdn.json' : 'share-file.json';
-  const cleanSubPath = subPath === '/' ? '' : subPath;
-  const filePath = `${cleanSubPath}/${fileName}`.replace(/\/+/g, '/');
+  const fileName = useCdnIndex ? 'share-file.cdn.json' : 'share-file.json';
 
   // 自定义 CDN URL
-  if (access_cdn && access_cdn !== 'jsdelivr' && access_cdn !== 'raw') {
-    return `${access_cdn}/${repository}/${branch}${filePath}`;
+  if (accessCdn && accessCdn !== 'jsdelivr' && accessCdn !== 'raw') {
+    return joinUrl(accessCdn, repository, branch, fileName);
   }
 
   // jsDelivr CDN
-  if (access_cdn === 'jsdelivr' || !access_cdn) {
-    return `https://cdn.jsdelivr.net/gh/${repository}@${branch}${filePath}`;
+  if (accessCdn === 'jsdelivr' || !accessCdn) {
+    return `https://cdn.jsdelivr.net/gh/${repository}@${branch}/${fileName}`;
   }
 
   // GitHub raw URL
-  if (access_cdn === 'raw') {
-    return `https://raw.githubusercontent.com/${repository}/${branch}${filePath}`;
+  if (accessCdn === 'raw') {
+    return joinUrl(
+      'https://raw.githubusercontent.com',
+      repository,
+      branch,
+      fileName,
+    );
   }
 
-  throw new Error(`无效的 access_cdn 配置: ${access_cdn}`);
+  throw new Error(`无效的 accessCdn 配置: ${accessCdn}`);
+}
+
+function buildExternalFileUrl(
+  mountSource: MountSourceInfo,
+  nodeId: string,
+): string {
+  const { provider, repository, branch = 'main', accessCdn } = mountSource;
+
+  if (provider !== 'github') {
+    throw new Error(`不支持的存储提供商: ${provider}`);
+  }
+
+  if (accessCdn && accessCdn !== 'jsdelivr' && accessCdn !== 'raw') {
+    return joinUrl(accessCdn, repository, branch, nodeId);
+  }
+
+  if (accessCdn === 'raw') {
+    return joinUrl(
+      'https://raw.githubusercontent.com',
+      repository,
+      branch,
+      nodeId,
+    );
+  }
+
+  return `https://cdn.jsdelivr.net/gh/${repository}@${branch}/${trimUrlSegment(
+    nodeId,
+  )}`;
 }
 
 /**
@@ -94,7 +130,7 @@ async function fetchWithBranchFallback(
     : ['main', 'master'];
 
   for (const branch of branches) {
-    const url = buildExternalUrl({ ...mountSource, branch }, useCdn);
+    const url = buildExternalIndexUrl({ ...mountSource, branch }, useCdn);
 
     try {
       const response = await fetch(url);
@@ -117,8 +153,16 @@ async function fetchWithBranchFallback(
  * 生成缓存键
  */
 function getCacheKey(mountPoint: string, mountSource: MountSourceInfo): string {
-  const { provider, repository, branch = 'main', subPath = '/' } = mountSource;
-  return `${CACHE_KEY_PREFIX}${provider}:${repository}:${branch}:${subPath}:${mountPoint}`;
+  const {
+    provider,
+    repository,
+    branch = 'main',
+    subPath = '/',
+    accessCdn = 'jsdelivr',
+    useCdnIndex = false,
+  } = mountSource;
+
+  return `${CACHE_KEY_PREFIX}${provider}:${repository}:${branch}:${subPath}:${accessCdn}:${useCdnIndex}:${mountPoint}`;
 }
 
 /**
@@ -227,7 +271,7 @@ async function loadExternalShareFile(
 
   // 从网络加载
   try {
-    const useCdn = mountSource.use_cdn_index ?? false;
+    const useCdn = mountSource.useCdnIndex ?? false;
     const response = await fetchWithBranchFallback(mountSource, useCdn);
     const data: ShareFile = await response.json();
 
@@ -296,6 +340,8 @@ function rewriteExternalNodes(
   externalNodes: Record<string, ShareNode>,
   externalRootId: string,
   mountPointPath: string,
+  mountSource: MountSourceInfo,
+  shouldGenerateFileUrls: boolean,
 ): { nodes: Record<string, ShareNode>; pathIndex: Record<string, string> } {
   const rewrittenNodes: Record<string, ShareNode> = {};
   const pathIndex: Record<string, string> = {};
@@ -318,6 +364,12 @@ function rewriteExternalNodes(
     const newId = idMapping[oldId];
     const newParentId = node.parent ? idMapping[node.parent] || null : null;
 
+    const shouldAddFileUrl =
+      shouldGenerateFileUrls &&
+      node.type === 'file' &&
+      !node.url &&
+      !node.redirect_url;
+
     const rewrittenNode: ShareNode = {
       ...node,
       id: newId,
@@ -330,6 +382,9 @@ function rewriteExternalNodes(
       ),
       source: 'external',
       mount_point: mountPointPath,
+      ...(shouldAddFileUrl
+        ? { url: buildExternalFileUrl(mountSource, oldId) }
+        : {}),
     };
 
     rewrittenNodes[newId] = rewrittenNode;
@@ -355,10 +410,55 @@ function mergeExternalNodes(
 ): ShareFile {
   const mergedNodes = { ...localData.nodes };
   const mergedPathIndex = { ...localData.pathIndex };
+  const blockedExternalNodeIds = new Set<string>();
+
+  const isLocalNode = (node?: ShareNode): boolean =>
+    node?.source === undefined || node.source === 'local';
+
+  const blockExternalSubtree = (nodeId: string): void => {
+    if (blockedExternalNodeIds.has(nodeId)) return;
+
+    blockedExternalNodeIds.add(nodeId);
+
+    const node = externalResult.nodes[nodeId];
+    if (!node) return;
+
+    node.children.forEach(childId => blockExternalSubtree(childId));
+  };
+
+  Object.entries(externalResult.nodes).forEach(([nodeId, node]) => {
+    const existingNode = mergedNodes[nodeId];
+
+    if (
+      existingNode &&
+      isLocalNode(existingNode) &&
+      !(existingNode.type === 'folder' && node.type === 'folder')
+    ) {
+      blockExternalSubtree(nodeId);
+    }
+  });
 
   // 合并节点（本地优先，处理冲突）
   Object.entries(externalResult.nodes).forEach(([nodeId, node]) => {
-    if (mergedNodes[nodeId] && node.source === 'local') {
+    if (blockedExternalNodeIds.has(nodeId)) {
+      console.warn(`节点 ID 冲突，本地优先: ${nodeId}`);
+      return;
+    }
+
+    const existingNode = mergedNodes[nodeId];
+
+    if (
+      existingNode?.type === 'folder' &&
+      node.type === 'folder' &&
+      isLocalNode(existingNode)
+    ) {
+      mergedNodes[nodeId] = {
+        ...node,
+        ...existingNode,
+        source: existingNode.source ?? 'local',
+        children: [...new Set([...existingNode.children, ...node.children])],
+      };
+    } else if (existingNode && isLocalNode(existingNode)) {
       console.warn(`节点 ID 冲突，本地优先: ${nodeId}`);
     } else {
       mergedNodes[nodeId] = node;
@@ -367,10 +467,18 @@ function mergeExternalNodes(
 
   // 合并路径索引
   Object.entries(externalResult.pathIndex).forEach(([path, nodeId]) => {
-    if (
-      mergedPathIndex[path] &&
-      mergedNodes[mergedPathIndex[path]]?.source === 'local'
-    ) {
+    if (blockedExternalNodeIds.has(nodeId)) return;
+
+    const existingNodeId = mergedPathIndex[path];
+
+    if (!existingNodeId) {
+      mergedPathIndex[path] = nodeId;
+      return;
+    }
+
+    if (existingNodeId === nodeId) return;
+
+    if (isLocalNode(mergedNodes[existingNodeId])) {
       console.warn(`路径冲突，本地优先: ${path}`);
     } else {
       mergedPathIndex[path] = nodeId;
@@ -382,7 +490,10 @@ function mergeExternalNodes(
 
   if (mountPointNode) {
     const externalRootChildren = Object.values(externalResult.nodes)
-      .filter(node => node.parent === mountPointId)
+      .filter(
+        node =>
+          node.parent === mountPointId && !blockedExternalNodeIds.has(node.id),
+      )
       .map(node => node.id);
 
     // 创建新的节点对象以避免修改只读属性
@@ -415,10 +526,10 @@ export async function loadAllExternalSources(
   Object.entries(localData.nodes).forEach(([nodeId, node]) => {
     if (
       node.type === 'folder' &&
-      (node as unknown as { mount_source?: MountSourceInfo }).mount_source
+      (node as unknown as { mountSource?: MountSourceInfo }).mountSource
     ) {
-      const mountSource = (node as unknown as { mount_source: MountSourceInfo })
-        .mount_source;
+      const mountSource = (node as unknown as { mountSource: MountSourceInfo })
+        .mountSource;
 
       mountPoints.push({
         mountPointId: nodeId,
@@ -477,6 +588,8 @@ export async function loadAllExternalSources(
       filtered.nodes,
       filtered.rootNodeId,
       mountPoint.mountPointPath,
+      mountPoint.mountSource,
+      !(mountPoint.mountSource.useCdnIndex ?? false),
     );
 
     updateExternalSourceStatus(mountPoint.mountPointPath, 'success');
@@ -515,15 +628,15 @@ export async function refreshMountPoint(
 
   if (
     !mountPointNode ||
-    !(mountPointNode as unknown as { mount_source?: MountSourceInfo })
-      .mount_source
+    !(mountPointNode as unknown as { mountSource?: MountSourceInfo })
+      .mountSource
   ) {
     throw new Error(`节点不是挂载点: ${mountPointId}`);
   }
 
   const mountSource = (
-    mountPointNode as unknown as { mount_source: MountSourceInfo }
-  ).mount_source;
+    mountPointNode as unknown as { mountSource: MountSourceInfo }
+  ).mountSource;
 
   // 清除缓存
   clearMountPointCache(mountPointId, mountSource);
@@ -546,6 +659,8 @@ export async function refreshMountPoint(
     filtered.nodes,
     filtered.rootNodeId,
     mountPointId,
+    mountSource,
+    !(mountSource.useCdnIndex ?? false),
   );
 
   // 合并到本地数据

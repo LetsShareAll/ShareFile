@@ -28,9 +28,9 @@ export interface MountSourceInfo {
   /** 外部仓库的子路径，可选，默认为根目录 '/'。用于只挂载外部仓库的某个子目录。 */
   readonly subPath?: string;
   /** 访问索引文件时使用的 CDN 或访问方式。可选值：'jsdelivr' | 'raw' | 自定义 CDN URL。 */
-  readonly access_cdn?: string;
+  readonly accessCdn?: string;
   /** 是否优先加载外部仓库的 share-file.cdn.json 文件。默认 false，加载 share-file.json。 */
-  readonly use_cdn_index?: boolean;
+  readonly useCdnIndex?: boolean;
 }
 
 /**
@@ -84,7 +84,7 @@ export interface FileNodeBaseInfo extends BaseInfo {
  */
 export interface DirectoryNodeBaseInfo extends BaseInfo {
   /** 外部存储挂载源配置。仅当此目录节点作为外部存储挂载点时存在。 */
-  readonly mount_source?: MountSourceInfo;
+  readonly mountSource?: MountSourceInfo;
 }
 
 /**
@@ -196,6 +196,8 @@ export interface ShareNode {
   readonly source?: 'local' | 'external';
   /** 如果是外部节点，标识其所属的挂载点路径。 */
   readonly mount_point?: string;
+  /** 外部存储挂载源配置。仅目录节点可用。 */
+  readonly mountSource?: MountSourceInfo;
 }
 
 /**

@@ -850,7 +850,7 @@ async function main(): Promise<void> {
     hasExternalSources = Object.values(localData.nodes).some(
       (node: ShareNode) =>
         node.type === 'folder' &&
-        (node as unknown as { mount_source?: MountSourceInfo }).mount_source,
+        (node as unknown as { mountSource?: MountSourceInfo }).mountSource,
     );
 
     // 如果有外部源，显示刷新按钮

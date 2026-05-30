@@ -35,8 +35,8 @@ class MountSourceInfo(TypedDict, total=False):
     repository: str
     branch: Optional[str]
     subPath: Optional[str]
-    access_cdn: Optional[str]
-    use_cdn_index: Optional[bool]
+    accessCdn: Optional[str]
+    useCdnIndex: Optional[bool]
 
 
 class BaseInfo(TypedDict, total=False):
@@ -64,7 +64,7 @@ class DirectoryNodeInfo(BaseInfo, total=False):
     """目录节点信息"""
 
     type: Literal["folder"]
-    mount_source: Optional[MountSourceInfo]
+    mountSource: Optional[MountSourceInfo]
 
 
 NodeInfo = Union[FileNodeInfo, DirectoryNodeInfo]
@@ -283,7 +283,7 @@ BASE_FIELD_ORDER = [
     "description",
     "hidden",
     "redirect",
-    "mount_source",
+    "mountSource",
     "hold",
     "created_at",
     "updated_at",

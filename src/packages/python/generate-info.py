@@ -232,8 +232,8 @@ def process_directory(
                     new_node["hidden"] = old_node["hidden"]
                 if old_node.get("redirect"):
                     new_node["redirect"] = old_node["redirect"]
-                if old_node.get("mount_source"):
-                    new_node["mount_source"] = old_node["mount_source"]
+                if old_node.get("mountSource"):
+                    new_node["mountSource"] = old_node["mountSource"]
                 if old_node.get("hold"):
                     new_node["hold"] = old_node["hold"]
                 if old_node.get("created_at"):
@@ -254,8 +254,8 @@ def process_directory(
     if old_info:
         for name, old_node in old_info["children"].items():
             if name not in new_info["children"]:
-                # 检查是否为虚拟节点（有 redirect 字段）
-                if old_node.get("redirect"):
+                # 检查是否为虚拟节点（有 redirect 或 mountSource 字段）
+                if old_node.get("redirect") or old_node.get("mountSource"):
                     new_info["children"][name] = old_node
                     logger.stats["virtualNodes"] += 1
                     logger.debug(f"保留虚拟节点: {name}")

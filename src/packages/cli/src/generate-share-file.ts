@@ -9,7 +9,7 @@
 import * as fsp from 'fs/promises';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { DirectoryNode, FileNode } from '@share-file/types';
+import { DirectoryNode, FileNode, MountSourceInfo } from '@share-file/types';
 import {
   Logger,
   getErrorMessage,
@@ -97,6 +97,8 @@ interface ShareNode {
   redirect_type?: string | null;
   /** 附带用于提醒的二次重定向确认交互文案。 */
   redirect_confirm_message?: string | null;
+  /** 外部存储挂载源配置。仅目录节点可用。 */
+  mountSource?: MountSourceInfo;
 }
 
 /** * `share-file.json` 被写出时所呈现的完整顶层容器对象。
@@ -172,6 +174,12 @@ function infoNodeToShareNode(
     if (file.version) base.version = file.version;
     if (file.md5) base.md5 = file.md5;
     if (file.sha256) base.sha256 = file.sha256;
+  } else {
+    const folder = child as DirectoryNode;
+
+    if (folder.mountSource !== undefined) {
+      base.mountSource = folder.mountSource;
+    }
   }
 
   return base;
