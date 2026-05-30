@@ -15,6 +15,15 @@ import type {
   MountSourceInfo,
 } from '@share-file/types';
 import {
+  getMountSourceAccessCdn,
+  getMountSourceSubPath,
+  getMountSourceUseCdnIndex,
+  getNodeMountSource,
+  getShareFilePathIndex,
+  getShareFileRootId,
+  normalizeShareFile,
+} from '@share-file/types';
+import {
   initExternalSourceStatus,
   updateExternalSourceStatus,
 } from './notifications';
@@ -59,7 +68,8 @@ function buildExternalIndexUrl(
   mountSource: MountSourceInfo,
   useCdnIndex: boolean,
 ): string {
-  const { provider, repository, branch = 'main', accessCdn } = mountSource;
+  const { provider, repository, branch = 'main' } = mountSource;
+  const accessCdn = getMountSourceAccessCdn(mountSource);
 
   if (provider !== 'github') {
     throw new Error(`不支持的存储提供商: ${provider}`);
@@ -87,14 +97,15 @@ function buildExternalIndexUrl(
     );
   }
 
-  throw new Error(`无效的 accessCdn 配置: ${accessCdn}`);
+  throw new Error(`无效的 access_cdn 配置: ${accessCdn}`);
 }
 
 function buildExternalFileUrl(
   mountSource: MountSourceInfo,
   nodeId: string,
 ): string {
-  const { provider, repository, branch = 'main', accessCdn } = mountSource;
+  const { provider, repository, branch = 'main' } = mountSource;
+  const accessCdn = getMountSourceAccessCdn(mountSource);
 
   if (provider !== 'github') {
     throw new Error(`不支持的存储提供商: ${provider}`);
@@ -153,14 +164,10 @@ async function fetchWithBranchFallback(
  * 生成缓存键
  */
 function getCacheKey(mountPoint: string, mountSource: MountSourceInfo): string {
-  const {
-    provider,
-    repository,
-    branch = 'main',
-    subPath = '/',
-    accessCdn = 'jsdelivr',
-    useCdnIndex = false,
-  } = mountSource;
+  const { provider, repository, branch = 'main' } = mountSource;
+  const subPath = getMountSourceSubPath(mountSource) ?? '/';
+  const accessCdn = getMountSourceAccessCdn(mountSource) ?? 'jsdelivr';
+  const useCdnIndex = getMountSourceUseCdnIndex(mountSource) ?? false;
 
   return `${CACHE_KEY_PREFIX}${provider}:${repository}:${branch}:${subPath}:${accessCdn}:${useCdnIndex}:${mountPoint}`;
 }
@@ -173,17 +180,31 @@ function loadFromCache(cacheKey: string): ShareFile | null {
     const cached = localStorage.getItem(cacheKey);
     if (!cached) return null;
 
-    const cacheData: ExternalSourceCache = JSON.parse(cached);
+    const cacheData = JSON.parse(cached) as ExternalSourceCache &
+      Record<string, unknown>;
     const now = new Date().toISOString();
+    const expiresAt =
+      typeof cacheData.expires_at === 'string'
+        ? cacheData.expires_at
+        : typeof cacheData.expiresAt === 'string'
+          ? cacheData.expiresAt
+          : undefined;
 
     // 检查是否过期
-    if (cacheData.expiresAt < now) {
+    if (!expiresAt || expiresAt < now) {
+      localStorage.removeItem(cacheKey);
+      return null;
+    }
+
+    const data = normalizeShareFile(cacheData.data);
+
+    if (!data) {
       localStorage.removeItem(cacheKey);
       return null;
     }
 
     console.log(`从缓存加载外部源: ${cacheKey}`);
-    return cacheData.data;
+    return data;
   } catch (error) {
     console.error('缓存加载失败:', error);
     return null;
@@ -205,14 +226,14 @@ function saveToCache(
 
     const cacheData: ExternalSourceCache = {
       data,
-      cachedAt: now.toISOString(),
-      expiresAt: expiresAt.toISOString(),
-      mountPoint,
+      cached_at: now.toISOString(),
+      expires_at: expiresAt.toISOString(),
+      mount_point: mountPoint,
       source: {
         provider: mountSource.provider,
         repository: mountSource.repository,
         branch: mountSource.branch || 'main',
-        subPath: mountSource.subPath,
+        sub_path: getMountSourceSubPath(mountSource),
       },
     };
 
@@ -271,9 +292,13 @@ async function loadExternalShareFile(
 
   // 从网络加载
   try {
-    const useCdn = mountSource.useCdnIndex ?? false;
+    const useCdn = getMountSourceUseCdnIndex(mountSource) ?? false;
     const response = await fetchWithBranchFallback(mountSource, useCdn);
-    const data: ShareFile = await response.json();
+    const data = normalizeShareFile(await response.json());
+
+    if (!data) {
+      throw new Error('外部源索引结构不符合要求');
+    }
 
     // 保存到缓存
     saveToCache(cacheKey, data, mountPoint, mountSource);
@@ -296,12 +321,15 @@ function filterExternalNodes(
   subPath: string,
 ): { nodes: Record<string, ShareNode>; rootNodeId: string } | null {
   if (subPath === '/') {
-    return { nodes: externalData.nodes, rootNodeId: externalData.rootId };
+    return {
+      nodes: externalData.nodes,
+      rootNodeId: getShareFileRootId(externalData),
+    };
   }
 
   // 查找 subPath 对应的节点
   const cleanSubPath = subPath.startsWith('/') ? subPath : `/${subPath}`;
-  const subPathNodeId = externalData.pathIndex[cleanSubPath];
+  const subPathNodeId = getShareFilePathIndex(externalData)[cleanSubPath];
 
   if (!subPathNodeId) {
     console.error(`外部源中不存在路径: ${cleanSubPath}`);
@@ -409,7 +437,7 @@ function mergeExternalNodes(
   mountPointId: string,
 ): ShareFile {
   const mergedNodes = { ...localData.nodes };
-  const mergedPathIndex = { ...localData.pathIndex };
+  const mergedPathIndex = { ...getShareFilePathIndex(localData) };
   const blockedExternalNodeIds = new Set<string>();
 
   const isLocalNode = (node?: ShareNode): boolean =>
@@ -508,7 +536,7 @@ function mergeExternalNodes(
   return {
     ...localData,
     nodes: mergedNodes,
-    pathIndex: mergedPathIndex,
+    path_index: mergedPathIndex,
   };
 }
 
@@ -526,10 +554,9 @@ export async function loadAllExternalSources(
   Object.entries(localData.nodes).forEach(([nodeId, node]) => {
     if (
       node.type === 'folder' &&
-      (node as unknown as { mountSource?: MountSourceInfo }).mountSource
+      getNodeMountSource(node)
     ) {
-      const mountSource = (node as unknown as { mountSource: MountSourceInfo })
-        .mountSource;
+      const mountSource = getNodeMountSource(node)!;
 
       mountPoints.push({
         mountPointId: nodeId,
@@ -571,7 +598,7 @@ export async function loadAllExternalSources(
     // 过滤节点（支持 subPath）
     const filtered = filterExternalNodes(
       result.data,
-      mountPoint.mountSource.subPath || '/',
+      getMountSourceSubPath(mountPoint.mountSource) || '/',
     );
 
     if (!filtered) {
@@ -589,7 +616,7 @@ export async function loadAllExternalSources(
       filtered.rootNodeId,
       mountPoint.mountPointPath,
       mountPoint.mountSource,
-      !(mountPoint.mountSource.useCdnIndex ?? false),
+      !(getMountSourceUseCdnIndex(mountPoint.mountSource) ?? false),
     );
 
     updateExternalSourceStatus(mountPoint.mountPointPath, 'success');
@@ -628,15 +655,12 @@ export async function refreshMountPoint(
 
   if (
     !mountPointNode ||
-    !(mountPointNode as unknown as { mountSource?: MountSourceInfo })
-      .mountSource
+    !getNodeMountSource(mountPointNode)
   ) {
     throw new Error(`节点不是挂载点: ${mountPointId}`);
   }
 
-  const mountSource = (
-    mountPointNode as unknown as { mountSource: MountSourceInfo }
-  ).mountSource;
+  const mountSource = getNodeMountSource(mountPointNode)!;
 
   // 清除缓存
   clearMountPointCache(mountPointId, mountSource);
@@ -649,7 +673,10 @@ export async function refreshMountPoint(
   }
 
   // 过滤和重写节点
-  const filtered = filterExternalNodes(result.data, mountSource.subPath || '/');
+  const filtered = filterExternalNodes(
+    result.data,
+    getMountSourceSubPath(mountSource) || '/',
+  );
 
   if (!filtered) {
     throw new Error('子路径不存在');
@@ -660,7 +687,7 @@ export async function refreshMountPoint(
     filtered.rootNodeId,
     mountPointId,
     mountSource,
-    !(mountSource.useCdnIndex ?? false),
+    !(getMountSourceUseCdnIndex(mountSource) ?? false),
   );
 
   // 合并到本地数据

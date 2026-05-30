@@ -2,6 +2,7 @@ import * as fsp from 'fs/promises';
 import * as path from 'path';
 
 import { InfoFile } from './schema';
+import { normalizeInfoFile } from './json-normalize';
 
 /**
  * 轻量级终端日志记录器基类。
@@ -138,19 +139,13 @@ export async function readInfoFileAsync(
 
   try {
     const rawContent = await fsp.readFile(infoFilePath, 'utf-8');
-    const parsed = JSON.parse(rawContent);
+    const parsed = normalizeInfoFile(JSON.parse(rawContent));
 
-    if (
-      typeof parsed !== 'object' ||
-      parsed === null ||
-      Array.isArray(parsed) ||
-      !('self' in parsed) ||
-      !('children' in parsed)
-    ) {
+    if (!parsed) {
       throw new Error('JSON 数据结构不符合要求');
     }
 
-    return parsed as InfoFile;
+    return parsed;
   } catch (error) {
     logger?.warn(
       `读取存量配置 ${infoFilePath} 失败。错误：${getErrorMessage(error)}`,

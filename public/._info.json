@@ -1,13 +1,13 @@
 {
   "self": {
     "description": "ShareFile - 静态文件分享站点",
-    "mountSource": {
+    "mount_source": {
       "provider": "github",
       "repository": "LetsShareAll/ShareFile",
       "branch": "file",
-      "subPath": "/",
-      "accessCdn": "https://cdn-file.lssa.fun",
-      "useCdnIndex": true
+      "sub_path": "/",
+      "access_cdn": "https://cdn-file.lssa.fun",
+      "use_cdn_index": true
     }
   },
   "children": {

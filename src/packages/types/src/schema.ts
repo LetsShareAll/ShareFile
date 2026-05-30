@@ -26,11 +26,11 @@ export interface MountSourceInfo {
   /** 分支名称，可选，默认尝试 'main' 后回退到 'master'。 */
   readonly branch?: string;
   /** 外部仓库的子路径，可选，默认为根目录 '/'。用于只挂载外部仓库的某个子目录。 */
-  readonly subPath?: string;
+  readonly sub_path?: string;
   /** 访问索引文件时使用的 CDN 或访问方式。可选值：'jsdelivr' | 'raw' | 自定义 CDN URL。 */
-  readonly accessCdn?: string;
+  readonly access_cdn?: string;
   /** 是否优先加载外部仓库的 share-file.cdn.json 文件。默认 false，加载 share-file.json。 */
-  readonly useCdnIndex?: boolean;
+  readonly use_cdn_index?: boolean;
 }
 
 /**
@@ -84,7 +84,7 @@ export interface FileNodeBaseInfo extends BaseInfo {
  */
 export interface DirectoryNodeBaseInfo extends BaseInfo {
   /** 外部存储挂载源配置。仅当此目录节点作为外部存储挂载点时存在。 */
-  readonly mountSource?: MountSourceInfo;
+  readonly mount_source?: MountSourceInfo;
 }
 
 /**
@@ -197,7 +197,7 @@ export interface ShareNode {
   /** 如果是外部节点，标识其所属的挂载点路径。 */
   readonly mount_point?: string;
   /** 外部存储挂载源配置。仅目录节点可用。 */
-  readonly mountSource?: MountSourceInfo;
+  readonly mount_source?: MountSourceInfo;
 }
 
 /**
@@ -205,13 +205,13 @@ export interface ShareNode {
  */
 export interface ShareFile {
   /** 根节点的 ID。 */
-  readonly rootId: string;
+  readonly root_id: string;
   /** 路径到节点 ID 的映射索引。 */
-  readonly pathIndex: Record<string, string>;
+  readonly path_index: Record<string, string>;
   /** 所有节点的 ID 到节点数据的映射。 */
   readonly nodes: Record<string, ShareNode>;
   /** 挂载点元数据，记录每个挂载点的外部源信息。 */
-  readonly mountPoints?: Record<
+  readonly mount_points?: Record<
     string,
     {
       readonly repository: string;
@@ -228,16 +228,16 @@ export interface ExternalSourceCache {
   /** 外部的 share-file.json 数据。 */
   readonly data: ShareFile;
   /** ISO 8601 缓存时间。 */
-  readonly cachedAt: string;
+  readonly cached_at: string;
   /** ISO 8601 过期时间。 */
-  readonly expiresAt: string;
+  readonly expires_at: string;
   /** 本地挂载点路径。 */
-  readonly mountPoint: string;
+  readonly mount_point: string;
   /** 外部源信息。 */
   readonly source: {
     readonly provider: string;
     readonly repository: string;
     readonly branch: string;
-    readonly subPath?: string;
+    readonly sub_path?: string;
   };
 }

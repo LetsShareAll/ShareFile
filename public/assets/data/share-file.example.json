@@ -1,6 +1,6 @@
 {
-  "rootId": "root",
-  "pathIndex": {
+  "root_id": "root",
+  "path_index": {
     "/": "root",
     "/readme.txt": "readme.txt",
     "/src": "src",

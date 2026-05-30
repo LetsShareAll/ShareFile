@@ -20,6 +20,7 @@ import {
   SelfInfo,
   VirtualDirectoryNode,
   VirtualFileNode,
+  getNodeMountSource,
 } from '@share-file/types';
 import {
   Logger,
@@ -246,7 +247,7 @@ const BASE_FIELD_ORDER = [
 
 /** * 对象序列化时，目录特有字段期望被排列的首选顺序（接续在基础字段后）。
  */
-const DIRECTORY_SPECIFIC_FIELD_ORDER = ['mountSource'] as const;
+const DIRECTORY_SPECIFIC_FIELD_ORDER = ['mount_source'] as const;
 
 /** * 对象序列化时，文件特有字段期望被排列的首选顺序（接续在基础字段后）。
  */
@@ -321,17 +322,14 @@ async function hasPhysicalEntityAsync(
 }
 
 /**
- * 评估给定的节点对象是否是一个虚拟节点（包含 redirect 或 mountSource 配置）。
+ * 评估给定的节点对象是否是一个虚拟节点（包含 redirect 或 mount_source 配置）。
  *
  * @param node 需要判定的节点对象。
- * @returns 包含 redirect 或 mountSource 属性时返回 true，否则 false。
+ * @returns 包含 redirect 或 mount_source 属性时返回 true，否则 false。
  */
 function isVirtualNode(node?: FileNode | DirectoryNode): boolean {
   if (!node) return false;
-  return (
-    node.redirect !== undefined ||
-    ('mountSource' in node && node.mountSource !== undefined)
-  );
+  return node.redirect !== undefined || getNodeMountSource(node) !== undefined;
 }
 
 /**
@@ -772,17 +770,17 @@ function finalizeInfoData(info: InfoFile, options: GenerateOptions): InfoFile {
           description,
           hidden,
           redirect,
-          mountSource,
           hold,
           created_at,
           updated_at,
         } = node;
+        const mountSource = getNodeMountSource(node);
         purified[name] = {
           type,
           description,
           hidden,
           redirect,
-          mountSource,
+          mount_source: mountSource,
           hold,
           created_at,
           updated_at,
@@ -909,6 +907,7 @@ async function generateInfoFileAsync(
     } else if (resolvedType === 'folder') {
       logger.stats.processedFolders++;
       const oldDirNode = existingNode as DirectoryNode | undefined;
+      const mountSource = oldDirNode ? getNodeMountSource(oldDirNode) : undefined;
       mergedChildren[name] = {
         type: 'folder',
         description:
@@ -919,9 +918,7 @@ async function generateInfoFileAsync(
             ? { hidden: true }
             : {}),
         ...(oldDirNode?.hold && { hold: oldDirNode.hold }),
-        ...(oldDirNode?.mountSource !== undefined
-          ? { mountSource: oldDirNode.mountSource }
-          : {}),
+        ...(mountSource !== undefined ? { mount_source: mountSource } : {}),
         ...(oldDirNode?.created_at && { created_at: oldDirNode.created_at }),
         ...(oldDirNode?.updated_at && { updated_at: oldDirNode.updated_at }),
       };

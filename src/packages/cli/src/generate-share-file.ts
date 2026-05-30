@@ -14,6 +14,9 @@ import {
   FileNode,
   MountSourceInfo,
   SelfInfo,
+  getNodeMountSource,
+  getShareFilePathIndex,
+  getShareFileRootId,
 } from '@share-file/types';
 import {
   Logger,
@@ -101,16 +104,16 @@ interface ShareNode {
   /** 附带用于提醒的二次重定向确认交互文案。 */
   redirect_confirm_message?: string | null;
   /** 外部存储挂载源配置。仅目录节点可用。 */
-  mountSource?: MountSourceInfo;
+  mount_source?: MountSourceInfo;
 }
 
 /** * `share-file.json` 被写出时所呈现的完整顶层容器对象。
  */
 interface ShareFile {
   /** 全局起点的固定识别字 ID。 */
-  rootId: string;
+  root_id: string;
   /** 将类似于 `/assets/images` 这样的外部绝对路径快速路由到内部对应 Node ID 的字典。 */
-  pathIndex: Record<string, string>;
+  path_index: Record<string, string>;
   /** 扁平存放了所有的 ShareNode 节点配置实体的映射容器集合。 */
   nodes: Record<string, ShareNode>;
 }
@@ -179,9 +182,10 @@ function infoNodeToShareNode(
     if (file.sha256) base.sha256 = file.sha256;
   } else {
     const folder = child as DirectoryNode;
+    const mountSource = getNodeMountSource(folder);
 
-    if (folder.mountSource !== undefined) {
-      base.mountSource = folder.mountSource;
+    if (mountSource !== undefined) {
+      base.mount_source = mountSource;
     }
   }
 
@@ -207,8 +211,10 @@ function mergeSelfInfoIntoDirectoryNode(
     mergedNode.redirect_confirm_message = self.redirect.confirm_message ?? null;
   }
 
-  if (self.mountSource !== undefined) {
-    mergedNode.mountSource = self.mountSource;
+  const mountSource = getNodeMountSource(self);
+
+  if (mountSource !== undefined) {
+    mergedNode.mount_source = mountSource;
   }
 
   return mergedNode;
@@ -250,7 +256,7 @@ async function processDirectory(
       rootNode,
       info.self,
     );
-    shareFile.pathIndex['/'] = 'root';
+    getShareFilePathIndex(shareFile)['/'] = 'root';
     logger.stats.mappedNodes++;
   } else {
     shareFile.nodes[relativeId] = mergeSelfInfoIntoDirectoryNode(
@@ -273,7 +279,7 @@ async function processDirectory(
       child,
     );
     shareFile.nodes[childId] = shareNode;
-    shareFile.pathIndex[`/${childId}`] = childId;
+    getShareFilePathIndex(shareFile)[`/${childId}`] = childId;
 
     childIds.push(childId);
     logger.stats.mappedNodes++;
@@ -329,8 +335,8 @@ function transformToCdnVersion(
   }
 
   return {
-    rootId: shareFile.rootId,
-    pathIndex: { ...shareFile.pathIndex },
+    root_id: getShareFileRootId(shareFile),
+    path_index: { ...getShareFilePathIndex(shareFile) },
     nodes: cdnNodes,
   };
 }
@@ -539,8 +545,8 @@ async function main(): Promise<void> {
   await registry.runHook('beforeScan', rootDir);
 
   const shareFile: ShareFile = {
-    rootId: 'root',
-    pathIndex: {},
+    root_id: 'root',
+    path_index: {},
     nodes: {},
   };
 

@@ -24,7 +24,13 @@ import {
   getRelativeTime,
 } from './utils';
 
-import type { ShareNode, ShareFile, MountSourceInfo } from '@share-file/types';
+import type { ShareNode, ShareFile } from '@share-file/types';
+import {
+  getNodeMountSource,
+  getShareFilePathIndex,
+  getShareFileRootId,
+  normalizeShareFile,
+} from '@share-file/types';
 import {
   loadAllExternalSources,
   clearAllExternalCache,
@@ -110,7 +116,9 @@ function renderBreadcrumb(path: string): void {
       current.className = 'current';
 
       // 检查是否为外部节点
-      const nodeId = globalShareData?.pathIndex[accumulatedPath];
+      const nodeId = globalShareData
+        ? getShareFilePathIndex(globalShareData)[accumulatedPath]
+        : undefined;
 
       if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
         current.classList.add('external-breadcrumb');
@@ -126,7 +134,9 @@ function renderBreadcrumb(path: string): void {
       link.onclick = () => navigateTo(targetPath);
 
       // 检查是否为外部节点
-      const nodeId = globalShareData?.pathIndex[targetPath];
+      const nodeId = globalShareData
+        ? getShareFilePathIndex(globalShareData)[targetPath]
+        : undefined;
 
       if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
         link.classList.add('external-breadcrumb');
@@ -140,7 +150,7 @@ function renderBreadcrumb(path: string): void {
 function getNodePath(nodeId: string): string {
   if (!globalShareData) return '/';
 
-  const entry = Object.entries(globalShareData.pathIndex).find(
+  const entry = Object.entries(getShareFilePathIndex(globalShareData)).find(
     ([, id]) => id === nodeId,
   );
 
@@ -158,7 +168,7 @@ function getSearchResultIds(query: string): string[] {
   if (!normalizedQuery) return [];
 
   return Object.values(globalShareData.nodes)
-    .filter(node => node.id !== globalShareData!.rootId)
+    .filter(node => node.id !== getShareFileRootId(globalShareData!))
     .filter(node => {
       const nodePath = getNodePath(node.id);
       const searchableText = normalizeSearchText(
@@ -407,7 +417,7 @@ async function renderContent(currentPath: string): Promise<void> {
   DOM.content.innerHTML = '';
 
   const activeSearchQuery = searchQuery.trim();
-  const nodeId = globalShareData.pathIndex[currentPath];
+  const nodeId = getShareFilePathIndex(globalShareData)[currentPath];
 
   if (!nodeId && !activeSearchQuery) {
     DOM.content.innerHTML = '<p class="error">⛔ 该路径不存在或已被移除</p>';
@@ -844,13 +854,17 @@ async function main(): Promise<void> {
     // 加载本地 share-file.json
     const response = await fetch(`/assets/data/${SHARE_FILE_NAME}`);
     if (!response.ok) throw new Error('索引服务器异常');
-    const localData: ShareFile = await response.json();
+    const localData = normalizeShareFile(await response.json());
+
+    if (!localData) {
+      throw new Error('索引结构不符合要求');
+    }
 
     // 检查是否有外部挂载源
     hasExternalSources = Object.values(localData.nodes).some(
       (node: ShareNode) =>
         node.type === 'folder' &&
-        (node as unknown as { mountSource?: MountSourceInfo }).mountSource,
+        getNodeMountSource(node),
     );
 
     // 如果有外部源，显示刷新按钮
@@ -873,7 +887,8 @@ async function main(): Promise<void> {
 
           // 如果当前路径包含外部挂载点，重新渲染
           const currentPath = getCurrentPath();
-          const currentNodeId = globalShareData.pathIndex[currentPath];
+          const currentNodeId =
+            getShareFilePathIndex(globalShareData)[currentPath];
 
           if (
             currentNodeId &&
