@@ -128,7 +128,7 @@ export interface VirtualDirectoryNode extends DirectoryNodeBaseInfo {
 }
 
 /** 当前 `._info.json` 所在目录自身的描述信息。 */
-export type SelfInfo = BaseInfo;
+export type SelfInfo = DirectoryNodeBaseInfo;
 
 /**
  * `._info.json` 文件的顶层序列化数据结构。

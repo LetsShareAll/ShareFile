@@ -9,7 +9,12 @@
 import * as fsp from 'fs/promises';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { DirectoryNode, FileNode, MountSourceInfo } from '@share-file/types';
+import {
+  DirectoryNode,
+  FileNode,
+  MountSourceInfo,
+  SelfInfo,
+} from '@share-file/types';
 import {
   Logger,
   getErrorMessage,
@@ -185,6 +190,32 @@ function infoNodeToShareNode(
   return base;
 }
 
+function mergeSelfInfoIntoDirectoryNode(
+  node: ShareNode,
+  self: SelfInfo,
+): ShareNode {
+  const mergedNode: ShareNode = { ...node };
+
+  if (self.description) mergedNode.description = self.description;
+  if (self.hidden !== undefined) mergedNode.hidden = self.hidden;
+  if (self.created_at)
+    mergedNode.created_at = removeMillisecondsFromISO(self.created_at);
+  if (self.updated_at)
+    mergedNode.updated_at = removeMillisecondsFromISO(self.updated_at);
+
+  if (self.redirect) {
+    mergedNode.redirect_url = self.redirect.url;
+    mergedNode.redirect_type = self.redirect.type;
+    mergedNode.redirect_confirm_message = self.redirect.confirm_message ?? null;
+  }
+
+  if (self.mountSource !== undefined) {
+    mergedNode.mountSource = self.mountSource;
+  }
+
+  return mergedNode;
+}
+
 // ────────────── 核心生成逻辑 ──────────────
 
 /**
@@ -217,11 +248,17 @@ async function processDirectory(
       parent: null,
       children: [],
     };
-    if (info.self.description) rootNode.description = info.self.description;
-    if (info.self.hidden !== undefined) rootNode.hidden = info.self.hidden;
-    shareFile.nodes['root'] = rootNode;
+    shareFile.nodes['root'] = mergeSelfInfoIntoDirectoryNode(
+      rootNode,
+      info.self,
+    );
     shareFile.pathIndex['/'] = 'root';
     logger.stats.mappedNodes++;
+  } else {
+    shareFile.nodes[relativeId] = mergeSelfInfoIntoDirectoryNode(
+      shareFile.nodes[relativeId],
+      info.self,
+    );
   }
 
   const childIds: string[] = [];

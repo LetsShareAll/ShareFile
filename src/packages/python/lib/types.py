@@ -73,7 +73,7 @@ NodeInfo = Union[FileNodeInfo, DirectoryNodeInfo]
 class InfoFile(TypedDict):
     """._info.json 文件结构"""
 
-    self: BaseInfo
+    self: DirectoryNodeInfo
     children: Dict[str, NodeInfo]
 
 
@@ -99,6 +99,7 @@ class ShareNode(TypedDict, total=False):
     url: Optional[str]
     source: Optional[Literal["local", "external"]]
     mount_point: Optional[str]
+    mountSource: Optional[MountSourceInfo]
 
 
 class ShareFile(TypedDict, total=False):

@@ -83,6 +83,8 @@ def build_share_file(
             dir_node["created_at"] = info["self"]["created_at"]
         if info["self"].get("updated_at"):
             dir_node["updated_at"] = info["self"]["updated_at"]
+        if info["self"].get("mountSource"):
+            dir_node["mountSource"] = info["self"]["mountSource"]
 
         # 处理重定向
         if info["self"].get("redirect"):
@@ -124,6 +126,8 @@ def build_share_file(
                 child_node["created_at"] = child_info["created_at"]
             if child_info.get("updated_at"):
                 child_node["updated_at"] = child_info["updated_at"]
+            if child_info.get("mountSource"):
+                child_node["mountSource"] = child_info["mountSource"]
 
             # 文件特有字段
             if is_file:

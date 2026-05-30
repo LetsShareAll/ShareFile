@@ -858,10 +858,10 @@ function finalizeInfoData(info: InfoFile, options: GenerateOptions): InfoFile {
   }
 
   if (options.format) {
-    const formattedSelf = reorderFields(
-      info.self,
-      BASE_FIELD_ORDER,
-    ) as SelfInfo;
+    const formattedSelf = reorderFields(info.self, [
+      ...BASE_FIELD_ORDER,
+      ...DIRECTORY_SPECIFIC_FIELD_ORDER,
+    ]) as SelfInfo;
     const sortedKeys = Object.keys(children).sort((a, b) => {
       const orderA = children[a].type === 'folder' ? 0 : 1;
       const orderB = children[b].type === 'folder' ? 0 : 1;
