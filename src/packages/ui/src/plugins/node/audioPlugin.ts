@@ -270,6 +270,26 @@ function getResponseMimeType(
   );
 }
 
+function isUsableAudioUrl(fileUrl: string): boolean {
+  const normalizedUrl = fileUrl.trim();
+
+  if (
+    !normalizedUrl ||
+    normalizedUrl === 'undefined' ||
+    normalizedUrl === 'null'
+  ) {
+    return false;
+  }
+
+  try {
+    const resolvedUrl = new URL(normalizedUrl, window.location.href);
+
+    return !resolvedUrl.pathname.endsWith('/undefined');
+  } catch {
+    return false;
+  }
+}
+
 function mapAudioMetadata(
   metadata: IAudioMetadata,
   fallback: Pick<AmplitudeSong, 'artist' | 'name'>,
@@ -554,9 +574,10 @@ function renderAudioPreview(input: NodePluginPreviewInput): HTMLElement {
   let detached = false;
   let coverUrl: string | undefined;
   let cleanupLyricsSync: (() => void) | undefined;
+  const fileUrl = input.fileUrl.trim();
   const song = {
     ...parseAudioTitle(input.name),
-    url: input.fileUrl,
+    url: fileUrl,
   };
 
   wrapper.className = 'amplitude-preview';
@@ -607,7 +628,14 @@ function renderAudioPreview(input: NodePluginPreviewInput): HTMLElement {
   main.append(artwork, details);
   wrapper.append(main, lyricsPanel);
 
-  readAudioMetadata(input, song, controller.signal)
+  if (!isUsableAudioUrl(fileUrl)) {
+    status.textContent = '音频地址无效，无法加载播放器';
+    playButton.disabled = true;
+    slider.disabled = true;
+    return wrapper;
+  }
+
+  readAudioMetadata({ ...input, fileUrl }, song, controller.signal)
     .then(metadata => {
       if (detached) {
         if (metadata.coverUrl) URL.revokeObjectURL(metadata.coverUrl);
@@ -672,17 +700,9 @@ function renderAudioPreview(input: NodePluginPreviewInput): HTMLElement {
 
   requestAnimationFrame(() => {
     Amplitude.init({
-      playlists: {
-        preview: {
-          songs: [song],
-        },
-      },
       preload: 'metadata',
       songs: [song],
-      starting_playlist: 'preview',
-      starting_playlist_song: 0,
     });
-    Amplitude.bindNewElements();
     stopWhenDetached(wrapper, () => {
       detached = true;
       controller.abort();
