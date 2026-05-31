@@ -43,11 +43,11 @@ jobs:
 
       - name: 生成目录元数据
         run: |
-          "${{ steps.tools.outputs.dir }}/generate-info-linux" . --recursive
+          "${{ steps.tools.outputs.dir }}/generate-info-linux" . --recursive --config ./config.yaml
 
       - name: 生成文件索引
         run: |
-          "${{ steps.tools.outputs.dir }}/generate-share-file-linux" . ./share-file.json --cdn-url "https://cdn-file.lssa.fun"
+          "${{ steps.tools.outputs.dir }}/generate-share-file-linux" . ./share-file.json --cdn-url "https://cdn-file.lssa.fun" --config ./config.yaml
 
       - name: 检查更改
         id: git-check

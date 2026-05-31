@@ -17,6 +17,7 @@
 | `videos/`                              | 视频文件和视频分类目录           | 手动放置文件，CI 更新元数据           |
 | `others/`                              | 字体等不适合归入其他分类的资源   | 手动放置文件，CI 更新元数据           |
 | `._info.json`                          | 当前目录的元数据                 | 可手动补充说明；自动字段由 CI 更新    |
+| `config.yaml`                          | 索引生成配置                     | 控制生成工具参数和额外忽略规则        |
 | `share-file.json`                      | 前端使用的文件树索引             | CI 自动生成                           |
 | `share-file.cdn.json`                  | 带 CDN 下载地址的文件树索引      | CI 自动生成                           |
 | `.github/workflows/generate-index.yml` | `file` 分支索引生成工作流        | 手动维护                              |
@@ -36,8 +37,8 @@
 
 1. 签出 `file` 分支。
 2. 从 `origin/main` 取得 `generate-info-linux` 和 `generate-share-file-linux`。
-3. 执行 `generate-info-linux . --recursive`，递归更新目录元数据。
-4. 执行 `generate-share-file-linux . ./share-file.json --cdn-url "https://cdn-file.lssa.fun"`，生成 `share-file.json` 和 `share-file.cdn.json`。
+3. 执行 `generate-info-linux . --recursive --config ./config.yaml`，递归更新目录元数据。
+4. 执行 `generate-share-file-linux . ./share-file.json --cdn-url "https://cdn-file.lssa.fun" --config ./config.yaml`，生成 `share-file.json` 和 `share-file.cdn.json`。
 5. 如果产生变更，将结果提交回 `file` 分支。
 
 修改 `README.md` 或 `.github/**` 不会触发自动生成。需要手动重跑时，可以在 GitHub Actions 中使用 `workflow_dispatch`。
@@ -84,6 +85,8 @@
 | `hold`        | 子节点          | 锁定自动字段，避免被生成工具覆盖                      |
 
 生成工具会保留人工维护的说明、版本、跳转和锁定配置，并更新文件大小、哈希和时间等自动字段。
+
+`config.yaml` 中的 `generate_info.ignore_patterns` 会额外忽略维护文件和生成文件，例如 `share-file.json`、`share-file.cdn.json`、`config.yaml`、`README.md`、`src/` 和 `public/`，避免它们进入目录元数据和前端索引。
 
 ## 虚拟节点与跳转
 
