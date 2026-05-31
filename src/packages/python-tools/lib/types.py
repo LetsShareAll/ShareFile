@@ -8,6 +8,14 @@ from typing import TypedDict, Literal, Optional, Union, Dict, List
 from dataclasses import dataclass
 
 
+# ────────────── 默认配置 ──────────────
+
+DEFAULT_CDN_BASE_URL = (
+    "https://cdn-file.lssa.fun/"
+    "raw.githubusercontent.com/LetsShareAll/ShareFile/file/public"
+)
+
+
 # ────────────── 类型定义 ──────────────
 
 
@@ -142,7 +150,7 @@ class GenerateShareFileOptions:
 
     root_dir: str = "."
     output_file: str = None
-    cdn_base_url: str = ""
+    cdn_base_url: str = DEFAULT_CDN_BASE_URL
     verbose: bool = False
 
     def __post_init__(self):

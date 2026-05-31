@@ -365,6 +365,32 @@ function filterExternalNodes(
 /**
  * 重写外部节点的 ID 和路径引用
  */
+function getRelativeExternalNodeId(
+  oldId: string,
+  externalRootId: string,
+): string {
+  if (oldId === externalRootId) return '';
+
+  const rootPrefix = `${externalRootId}/`;
+
+  if (externalRootId !== 'root' && oldId.startsWith(rootPrefix)) {
+    return oldId.slice(rootPrefix.length);
+  }
+
+  return oldId;
+}
+
+function joinMountedNodeId(mountPointPath: string, relativeId: string): string {
+  if (!relativeId) return mountPointPath;
+  if (mountPointPath === 'root') return relativeId;
+
+  return `${mountPointPath}/${relativeId}`.replace(/\/+/g, '/');
+}
+
+function getNodePathFromId(nodeId: string): string {
+  return nodeId === 'root' ? '/' : `/${nodeId}`.replace(/\/+/g, '/');
+}
+
 function rewriteExternalNodes(
   externalNodes: Record<string, ShareNode>,
   externalRootId: string,
@@ -378,14 +404,8 @@ function rewriteExternalNodes(
 
   // 第一遍：建立 ID 映射
   Object.keys(externalNodes).forEach(oldId => {
-    if (oldId === externalRootId) {
-      // 根节点映射到挂载点
-      idMapping[oldId] = mountPointPath;
-    } else {
-      // 其他节点添加挂载点前缀
-      const newId = `${mountPointPath}/${oldId}`.replace(/\/+/g, '/');
-      idMapping[oldId] = newId;
-    }
+    const relativeId = getRelativeExternalNodeId(oldId, externalRootId);
+    idMapping[oldId] = joinMountedNodeId(mountPointPath, relativeId);
   });
 
   // 第二遍：重写节点
@@ -402,10 +422,7 @@ function rewriteExternalNodes(
     const rewrittenNode: ShareNode = {
       ...node,
       id: newId,
-      parent:
-        newParentId === mountPointPath
-          ? mountPointPath.split('/').slice(0, -1).join('/') || 'root'
-          : newParentId,
+      parent: newParentId,
       children: node.children.map(
         (childId: string) => idMapping[childId] || childId,
       ),
@@ -419,8 +436,7 @@ function rewriteExternalNodes(
     rewrittenNodes[newId] = rewrittenNode;
 
     // 构建路径索引
-    const nodePath = `/${newId}`.replace(/\/+/g, '/');
-    pathIndex[nodePath] = newId;
+    pathIndex[getNodePathFromId(newId)] = newId;
   });
 
   return { nodes: rewrittenNodes, pathIndex };
@@ -553,10 +569,7 @@ export async function loadAllExternalSources(
   const mountPoints: MountPointInfo[] = [];
 
   Object.entries(localData.nodes).forEach(([nodeId, node]) => {
-    if (
-      node.type === 'folder' &&
-      getNodeMountSource(node)
-    ) {
+    if (node.type === 'folder' && getNodeMountSource(node)) {
       const mountSource = getNodeMountSource(node)!;
 
       mountPoints.push({
@@ -654,10 +667,7 @@ export async function refreshMountPoint(
 ): Promise<ShareFile> {
   const mountPointNode = localData.nodes[mountPointId];
 
-  if (
-    !mountPointNode ||
-    !getNodeMountSource(mountPointNode)
-  ) {
+  if (!mountPointNode || !getNodeMountSource(mountPointNode)) {
     throw new Error(`节点不是挂载点: ${mountPointId}`);
   }
 

@@ -222,6 +222,17 @@ function mergeSelfInfoIntoDirectoryNode(
   return mergedNode;
 }
 
+function encodePathSegment(segment: string): string {
+  return encodeURIComponent(segment).replace(
+    /[!'()*]/g,
+    char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
+}
+
+function encodeNodeIdForUrl(nodeId: string): string {
+  return nodeId.split('/').map(encodePathSegment).join('/');
+}
+
 // ────────────── 核心生成逻辑 ──────────────
 
 /**
@@ -330,7 +341,8 @@ function transformToCdnVersion(
 
     // 只为 type='file' 且没有 redirect_url 的节点添加 url 字段
     if (node.type === 'file' && !node.redirect_url) {
-      (cdnNode as ShareNode & { url: string }).url = `${cdnBaseUrl}/${nodeId}`;
+      (cdnNode as ShareNode & { url: string }).url =
+        `${cdnBaseUrl}/${encodeNodeIdForUrl(nodeId)}`;
     }
 
     cdnNodes[nodeId] = cdnNode;

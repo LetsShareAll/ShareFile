@@ -16,6 +16,7 @@ import argparse
 import re
 from typing import Dict, List, Optional
 from urllib.parse import quote
+from urllib.parse import urlparse
 
 # 添加 lib 目录到 Python 路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "lib"))
@@ -25,6 +26,7 @@ from lib.types import (
     ShareFile,
     ShareNode,
     GenerateShareFileOptions,
+    DEFAULT_CDN_BASE_URL,
 )
 from lib.logger import GenShareLogger
 from lib.config_loader import load_generate_share_file_config
@@ -203,6 +205,19 @@ def generate_cdn_version(
     return cdn_share_file
 
 
+def normalize_cdn_base_url(value: str) -> str:
+    """Validate and normalize the CDN base URL to match the TypeScript CLI."""
+    trimmed = value.strip()
+    if not trimmed:
+        raise ValueError("CDN URL 不能为空。")
+
+    parsed = urlparse(trimmed)
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        raise ValueError(f"CDN URL 不是合法 URL: {trimmed}")
+
+    return trimmed.rstrip("/")
+
+
 def main():
     """主函数"""
     parser = argparse.ArgumentParser(
@@ -231,9 +246,23 @@ def main():
     if args.verbose:
         options.verbose = args.verbose
 
-    # 从环境变量读取 CDN URL
+    # 从环境变量读取 CDN URL。优先级：命令行 > 配置文件 > 环境变量 > 默认值。
+    env_cdn_url = os.environ.get("SHARE_FILE_CDN_URL", "")
+    if (
+        not args.cdn_url
+        and env_cdn_url
+        and options.cdn_base_url == DEFAULT_CDN_BASE_URL
+    ):
+        options.cdn_base_url = env_cdn_url
+
     if not options.cdn_base_url:
-        options.cdn_base_url = os.environ.get("SHARE_FILE_CDN_URL", "")
+        options.cdn_base_url = DEFAULT_CDN_BASE_URL
+
+    try:
+        options.cdn_base_url = normalize_cdn_base_url(options.cdn_base_url)
+    except ValueError as e:
+        print(f"错误: {e}", file=sys.stderr)
+        sys.exit(1)
 
     # 初始化日志
     logger = GenShareLogger(options.verbose)

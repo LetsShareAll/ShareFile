@@ -121,11 +121,11 @@ python generate-share-file.py --config config.example.yaml
 
 主要选项：
 
-| 选项            | 说明                      |
-| --------------- | ------------------------- |
-| `--config FILE` | 从配置文件读取参数        |
-| `--cdn-url URL` | 设置 CDN 文件访问基础 URL |
-| `--verbose`     | 输出详细日志              |
+| 选项            | 说明                                                                  |
+| --------------- | --------------------------------------------------------------------- |
+| `--config FILE` | 从配置文件读取参数                                                    |
+| `--cdn-url URL` | 设置 CDN 文件访问基础 URL，未设置时使用与 TypeScript CLI 相同的默认值 |
+| `--verbose`     | 输出详细日志                                                          |
 
 ## 配置文件
 
@@ -159,7 +159,7 @@ generate_info:
 generate_share_file:
   root_dir: '.'
   output_file: './share-file.json'
-  cdn_base_url: 'https://cdn.example.com/files'
+  cdn_base_url: 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public'
   verbose: false
 ```
 
