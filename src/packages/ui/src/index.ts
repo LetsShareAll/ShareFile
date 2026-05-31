@@ -359,6 +359,15 @@ function createCopyLinkButton(url: string): HTMLButtonElement {
   return linkBtn;
 }
 
+function createExternalSourceIndicator(node: ShareNode): HTMLSpanElement {
+  const indicator = document.createElement('span');
+  indicator.className = 'external-indicator';
+  indicator.title = `来自外部源: ${node.mount_point || '/'}`;
+  indicator.innerHTML = '<i class="fas fa-link"></i>';
+
+  return indicator;
+}
+
 function getNodeFilePath(node: ShareNode): string {
   return node.id.startsWith('/') ? node.id : '/' + node.id;
 }
@@ -507,24 +516,24 @@ async function renderContent(currentPath: string): Promise<void> {
     iconSpan.className = `item-icon ${typeInfo.className}`;
     iconSpan.appendChild(createIcon(typeInfo.iconClass));
 
-    // 为外部节点添加链接图标徽章
-    if (childNode.source === 'external') {
-      const linkBadge = document.createElement('i');
-      linkBadge.className = 'fas fa-link external-badge';
-      linkBadge.title = `来自外部源: ${childNode.mount_point || ''}`;
-      iconSpan.appendChild(linkBadge);
-    }
-
     const nameSpan = document.createElement('span');
     nameSpan.className = 'item-name';
-    nameSpan.textContent = childNode.name;
     nameSpan.title = childNode.name;
+
+    const nameText = document.createElement('span');
+    nameText.className = 'item-name-text';
+    nameText.textContent = childNode.name;
+    nameSpan.appendChild(nameText);
 
     if (childNode.version) {
       const versionBadge = document.createElement('span');
       versionBadge.className = 'version-badge';
       versionBadge.textContent = `v${childNode.version}`;
       nameSpan.appendChild(versionBadge);
+    }
+
+    if (childNode.source === 'external') {
+      nameSpan.appendChild(createExternalSourceIndicator(childNode));
     }
 
     const descriptionSpan = document.createElement('span');
@@ -862,9 +871,7 @@ async function main(): Promise<void> {
 
     // 检查是否有外部挂载源
     hasExternalSources = Object.values(localData.nodes).some(
-      (node: ShareNode) =>
-        node.type === 'folder' &&
-        getNodeMountSource(node),
+      (node: ShareNode) => node.type === 'folder' && getNodeMountSource(node),
     );
 
     // 如果有外部源，显示刷新按钮

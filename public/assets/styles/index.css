@@ -377,10 +377,20 @@ kbd {
 }
 
 .item-name {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   min-width: 0;
   color: var(--text);
   font-weight: 650;
   line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-name-text {
+  display: block;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -460,9 +470,17 @@ kbd {
 
 .container.view-icon .item-name {
   align-self: start;
+  flex-wrap: wrap;
+  justify-content: center;
   font-size: 0.95rem;
-  display: block;
   max-width: 100%;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.container.view-icon .item-name-text {
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -470,7 +488,6 @@ kbd {
 
 .container.view-icon .version-badge {
   display: inline-flex;
-  margin-left: 0.25rem;
 }
 
 .container.view-icon .hash-row {
@@ -549,6 +566,10 @@ kbd {
 
 .container.view-detail .item-name {
   font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.container.view-detail .item-name-text {
   white-space: nowrap;
 }
 
@@ -1625,17 +1646,25 @@ html[data-theme='dark'] .hljs-doctag {
   background: var(--external-hover-bg, rgba(33, 150, 243, 0.05));
 }
 
-/* 外部节点图标徽章 */
-.external-badge {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  font-size: 10px;
+/* 外部节点来源标记 */
+.external-indicator {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid rgba(33, 150, 243, 0.22);
+  border-radius: 6px;
+  background: rgba(33, 150, 243, 0.1);
   color: var(--external-accent, #2196f3);
-  background: var(--card-bg);
-  border-radius: 50%;
-  padding: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 0.68rem;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(33, 150, 243, 0.08);
+}
+
+.container.view-icon .external-indicator {
+  margin-top: 0.05rem;
 }
 
 /* 外部节点面包屑 */
@@ -1659,8 +1688,9 @@ html[data-theme='dark'] .hljs-doctag {
   --external-hover-bg: rgba(100, 181, 246, 0.08);
 }
 
-[data-theme='dark'] .external-badge {
-  background: var(--card-bg);
+[data-theme='dark'] .external-indicator {
+  border-color: rgba(100, 181, 246, 0.26);
+  background: rgba(100, 181, 246, 0.14);
 }
 
 /* 刷新按钮样式 */
@@ -1696,5 +1726,3 @@ html[data-theme='dark'] .hljs-doctag {
 .refresh-btn:hover:not(:disabled) i {
   transform: rotate(180deg);
 }
-
-
