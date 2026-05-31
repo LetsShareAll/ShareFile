@@ -92,6 +92,15 @@ async function previewFileContent(
 }
 
 // ────────────── 渲染引擎 ──────────────
+function markExternalBreadcrumb(element: HTMLElement): void {
+  element.classList.add('external-breadcrumb');
+
+  const icon = createIcon('fas fa-link');
+  icon.classList.add('external-breadcrumb-icon');
+  icon.setAttribute('aria-hidden', 'true');
+  element.prepend(icon);
+}
+
 function renderBreadcrumb(path: string): void {
   DOM.breadcrumb.innerHTML = '';
   const segments = path.split('/').filter(Boolean);
@@ -121,7 +130,7 @@ function renderBreadcrumb(path: string): void {
         : undefined;
 
       if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
-        current.classList.add('external-breadcrumb');
+        markExternalBreadcrumb(current);
       }
 
       DOM.breadcrumb.appendChild(current);
@@ -139,7 +148,7 @@ function renderBreadcrumb(path: string): void {
         : undefined;
 
       if (nodeId && globalShareData?.nodes[nodeId]?.source === 'external') {
-        link.classList.add('external-breadcrumb');
+        markExternalBreadcrumb(link);
       }
 
       DOM.breadcrumb.appendChild(link);

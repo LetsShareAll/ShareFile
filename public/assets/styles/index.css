@@ -1669,16 +1669,15 @@ html[data-theme='dark'] .hljs-doctag {
 
 /* 外部节点面包屑 */
 .external-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   color: var(--external-accent, #2196f3) !important;
   position: relative;
 }
 
-.external-breadcrumb::before {
-  content: '\f0c1';
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
+.external-breadcrumb-icon {
   font-size: 0.75em;
-  margin-right: 4px;
   opacity: 0.7;
 }
 
