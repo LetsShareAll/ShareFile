@@ -29,5 +29,5 @@ generate_info:
 generate_share_file:
   root_dir: '.'
   output_file: './share-file.json'
-  cdn_base_url: 'https://cdn-file.lssa.fun'
+  cdn_base_url: 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file'
   verbose: false

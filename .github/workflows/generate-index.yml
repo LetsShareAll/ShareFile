@@ -15,6 +15,8 @@ permissions:
 jobs:
   generate-index:
     runs-on: ubuntu-latest
+    env:
+      CONFIG_FILE: ./config.yaml
     concurrency:
       group: file-index
       cancel-in-progress: false
@@ -41,13 +43,18 @@ jobs:
           ls -lh "$tools_dir"
           echo "dir=$tools_dir" >> "$GITHUB_OUTPUT"
 
+      - name: 检查生成配置
+        run: |
+          test -f "$CONFIG_FILE"
+          sed -n '1,120p' "$CONFIG_FILE"
+
       - name: 生成目录元数据
         run: |
-          "${{ steps.tools.outputs.dir }}/generate-info-linux" . --recursive --config ./config.yaml
+          "${{ steps.tools.outputs.dir }}/generate-info-linux" . --recursive --config "$CONFIG_FILE"
 
       - name: 生成文件索引
         run: |
-          "${{ steps.tools.outputs.dir }}/generate-share-file-linux" . ./share-file.json --cdn-url "https://cdn-file.lssa.fun" --config ./config.yaml
+          "${{ steps.tools.outputs.dir }}/generate-share-file-linux" . ./share-file.json --config "$CONFIG_FILE"
 
       - name: 检查更改
         id: git-check

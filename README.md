@@ -38,7 +38,7 @@
 1. 签出 `file` 分支。
 2. 从 `origin/main` 取得 `generate-info-linux` 和 `generate-share-file-linux`。
 3. 执行 `generate-info-linux . --recursive --config ./config.yaml`，递归更新目录元数据。
-4. 执行 `generate-share-file-linux . ./share-file.json --cdn-url "https://cdn-file.lssa.fun" --config ./config.yaml`，生成 `share-file.json` 和 `share-file.cdn.json`。
+4. 执行 `generate-share-file-linux . ./share-file.json --config ./config.yaml`，生成 `share-file.json` 和 `share-file.cdn.json`。
 5. 如果产生变更，将结果提交回 `file` 分支。
 
 修改 `README.md` 或 `.github/**` 不会触发自动生成。需要手动重跑时，可以在 GitHub Actions 中使用 `workflow_dispatch`。
