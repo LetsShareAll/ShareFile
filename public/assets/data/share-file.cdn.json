@@ -81,9 +81,9 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 1600,
-      "md5": "8df7cd4af49580890b6d93e6a5e731d2",
-      "sha256": "73d09788dd2532e6dd9bd16c73a5bd23d7b7a43e050242f00f91da5fc0578f27",
+      "size": 1628,
+      "md5": "5ba52776ff95b2650adafbe6e3d01f84",
+      "sha256": "6c41d9f417757e36082da993f4bcf5c6c040e923a73198f520bbdb82eeecc2fe",
       "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/config.example.yaml"
     },
     "softwares/applications/tools/generate-info-linux": {
@@ -94,13 +94,13 @@
       "children": [],
       "description": "文件",
       "created_at": "2026-05-29T15:55:26Z",
-      "updated_at": "2026-05-31T10:01:35Z",
+      "updated_at": "2026-05-31T10:21:57Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 20763584,
-      "md5": "55417e3a3186b0c9554d65ee26b5d62e",
-      "sha256": "31bb6c1f3a9fe0013d6594ce78361f6a4636f95bc2179f498229f318d807e6ba",
+      "size": 20762344,
+      "md5": "9c01191aaf69993b6127a28ad18ec80f",
+      "sha256": "6f21fdc9fd969554f8e17dd175778db561ba127ce2f3ca8bfa07aceb85cfcde0",
       "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/generate-info-linux"
     },
     "softwares/applications/tools/generate-share-file-linux": {
@@ -111,13 +111,13 @@
       "children": [],
       "description": "文件",
       "created_at": "2026-05-29T15:55:26Z",
-      "updated_at": "2026-05-31T10:01:35Z",
+      "updated_at": "2026-05-31T10:21:57Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 20762696,
-      "md5": "74884245d0b7038441333db51c7e6dfb",
-      "sha256": "46da9da1936bee2ea0e49b4116486f72f9ddc8b444d2aad020969193b95776cd",
+      "size": 20762056,
+      "md5": "67d0e7d1ab1a0e51a37ec648f9a257e3",
+      "sha256": "ec95acdec0444a5c2ecd5a441c892cbf94b66968edadc888157f6ce97757c394",
       "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/generate-share-file-linux"
     }
   }

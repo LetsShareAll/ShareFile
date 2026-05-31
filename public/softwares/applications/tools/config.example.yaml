@@ -4,10 +4,10 @@
 # generate-info 配置
 generate_info:
   # 扫描的根目录（相对于配置文件或绝对路径）
-  root_dir: "."
+  root_dir: '.'
 
   # 输出文件名
-  output_filename: "._info.json"
+  output_filename: '._info.json'
 
   # 是否递归处理子目录
   recursive: true
@@ -51,15 +51,15 @@ generate_info:
 # generate-share-file 配置
 generate_share_file:
   # 扫描的根目录
-  root_dir: "."
+  root_dir: '.'
 
   # 输出文件路径
   # 默认为 {root_dir}/share-file.json
-  output_file: "./share-file.json"
+  output_file: './share-file.json'
 
-  # CDN 基础 URL（用于生成 share-file.cdn.json）
-  # 留空则不生成 CDN 版本
-  cdn_base_url: "https://cdn-file.lssa.fun/raw.githubusercontent.com/user/repo/branch/public"
+  # CDN 文件访问基础 URL（用于生成 share-file.cdn.json）
+  # 默认值与 TypeScript CLI 一致
+  cdn_base_url: 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public'
 
   # 是否输出详细日志
   verbose: false
