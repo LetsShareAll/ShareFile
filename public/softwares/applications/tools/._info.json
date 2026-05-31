@@ -7,28 +7,28 @@
       "type": "file",
       "description": "EXAMPLE 文件",
       "created_at": "2026-05-29T14:41:06.000Z",
-      "updated_at": "2026-05-31T09:26:32.000Z",
-      "size": 1590,
-      "md5": "cfedf686eee4b8a27ff1f684c1274bd2",
-      "sha256": "ffb1f3a43df06e672fddf8f510ab2d9c24690cdd12b2aa354f25041ac9cdc588"
+      "updated_at": "2026-05-31T10:16:59.000Z",
+      "size": 1600,
+      "md5": "8df7cd4af49580890b6d93e6a5e731d2",
+      "sha256": "73d09788dd2532e6dd9bd16c73a5bd23d7b7a43e050242f00f91da5fc0578f27"
     },
     "generate-info-linux": {
       "type": "file",
       "description": "文件",
       "created_at": "2026-05-29T15:55:26.000Z",
-      "updated_at": "2026-05-31T09:28:30.000Z",
-      "size": 20762368,
-      "md5": "4dfc6cda3070454823d73964b859e932",
-      "sha256": "737e7a0640d16a5bbc26a9ded36632344832f15cc8e80dc0878f876ad61490c1"
+      "updated_at": "2026-05-31T10:01:35.000Z",
+      "size": 20763584,
+      "md5": "55417e3a3186b0c9554d65ee26b5d62e",
+      "sha256": "31bb6c1f3a9fe0013d6594ce78361f6a4636f95bc2179f498229f318d807e6ba"
     },
     "generate-share-file-linux": {
       "type": "file",
       "description": "文件",
       "created_at": "2026-05-29T15:55:26.000Z",
-      "updated_at": "2026-05-31T09:28:30.000Z",
-      "size": 20761880,
-      "md5": "09cf5010f77924d26d3d007e87b8a48b",
-      "sha256": "f77c04e2aafd7fa950462ebdaad56cfa310c991ce6d5a320ca4596db11adf6e4"
+      "updated_at": "2026-05-31T10:01:35.000Z",
+      "size": 20762696,
+      "md5": "74884245d0b7038441333db51c7e6dfb",
+      "sha256": "46da9da1936bee2ea0e49b4116486f72f9ddc8b444d2aad020969193b95776cd"
     }
   }
 }
