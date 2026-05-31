@@ -6,12 +6,14 @@
     "dev": "pnpm --filter @share-file/ui run dev",
     "check": "pnpm -r run check",
     "lint": "pnpm -r run lint",
-    "format": "pnpm -r run format",
+    "format": "pnpm -r run format && pnpm exec prettier --write .github/workflows package.json",
+    "format:check": "pnpm exec prettier --check .github/workflows package.json",
+    "verify": "pnpm run check && pnpm run lint && pnpm run format:check",
     "generate": "pnpm --filter @share-file/cli run generate",
     "generate-info": "pnpm --filter @share-file/cli run generate-info",
     "generate-share-file": "pnpm --filter @share-file/cli run generate-share-file",
-    "prebuild": "pnpm run generate && pnpm run check && pnpm run format && pnpm run lint",
-    "build": "pnpm run prebuild && pnpm --filter @share-file/ui run build"
+    "build": "pnpm run build:site",
+    "build:site": "pnpm --filter @share-file/ui run build"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

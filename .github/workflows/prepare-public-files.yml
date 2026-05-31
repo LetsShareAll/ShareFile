@@ -1,0 +1,94 @@
+name: 准备 public 文件
+
+on:
+  workflow_run:
+    workflows:
+      - 检查代码
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prepare-public-files-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prepare-public-files:
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.event == 'push'
+        )
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 签出仓库
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.event.workflow_run.head_sha }}
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.2.2
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '26.2.0'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: src/packages/python-tools/requirements.txt
+
+      - name: 构建 Python 可执行文件
+        run: |
+          cd src/packages/python-tools
+          pip install -r requirements.txt
+          pyinstaller build.spec
+          mkdir -p ../../../public/softwares/applications/tools
+          cp dist/generate-info ../../../public/softwares/applications/tools/generate-info-linux
+          cp dist/generate-share-file ../../../public/softwares/applications/tools/generate-share-file-linux
+          cp config.example.yaml ../../../public/softwares/applications/tools/
+          chmod +x ../../../public/softwares/applications/tools/generate-*
+          ls -lh ../../../public/softwares/applications/tools/
+
+      - name: 生成 public 索引
+        run: pnpm run generate
+
+      - name: 检查 public 变更
+        id: git-check
+        run: |
+          echo "检查 public 是否有文件被修改..."
+          if git diff --quiet -- public; then
+            echo "没有检测到 public 变更"
+            echo "changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "检测到 public 变更"
+            echo "changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 提交 public 变更
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public
+          git commit -m "ci(public): prepare generated public files [skip ci]"
+          git push origin HEAD:main

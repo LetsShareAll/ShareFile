@@ -13,25 +13,19 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function getString(
   value: Record<string, unknown>,
-  snakeKey: string,
-  legacyCamelKey?: string,
+  key: string,
 ): string | undefined {
-  const snakeValue = value[snakeKey];
-  const camelValue = legacyCamelKey ? value[legacyCamelKey] : undefined;
-  if (typeof snakeValue === 'string') return snakeValue;
-  if (typeof camelValue === 'string') return camelValue;
+  const currentValue = value[key];
+  if (typeof currentValue === 'string') return currentValue;
   return undefined;
 }
 
 function getBoolean(
   value: Record<string, unknown>,
-  snakeKey: string,
-  legacyCamelKey?: string,
+  key: string,
 ): boolean | undefined {
-  const snakeValue = value[snakeKey];
-  const camelValue = legacyCamelKey ? value[legacyCamelKey] : undefined;
-  if (typeof snakeValue === 'boolean') return snakeValue;
-  if (typeof camelValue === 'boolean') return camelValue;
+  const currentValue = value[key];
+  if (typeof currentValue === 'boolean') return currentValue;
   return undefined;
 }
 
@@ -49,14 +43,14 @@ export function normalizeMountSource(
     provider,
     repository,
     ...(getString(value, 'branch') && { branch: getString(value, 'branch') }),
-    ...(getString(value, 'sub_path', 'subPath') && {
-      sub_path: getString(value, 'sub_path', 'subPath'),
+    ...(getString(value, 'sub_path') && {
+      sub_path: getString(value, 'sub_path'),
     }),
-    ...(getString(value, 'access_cdn', 'accessCdn') && {
-      access_cdn: getString(value, 'access_cdn', 'accessCdn'),
+    ...(getString(value, 'access_cdn') && {
+      access_cdn: getString(value, 'access_cdn'),
     }),
-    ...(getBoolean(value, 'use_cdn_index', 'useCdnIndex') !== undefined && {
-      use_cdn_index: getBoolean(value, 'use_cdn_index', 'useCdnIndex'),
+    ...(getBoolean(value, 'use_cdn_index') !== undefined && {
+      use_cdn_index: getBoolean(value, 'use_cdn_index'),
     }),
   };
 
@@ -68,14 +62,12 @@ function normalizeNode<T extends FileNode | DirectoryNode | ShareNode>(
 ): T {
   const source = value as Record<string, unknown>;
   const normalized: Record<string, unknown> = { ...source };
-  const mountSource = normalizeMountSource(
-    source.mount_source ?? source.mountSource,
-  );
+  const mount_source = normalizeMountSource(source.mount_source);
 
-  delete normalized.mountSource;
+  delete normalized.mount_source;
 
-  if (mountSource) {
-    normalized.mount_source = mountSource;
+  if (mount_source) {
+    normalized.mount_source = mount_source;
   }
 
   return normalized as T;
@@ -103,18 +95,18 @@ export function normalizeInfoFile(value: unknown): InfoFile | undefined {
 export function normalizeShareFile(value: unknown): ShareFile | undefined {
   if (!isRecord(value) || !isRecord(value.nodes)) return undefined;
 
-  const rootId = getString(value, 'root_id', 'rootId');
-  const rawPathIndex = value.path_index ?? value.pathIndex;
-  const rawMountPoints = value.mount_points ?? value.mountPoints;
+  const root_id = getString(value, 'root_id');
+  const raw_path_index = value.path_index;
+  const raw_mount_points = value.mount_points;
 
-  if (!rootId || !isRecord(rawPathIndex)) return undefined;
+  if (!root_id || !isRecord(raw_path_index)) return undefined;
 
-  const pathIndex: Record<string, string> = {};
+  const path_index: Record<string, string> = {};
   const nodes: Record<string, ShareNode> = {};
 
-  for (const [path, nodeId] of Object.entries(rawPathIndex)) {
-    if (typeof nodeId === 'string') {
-      pathIndex[path] = nodeId;
+  for (const [path, node_id] of Object.entries(raw_path_index)) {
+    if (typeof node_id === 'string') {
+      path_index[path] = node_id;
     }
   }
 
@@ -125,11 +117,11 @@ export function normalizeShareFile(value: unknown): ShareFile | undefined {
   }
 
   return {
-    root_id: rootId,
-    path_index: pathIndex,
+    root_id,
+    path_index,
     nodes,
-    ...(isRecord(rawMountPoints) && {
-      mount_points: rawMountPoints as ShareFile['mount_points'],
+    ...(isRecord(raw_mount_points) && {
+      mount_points: raw_mount_points as ShareFile['mount_points'],
     }),
   };
 }

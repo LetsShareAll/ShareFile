@@ -1,0 +1,70 @@
+name: 部署 GitHub Pages
+
+on:
+  workflow_run:
+    workflows:
+      - 准备 public 文件
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: deploy-github-pages
+  cancel-in-progress: true
+
+jobs:
+  build-page:
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_branch == 'main'
+        )
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 签出仓库
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.2.2
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '26.2.0'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建页面
+        run: pnpm run build
+
+      - name: 上传页面
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: './public'
+
+  deploy-page:
+    needs: build-page
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 部署页面
+        id: deployment
+        uses: actions/deploy-pages@v5
