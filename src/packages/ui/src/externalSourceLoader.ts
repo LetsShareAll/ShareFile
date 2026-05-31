@@ -31,7 +31,8 @@ import {
 // ────────────── 常量定义 ──────────────
 
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 小时（与 jsDelivr CDN 缓存对齐）
-const CACHE_KEY_PREFIX = 'share-file-external:';
+const CACHE_KEY_PREFIX = 'share-file-external:v2:';
+const LEGACY_CACHE_KEY_PREFIXES = ['share-file-external:'];
 const GITHUB_RAW_HOST = 'raw.githubusercontent.com';
 const GITHUB_RAW_BASE_URL = `https://${GITHUB_RAW_HOST}`;
 
@@ -130,6 +131,53 @@ function buildExternalFileUrl(
   )}`;
 }
 
+function getExpectedFileUrlPrefix(mountSource: MountSourceInfo): string {
+  const { repository, branch = 'main' } = mountSource;
+  const accessCdn = getMountSourceAccessCdn(mountSource);
+
+  if (accessCdn && accessCdn !== 'jsdelivr' && accessCdn !== 'raw') {
+    return `${joinUrl(accessCdn, GITHUB_RAW_HOST, repository, branch)}/`;
+  }
+
+  if (accessCdn === 'raw') {
+    return `${joinUrl(GITHUB_RAW_BASE_URL, repository, branch)}/`;
+  }
+
+  return `https://cdn.jsdelivr.net/gh/${repository}@${branch}/`;
+}
+
+function isUsableExternalFileUrl(
+  value: unknown,
+  mountSource: MountSourceInfo,
+): value is string {
+  if (typeof value !== 'string') return false;
+
+  const url = value.trim();
+
+  if (!url || url === 'undefined' || url === 'null') return false;
+
+  try {
+    new URL(url);
+  } catch {
+    return false;
+  }
+
+  return url.startsWith(getExpectedFileUrlPrefix(mountSource));
+}
+
+function hasRequiredCdnFileUrls(
+  data: ShareFile,
+  mountSource: MountSourceInfo,
+): boolean {
+  if (!(getMountSourceUseCdnIndex(mountSource) ?? false)) return true;
+
+  return Object.values(data.nodes).every(node => {
+    if (node.type !== 'file' || node.redirect_url) return true;
+
+    return isUsableExternalFileUrl(node.url, mountSource);
+  });
+}
+
 /**
  * 尝试多个分支名称（main -> master）
  */
@@ -165,18 +213,37 @@ async function fetchWithBranchFallback(
  * 生成缓存键
  */
 function getCacheKey(mountPoint: string, mountSource: MountSourceInfo): string {
+  return `${CACHE_KEY_PREFIX}${getCacheKeyBody(mountPoint, mountSource)}`;
+}
+
+function getCacheKeyBody(
+  mountPoint: string,
+  mountSource: MountSourceInfo,
+): string {
   const { provider, repository, branch = 'main' } = mountSource;
   const subPath = getMountSourceSubPath(mountSource) ?? '/';
   const accessCdn = getMountSourceAccessCdn(mountSource) ?? 'jsdelivr';
   const useCdnIndex = getMountSourceUseCdnIndex(mountSource) ?? false;
 
-  return `${CACHE_KEY_PREFIX}${provider}:${repository}:${branch}:${subPath}:${accessCdn}:${useCdnIndex}:${mountPoint}`;
+  return `${provider}:${repository}:${branch}:${subPath}:${accessCdn}:${useCdnIndex}:${mountPoint}`;
+}
+
+function getLegacyCacheKeys(
+  mountPoint: string,
+  mountSource: MountSourceInfo,
+): string[] {
+  const body = getCacheKeyBody(mountPoint, mountSource);
+
+  return LEGACY_CACHE_KEY_PREFIXES.map(prefix => `${prefix}${body}`);
 }
 
 /**
  * 从缓存加载外部源
  */
-function loadFromCache(cacheKey: string): ShareFile | null {
+function loadFromCache(
+  cacheKey: string,
+  mountSource: MountSourceInfo,
+): ShareFile | null {
   try {
     const cached = localStorage.getItem(cacheKey);
     if (!cached) return null;
@@ -201,6 +268,12 @@ function loadFromCache(cacheKey: string): ShareFile | null {
 
     if (!data) {
       localStorage.removeItem(cacheKey);
+      return null;
+    }
+
+    if (!hasRequiredCdnFileUrls(data, mountSource)) {
+      localStorage.removeItem(cacheKey);
+      console.warn(`外部源缓存包含无效 CDN URL，已丢弃: ${cacheKey}`);
       return null;
     }
 
@@ -252,9 +325,15 @@ export function clearMountPointCache(
   mountPoint: string,
   mountSource: MountSourceInfo,
 ): void {
-  const cacheKey = getCacheKey(mountPoint, mountSource);
-  localStorage.removeItem(cacheKey);
-  console.log(`已清除缓存: ${cacheKey}`);
+  const cacheKeys = [
+    getCacheKey(mountPoint, mountSource),
+    ...getLegacyCacheKeys(mountPoint, mountSource),
+  ];
+
+  cacheKeys.forEach(cacheKey => {
+    localStorage.removeItem(cacheKey);
+    console.log(`已清除缓存: ${cacheKey}`);
+  });
 }
 
 /**
@@ -263,7 +342,10 @@ export function clearMountPointCache(
 export function clearAllExternalCache(): void {
   const keys = Object.keys(localStorage);
   keys.forEach(key => {
-    if (key.startsWith(CACHE_KEY_PREFIX)) {
+    if (
+      key.startsWith(CACHE_KEY_PREFIX) ||
+      LEGACY_CACHE_KEY_PREFIXES.some(prefix => key.startsWith(prefix))
+    ) {
       localStorage.removeItem(key);
     }
   });
@@ -284,7 +366,7 @@ async function loadExternalShareFile(
 
   // 尝试从缓存加载
   if (useCache) {
-    const cached = loadFromCache(cacheKey);
+    const cached = loadFromCache(cacheKey, mountSource);
 
     if (cached) {
       return { success: true, data: cached, fromCache: true };
@@ -414,10 +496,10 @@ function rewriteExternalNodes(
     const newParentId = node.parent ? idMapping[node.parent] || null : null;
 
     const shouldAddFileUrl =
-      shouldGenerateFileUrls &&
       node.type === 'file' &&
-      !node.url &&
-      !node.redirect_url;
+      !node.redirect_url &&
+      ((shouldGenerateFileUrls && !node.url) ||
+        !isUsableExternalFileUrl(node.url, mountSource));
 
     const rewrittenNode: ShareNode = {
       ...node,

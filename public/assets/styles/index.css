@@ -8,7 +8,7 @@
 /* 自定义字体：等宽代码字体（Sarasa Mono SC Nerd） */
 @font-face {
   font-family: 'Sarasa Mono SC Nerd';
-  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2')
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2')
     format('woff2');
   font-weight: 400;
   font-style: normal;
@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: 'Sarasa Mono SC Nerd';
-  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-bold-nerd-font.woff2')
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-bold-nerd-font.woff2')
     format('woff2');
   font-weight: 700;
   font-style: normal;
@@ -24,7 +24,7 @@
 
 @font-face {
   font-family: 'Sarasa Mono SC Nerd';
-  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2')
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2')
     format('woff2');
   font-weight: 400;
   font-style: italic;
@@ -32,7 +32,7 @@
 
 @font-face {
   font-family: 'Sarasa Mono SC Nerd';
-  src: url('/others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2')
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2')
     format('woff2');
   font-weight: 700;
   font-style: italic;
