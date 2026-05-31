@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 DEFAULT_CDN_BASE_URL = (
     "https://cdn-file.lssa.fun/"
-    "raw.githubusercontent.com/LetsShareAll/ShareFile/file/public"
+    "raw.githubusercontent.com/LetsShareAll/ShareFile/main/public"
 )
 
 

@@ -34,7 +34,7 @@ const workspaceRoot = path.resolve(
   '..',
 );
 const DEFAULT_CDN_BASE_URL =
-  'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public';
+  'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/main/public';
 
 interface GenerateShareOptions {
   rootDir: string;

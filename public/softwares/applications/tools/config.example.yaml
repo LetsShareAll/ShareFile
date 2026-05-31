@@ -59,7 +59,7 @@ generate_share_file:
 
   # CDN 文件访问基础 URL（用于生成 share-file.cdn.json）
   # 默认值与 TypeScript CLI 一致
-  cdn_base_url: 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public'
+  cdn_base_url: 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/main/public'
 
   # 是否输出详细日志
   verbose: false

@@ -159,7 +159,7 @@ generate_info:
 generate_share_file:
   root_dir: '.'
   output_file: './share-file.json'
-  cdn_base_url: 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public'
+  cdn_base_url: 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/main/public'
   verbose: false
 ```
 
