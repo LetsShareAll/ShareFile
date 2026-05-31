@@ -1,212 +1,146 @@
-# ShareFile Python 工具使用文档
+# ShareFile Python 工具
 
-本文档介绍如何使用 ShareFile Python 工具来生成文件索引。
+`src/packages/python-tools` 提供 Python 版 ShareFile 索引生成工具。它复刻 TypeScript CLI 的核心能力，适合没有 Node.js 环境的机器使用，也可以通过 PyInstaller 打包成独立可执行文件。
 
-## 目录
+包含两个入口：
 
-- [简介](#简介)
-- [安装](#安装)
-- [快速开始](#快速开始)
-- [generate-info.py](#generate-infopy)
-- [generate-share-file.py](#generate-share-filepy)
-- [配置文件](#配置文件)
-- [常见问题](#常见问题)
+| 工具                     | 职责                                                                |
+| ------------------------ | ------------------------------------------------------------------- |
+| `generate-info.py`       | 扫描目录，生成或更新每个目录下的 `._info.json`                      |
+| `generate-share-file.py` | 读取 `._info.json`，生成 `share-file.json` 和 `share-file.cdn.json` |
 
-## 简介
+## 使用方式
 
-ShareFile Python 工具提供两个命令行程序：
+### 使用预编译文件
 
-- **generate-info.py**：递归扫描目录，为每个目录生成 `._info.json` 元数据文件
-- **generate-share-file.py**：根据 `._info.json` 文件构建扁平化的 `share-file.json` 索引
+GitHub Actions 会编译 Linux 版工具，并复制到：
 
-这些工具完全复刻了 TypeScript 版本的功能，适合没有 Node.js 环境的用户使用。
+```text
+public/softwares/applications/tools/
+```
 
-## 安装
+当前自动化产物：
 
-### 方式 1：使用预编译的可执行文件（推荐）
+```text
+generate-info-linux
+generate-share-file-linux
+config.example.yaml
+```
 
-从项目网站下载对应平台的可执行文件：
+示例：
 
-- **Linux**: `generate-info-linux`, `generate-share-file-linux`
-- **Windows**: `generate-info.exe`, `generate-share-file.exe`
-- **macOS**: `generate-info-macos`, `generate-share-file-macos`
+```bash
+./generate-info-linux ./public
+./generate-share-file-linux ./public ./public/assets/data/share-file.json
+```
 
-下载后直接运行，无需安装 Python。
+### 从源码运行
 
-### 方式 2：从源码运行
+要求：
 
-**要求：**
-- Python 3.12 或更高版本
+- Python `>=3.12`
 - pip
 
-**安装步骤：**
+安装依赖：
 
 ```bash
-# 克隆仓库
-git clone https://github.com/your-repo/ShareFile.git
-cd ShareFile/src/packages/python-tools
-
-# 安装依赖
+cd src/packages/python-tools
 pip install -r requirements.txt
-
-# 运行脚本
-python generate-info.py --help
-python generate-share-file.py --help
 ```
 
-## 快速开始
-
-### 1. 生成元数据文件
-
-在你的文件目录中运行：
+运行：
 
 ```bash
-# 使用可执行文件
-./generate-info-linux /path/to/your/files
-
-# 或使用 Python 脚本
-python generate-info.py /path/to/your/files
+python generate-info.py ../../../public
+python generate-share-file.py ../../../public ../../../public/assets/data/share-file.json
 ```
 
-这会递归扫描目录，为每个目录生成 `._info.json` 文件，包含：
-- 文件大小
-- MD5 和 SHA256 哈希值
-- Git 历史时间戳（如果在 Git 仓库中）
-- 文件类型描述
+## `generate-info.py`
 
-### 2. 生成索引文件
+基本用法：
 
 ```bash
-# 使用可执行文件
-./generate-share-file-linux /path/to/your/files ./share-file.json
-
-# 或使用 Python 脚本
-python generate-share-file.py /path/to/your/files ./share-file.json
+python generate-info.py [目录] [选项]
 ```
 
-这会生成 `share-file.json`，包含所有文件的扁平化索引。
-
-### 3. 生成 CDN 版本（可选）
-
-如果你使用 CDN 托管文件：
+常用示例：
 
 ```bash
-./generate-share-file-linux /path/to/your/files ./share-file.json \
+# 扫描 public，并更新目录元数据
+python generate-info.py ../../../public
+
+# 预览变化，不写入文件
+python generate-info.py ../../../public --dry-run --verbose
+
+# 跳过哈希和 Git 历史，加快扫描
+python generate-info.py ../../../public --no-hash --no-git
+
+# 使用配置文件
+python generate-info.py --config config.example.yaml
+```
+
+主要选项：
+
+| 选项                 | 说明                          |
+| -------------------- | ----------------------------- |
+| `--config FILE`      | 从配置文件读取参数            |
+| `--no-recursive`     | 只处理指定目录，不递归子目录  |
+| `--force`            | 忽略 `hold`，强制更新自动字段 |
+| `--dry-run`          | 预览结果，不写文件            |
+| `--no-hash`          | 不计算 MD5 / SHA256           |
+| `--no-git`           | 不读取 Git 历史时间           |
+| `--no-size`          | 不更新文件大小                |
+| `--no-clean`         | 不清理已不存在的物理节点      |
+| `--no-clean-ignored` | 不清理被忽略规则匹配的节点    |
+| `--no-purify`        | 不精简目录节点上的文件字段    |
+| `--no-format`        | 不格式化输出 JSON             |
+| `--ignore PATTERN`   | 添加忽略正则，可重复使用      |
+| `--verbose`          | 输出详细日志                  |
+
+## `generate-share-file.py`
+
+基本用法：
+
+```bash
+python generate-share-file.py [目录] [输出文件] [选项]
+```
+
+常用示例：
+
+```bash
+# 生成基础索引，并同步生成 share-file.cdn.json
+python generate-share-file.py ../../../public ../../../public/assets/data/share-file.json
+
+# 指定 CDN 基础 URL
+python generate-share-file.py ../../../public ../../../public/assets/data/share-file.json \
   --cdn-url "https://cdn.example.com/files"
+
+# 使用配置文件
+python generate-share-file.py --config config.example.yaml
 ```
 
-这会额外生成 `share-file.cdn.json`，其中文件 URL 指向 CDN。
+主要选项：
 
-## generate-info.py
-
-### 基本用法
-
-```bash
-generate-info.py [目录] [选项]
-```
-
-### 选项
-
-**目录扫描：**
-- `--recursive` / `--no-recursive`：是否递归处理子目录（默认：递归）
-- `--ignore PATTERN`：添加忽略规则（正则表达式），可多次使用
-
-**元数据生成：**
-- `--no-hash`：不计算文件哈希值
-- `--no-git`：不从 Git 历史提取时间戳
-- `--no-size`：不更新文件大小
-
-**清理选项：**
-- `--no-clean`：不清理失效的节点
-- `--no-clean-ignored`：不清理被忽略的节点
-- `--no-purify`：不精简目录节点的冗余字段
-- `--no-format`：不格式化 JSON 输出
-
-**高级选项：**
-- `--force`：忽略 hold 锁定，强制更新所有字段
-- `--dry-run`：预览模式，不写入文件
-- `--config FILE`：使用配置文件
-- `--output FILE`：指定输出文件名（默认：`._info.json`）
-- `--verbose`：输出详细日志
-
-### 示例
-
-**基础扫描：**
-```bash
-generate-info.py ./public
-```
-
-**跳过哈希计算（加快速度）：**
-```bash
-generate-info.py ./public --no-hash
-```
-
-**预览模式（不写入文件）：**
-```bash
-generate-info.py ./public --dry-run --verbose
-```
-
-**使用配置文件：**
-```bash
-generate-info.py --config config.yaml
-```
-
-**添加自定义忽略规则：**
-```bash
-generate-info.py ./public --ignore "^\.tmp$" --ignore "^test_.*\.py$"
-```
-
-## generate-share-file.py
-
-### 基本用法
-
-```bash
-generate-share-file.py [目录] [输出文件] [选项]
-```
-
-### 选项
-
-- `--config FILE`：使用配置文件
-- `--cdn-url URL`：CDN 基础 URL（生成 CDN 版本）
-- `--verbose`：输出详细日志
-
-### 示例
-
-**生成基础索引：**
-```bash
-generate-share-file.py ./public ./public/assets/data/share-file.json
-```
-
-**生成 CDN 版本：**
-```bash
-generate-share-file.py ./public ./public/assets/data/share-file.json \
-  --cdn-url "https://cdn.jsdelivr.net/gh/user/repo@main/public"
-```
-
-**使用配置文件：**
-```bash
-generate-share-file.py --config config.yaml
-```
+| 选项            | 说明                      |
+| --------------- | ------------------------- |
+| `--config FILE` | 从配置文件读取参数        |
+| `--cdn-url URL` | 设置 CDN 文件访问基础 URL |
+| `--verbose`     | 输出详细日志              |
 
 ## 配置文件
 
-你可以使用 `config.yaml` 来避免每次都输入命令行参数。
-
-### 创建配置文件
-
-复制示例配置文件：
+复制示例配置：
 
 ```bash
 cp config.example.yaml config.yaml
 ```
 
-### 配置文件结构
+配置结构：
 
 ```yaml
-# generate-info 配置
 generate_info:
-  root_dir: "."
-  output_filename: "._info.json"
+  root_dir: '.'
+  output_filename: '._info.json'
   recursive: true
   calculate_hash: true
   use_git_history: true
@@ -222,100 +156,131 @@ generate_info:
     - "^\\.tmp$"
     - "^\\.cache$"
 
-# generate-share-file 配置
 generate_share_file:
-  root_dir: "."
-  output_file: "./share-file.json"
-  cdn_base_url: "https://cdn.example.com/files"
+  root_dir: '.'
+  output_file: './share-file.json'
+  cdn_base_url: 'https://cdn.example.com/files'
   verbose: false
 ```
 
-### 使用配置文件
+命令行参数会覆盖配置文件中的同名设置。
+
+## 元数据能力
+
+Python 工具支持：
+
+- 自动补全 `size`
+- 自动计算 `md5` / `sha256`
+- 从 Git 历史推断 `created_at` / `updated_at`
+- 清理不存在的物理节点
+- 保留虚拟节点
+- 识别 `hold` 字段锁定
+- 保留 `redirect`
+- 保留目录级 `mount_source`
+
+根项目的数据结构说明见：
+
+```text
+docs/metadata.md
+```
+
+## 打包
+
+安装依赖后运行：
 
 ```bash
-# 使用配置文件
-generate-info.py --config config.yaml
+pyinstaller build.spec
+```
 
-# 命令行参数会覆盖配置文件
-generate-info.py --config config.yaml --verbose
+输出目录：
+
+```text
+dist/
+```
+
+预期产物：
+
+```text
+dist/generate-info
+dist/generate-share-file
+```
+
+GitHub Actions 中的 `准备 public 文件` workflow 会执行相同打包流程，并复制产物：
+
+```text
+dist/generate-info
+  -> public/softwares/applications/tools/generate-info-linux
+
+dist/generate-share-file
+  -> public/softwares/applications/tools/generate-share-file-linux
+```
+
+## 与 TypeScript CLI 的关系
+
+TypeScript CLI 是仓库内开发和自动化的主实现：
+
+```text
+src/packages/cli
+```
+
+Python 工具是便携版本，适合：
+
+- 没有 Node.js 的环境
+- 只需要生成索引的文件维护机器
+- 分发给非开发者使用
+
+修改元数据协议时，需要同步检查：
+
+```text
+src/packages/types/src/schema.ts
+src/packages/cli/src/generate-info.ts
+src/packages/cli/src/generate-share-file.ts
+src/packages/python-tools/*.py
 ```
 
 ## 常见问题
 
-### Q: 如何加快扫描速度？
+### 生成速度太慢
 
-A: 跳过哈希计算和 Git 历史提取：
-
-```bash
-generate-info.py ./public --no-hash --no-git
-```
-
-### Q: 如何只扫描特定目录？
-
-A: 直接指定目录路径，并使用 `--no-recursive` 选项：
+跳过哈希和 Git 历史：
 
 ```bash
-generate-info.py ./public/documents --no-recursive
+python generate-info.py ../../../public --no-hash --no-git
 ```
 
-### Q: 如何保护某些字段不被自动更新？
+### 手工字段被覆盖
 
-A: 在 `._info.json` 中使用 `hold` 字段：
+在节点上使用 `hold`：
 
 ```json
 {
-  "self": {},
   "children": {
-    "important.txt": {
+    "release.zip": {
       "type": "file",
-      "description": "重要文件",
       "hold": {
         "hash": true,
-        "size": true
+        "created_at": true
       }
     }
   }
 }
 ```
 
-### Q: 如何添加虚拟节点（重定向）？
+### 只想处理一个目录
 
-A: 在 `._info.json` 中添加带 `redirect` 字段的节点：
-
-```json
-{
-  "self": {},
-  "children": {
-    "external-link": {
-      "type": "file",
-      "description": "外部链接",
-      "redirect": {
-        "url": "https://example.com/file.pdf",
-        "type": "direct"
-      }
-    }
-  }
-}
+```bash
+python generate-info.py ./some-folder --no-recursive
 ```
 
-### Q: 生成的文件太大怎么办？
+### 需要 CDN URL
 
-A: 使用 `--no-hash` 跳过哈希计算，可以显著减小文件大小。
-
-### Q: 如何在 Windows 上运行？
-
-A: 下载 `.exe` 文件，或使用 PowerShell：
-
-```powershell
-python generate-info.py .\public
+```bash
+python generate-share-file.py ./public ./public/assets/data/share-file.json \
+  --cdn-url "https://cdn.example.com/files"
 ```
 
-### Q: 支持哪些文件类型？
+该命令会同步生成：
 
-A: 支持所有文件类型。常见文件类型会自动添加描述（如 `.txt` → "纯文本文件"）。
-
-## 更多信息
-
-- [项目主页](https://github.com/your-repo/ShareFile)
-- [问题反馈](https://github.com/your-repo/ShareFile/issues)
-- [TypeScript CLI 文档](../cli/README.md)
+```text
+share-file.cdn.json
+```
