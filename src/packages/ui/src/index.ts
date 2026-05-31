@@ -889,20 +889,9 @@ async function main(): Promise<void> {
     // 后台异步加载外部源
     if (hasExternalSources) {
       loadAllExternalSources(localData)
-        .then(mergedData => {
+        .then(async mergedData => {
           globalShareData = mergedData;
-
-          // 如果当前路径包含外部挂载点，重新渲染
-          const currentPath = getCurrentPath();
-          const currentNodeId =
-            getShareFilePathIndex(globalShareData)[currentPath];
-
-          if (
-            currentNodeId &&
-            globalShareData.nodes[currentNodeId]?.source === 'external'
-          ) {
-            renderCurrentView();
-          }
+          await renderCurrentView();
         })
         .catch(error => {
           console.error('外部源加载失败:', error);
