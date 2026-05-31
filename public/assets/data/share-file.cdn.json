@@ -94,13 +94,13 @@
       "children": [],
       "description": "文件",
       "created_at": "2026-05-29T15:55:26Z",
-      "updated_at": "2026-05-29T17:26:41Z",
+      "updated_at": "2026-05-31T09:28:30Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 20760944,
-      "md5": "144939efa21c34b995a88ec02a16b2f5",
-      "sha256": "bbf6cdd4cb2a5d453781fa7dae2990ff321917858d5d4c56be429e05e76d354c",
+      "size": 20762368,
+      "md5": "4dfc6cda3070454823d73964b859e932",
+      "sha256": "737e7a0640d16a5bbc26a9ded36632344832f15cc8e80dc0878f876ad61490c1",
       "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/generate-info-linux"
     },
     "softwares/applications/tools/generate-share-file-linux": {
@@ -111,13 +111,13 @@
       "children": [],
       "description": "文件",
       "created_at": "2026-05-29T15:55:26Z",
-      "updated_at": "2026-05-29T17:26:41Z",
+      "updated_at": "2026-05-31T09:28:30Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 20759408,
-      "md5": "90aed0e937c8c45e6ebeafe62b67f9fd",
-      "sha256": "af53ef9a6cfde1411d64164d7705931653fde45b9bdf6d1bc47cfaa4d75b4d09",
+      "size": 20761880,
+      "md5": "09cf5010f77924d26d3d007e87b8a48b",
+      "sha256": "f77c04e2aafd7fa950462ebdaad56cfa310c991ce6d5a320ca4596db11adf6e4",
       "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/generate-share-file-linux"
     }
   }
