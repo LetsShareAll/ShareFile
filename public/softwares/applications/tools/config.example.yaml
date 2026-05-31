@@ -59,7 +59,7 @@ generate_share_file:
 
   # CDN 基础 URL（用于生成 share-file.cdn.json）
   # 留空则不生成 CDN 版本
-  cdn_base_url: "https://cdn-file.lssa.fun/github.com/user/repo/blob/branch/public"
+  cdn_base_url: "https://cdn-file.lssa.fun/raw.githubusercontent.com/user/repo/branch/public"
 
   # 是否输出详细日志
   verbose: false

@@ -32,6 +32,8 @@ import {
 
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 小时（与 jsDelivr CDN 缓存对齐）
 const CACHE_KEY_PREFIX = 'share-file-external:';
+const GITHUB_RAW_HOST = 'raw.githubusercontent.com';
+const GITHUB_RAW_BASE_URL = `https://${GITHUB_RAW_HOST}`;
 
 // ────────────── 类型定义 ──────────────
 
@@ -61,6 +63,15 @@ function joinUrl(baseUrl: string, ...segments: string[]): string {
   return [normalizedBase, ...normalizedSegments].join('/');
 }
 
+function buildCustomGithubCdnUrl(
+  accessCdn: string,
+  repository: string,
+  branch: string,
+  filePath: string,
+): string {
+  return joinUrl(accessCdn, GITHUB_RAW_HOST, repository, branch, filePath);
+}
+
 /**
  * 根据 mountSource 配置构建外部仓库根目录下的 share-file.json URL。
  */
@@ -79,7 +90,7 @@ function buildExternalIndexUrl(
 
   // 自定义 CDN URL
   if (accessCdn && accessCdn !== 'jsdelivr' && accessCdn !== 'raw') {
-    return joinUrl(accessCdn, repository, branch, fileName);
+    return buildCustomGithubCdnUrl(accessCdn, repository, branch, fileName);
   }
 
   // jsDelivr CDN
@@ -89,12 +100,7 @@ function buildExternalIndexUrl(
 
   // GitHub raw URL
   if (accessCdn === 'raw') {
-    return joinUrl(
-      'https://raw.githubusercontent.com',
-      repository,
-      branch,
-      fileName,
-    );
+    return joinUrl(GITHUB_RAW_BASE_URL, repository, branch, fileName);
   }
 
   throw new Error(`无效的 access_cdn 配置: ${accessCdn}`);
@@ -112,16 +118,11 @@ function buildExternalFileUrl(
   }
 
   if (accessCdn && accessCdn !== 'jsdelivr' && accessCdn !== 'raw') {
-    return joinUrl(accessCdn, repository, branch, nodeId);
+    return buildCustomGithubCdnUrl(accessCdn, repository, branch, nodeId);
   }
 
   if (accessCdn === 'raw') {
-    return joinUrl(
-      'https://raw.githubusercontent.com',
-      repository,
-      branch,
-      nodeId,
-    );
+    return joinUrl(GITHUB_RAW_BASE_URL, repository, branch, nodeId);
   }
 
   return `https://cdn.jsdelivr.net/gh/${repository}@${branch}/${trimUrlSegment(

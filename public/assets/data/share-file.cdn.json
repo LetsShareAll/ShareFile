@@ -84,7 +84,7 @@
       "size": 1590,
       "md5": "cfedf686eee4b8a27ff1f684c1274bd2",
       "sha256": "ffb1f3a43df06e672fddf8f510ab2d9c24690cdd12b2aa354f25041ac9cdc588",
-      "url": "https://cdn-file.lssa.fun/github.com/LetsShareAll/ShareFile/blob/file/public/softwares/applications/tools/config.example.yaml"
+      "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/config.example.yaml"
     },
     "softwares/applications/tools/generate-info-linux": {
       "id": "softwares/applications/tools/generate-info-linux",
@@ -101,7 +101,7 @@
       "size": 20760944,
       "md5": "144939efa21c34b995a88ec02a16b2f5",
       "sha256": "bbf6cdd4cb2a5d453781fa7dae2990ff321917858d5d4c56be429e05e76d354c",
-      "url": "https://cdn-file.lssa.fun/github.com/LetsShareAll/ShareFile/blob/file/public/softwares/applications/tools/generate-info-linux"
+      "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/generate-info-linux"
     },
     "softwares/applications/tools/generate-share-file-linux": {
       "id": "softwares/applications/tools/generate-share-file-linux",
@@ -118,7 +118,7 @@
       "size": 20759408,
       "md5": "90aed0e937c8c45e6ebeafe62b67f9fd",
       "sha256": "af53ef9a6cfde1411d64164d7705931653fde45b9bdf6d1bc47cfaa4d75b4d09",
-      "url": "https://cdn-file.lssa.fun/github.com/LetsShareAll/ShareFile/blob/file/public/softwares/applications/tools/generate-share-file-linux"
+      "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/public/softwares/applications/tools/generate-share-file-linux"
     }
   }
 }
