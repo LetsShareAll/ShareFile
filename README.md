@@ -40,7 +40,7 @@ https://file.lssa.fun/
 - 虚拟节点：支持虚拟文件、虚拟目录、外部链接和确认跳转。
 - 外部挂载：通过 `mount_source` 在运行时加载其他仓库或分支的索引。
 - 前端预览：支持图片、Markdown、文本、代码、PDF、音频、视频等常见类型。
-- 离线工具：提供 Python 版生成工具，可打包成无需 Node.js 的可执行文件。
+- 离线工具：Python CLI 是索引生成的权威实现，可打包成无需 Node.js 的可执行文件。
 
 ## 架构概览
 
@@ -49,8 +49,7 @@ ShareFile 的核心思路是把“站点壳”和“文件数据”拆开。
 ```text
 main 分支
   ├─ UI 源码
-  ├─ TypeScript CLI
-  ├─ Python 工具源码
+  ├─ Python 生成工具源码
   ├─ GitHub Actions
   └─ public/ 站点壳、工具下载和本地索引
 
@@ -94,24 +93,19 @@ file 分支
 │   │   ├── scripts/
 │   │   └── styles/
 │   └── softwares/applications/tools/
-├── src/packages/
+├── packages/
 │   ├── cli/
-│   ├── python-tools/
-│   ├── types/
 │   └── ui/
 ├── package.json
-├── pnpm-workspace.yaml
-└── tsconfig.json
+└── pnpm-workspace.yaml
 ```
 
 核心包职责：
 
-| 路径                        | 职责                                                             |
-| --------------------------- | ---------------------------------------------------------------- |
-| `src/packages/cli`          | TypeScript 生成工具，维护 `._info.json` 并生成 `share-file.json` |
-| `src/packages/types`        | CLI 与 UI 共用的数据结构、访问器和规范化逻辑                     |
-| `src/packages/ui`           | 浏览器端文件列表、搜索、预览、主题和外部挂载加载逻辑             |
-| `src/packages/python-tools` | Python 版生成工具和 PyInstaller 打包配置                         |
+| 路径           | 职责                                                    |
+| -------------- | ------------------------------------------------------- |
+| `packages/cli` | Python CLI，维护 `._info.json` 并生成 `share-file.json` |
+| `packages/ui`  | 浏览器端文件列表、搜索、预览、主题和外部挂载加载逻辑    |
 
 ## 快速开始
 
@@ -119,6 +113,9 @@ file 分支
 
 - Node.js `>=26.2.0`
 - pnpm `>=11`
+- Python `>=3.12`
+
+根级生成脚本会自动查找 `python3`、`python` 或 Windows `py -3`。如果本机需要指定解释器，可设置 `PYTHON` 环境变量。
 
 安装依赖：
 
@@ -161,19 +158,19 @@ pnpm run build
 
 ## 常用脚本
 
-| 命令                           | 说明                                                       |
-| ------------------------------ | ---------------------------------------------------------- |
-| `pnpm run dev`                 | 生成一次索引，启动本地静态服务器，并监听 UI 源码变更       |
-| `pnpm run generate`            | 运行 `generate-info` 和 `generate-share-file`              |
-| `pnpm run generate-info`       | 扫描 `public/` 并维护目录级 `._info.json`                  |
-| `pnpm run generate-share-file` | 根据 `._info.json` 生成前端索引                            |
-| `pnpm run check`               | 对 workspace 包执行 TypeScript 检查                        |
-| `pnpm run lint`                | 对 workspace 包执行 ESLint                                 |
-| `pnpm run format`              | 格式化 workspace 包，并格式化 workflow 与根 `package.json` |
-| `pnpm run format:check`        | 检查 workflow 与根 `package.json` 格式                     |
-| `pnpm run verify`              | 执行 `check`、`lint` 和 `format:check`                     |
-| `pnpm run build`               | 构建站点 UI                                                |
-| `pnpm run build:site`          | 直接调用 UI 包构建脚本                                     |
+| 命令                           | 说明                                                          |
+| ------------------------------ | ------------------------------------------------------------- |
+| `pnpm run dev`                 | 生成一次索引，启动本地静态服务器，并监听 UI 源码变更          |
+| `pnpm run generate`            | 使用 Python CLI 运行 `generate-info` 和 `generate-share-file` |
+| `pnpm run generate-info`       | 使用 Python CLI 扫描 `public/` 并维护目录级 `._info.json`     |
+| `pnpm run generate-share-file` | 使用 Python CLI 根据 `._info.json` 生成前端索引               |
+| `pnpm run check`               | 执行 UI TypeScript、Python 语法和脚本路径检查                 |
+| `pnpm run lint`                | 执行 UI ESLint 和根级脚本 ESLint                              |
+| `pnpm run format`              | 格式化 UI、workflow、根配置文件和根级脚本                     |
+| `pnpm run format:check`        | 检查 workflow、根配置文件和根级脚本格式                       |
+| `pnpm run verify`              | 执行 `check`、`lint`、`format:check` 和契约测试               |
+| `pnpm run build`               | 构建站点 UI                                                   |
+| `pnpm run build:site`          | 直接调用 UI 包构建脚本                                        |
 
 ## 数据与元数据
 
@@ -260,11 +257,11 @@ GitHub Actions 已拆成三段：
   -> 部署 GitHub Pages
 ```
 
-| Workflow          | 文件                                         | 职责                                                                                     |
-| ----------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| 检查代码          | `.github/workflows/check-code.yml`           | PR、`main` push、手动触发；运行 `pnpm run verify`                                        |
-| 准备 public 文件  | `.github/workflows/prepare-public-files.yml` | 在 `检查代码` 的 `main` push 成功后运行；编译 Linux Python 工具、生成索引、提交 `public` |
-| 部署 GitHub Pages | `.github/workflows/deploy-github-pages.yml`  | 在 `准备 public 文件` 成功后构建站点并部署 Pages                                         |
+| Workflow          | 文件                                         | 职责                                                                                    |
+| ----------------- | -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| 检查代码          | `.github/workflows/check-code.yml`           | PR、`main` push、手动触发；运行 `pnpm run verify`                                       |
+| 准备 public 文件  | `.github/workflows/prepare-public-files.yml` | 在 `检查代码` 的 `main` push 成功后运行；编译 Linux Python CLI、生成索引、提交 `public` |
+| 部署 GitHub Pages | `.github/workflows/deploy-github-pages.yml`  | 在 `准备 public 文件` 成功后构建站点并部署 Pages                                        |
 
 详细说明见 [docs/workflows.md](docs/workflows.md)。
 
@@ -283,7 +280,7 @@ GitHub Actions 已拆成三段：
 更新站点或工具：
 
 ```text
-1. 在 main 分支修改 UI、CLI、类型或 Python 工具
+1. 在 main 分支修改 UI 或 Python CLI
 2. 运行 pnpm run verify
 3. 需要时运行 pnpm run generate
 4. 合并到 main
@@ -294,14 +291,14 @@ GitHub Actions 已拆成三段：
 
 ## 更多文档
 
-| 文档                                                                       | 内容                                              |
-| -------------------------------------------------------------------------- | ------------------------------------------------- |
-| [docs/architecture.md](docs/architecture.md)                               | 分支职责、数据流、外部挂载模型                    |
-| [docs/metadata.md](docs/metadata.md)                                       | `._info.json`、`hold`、`redirect`、`mount_source` |
-| [docs/workflows.md](docs/workflows.md)                                     | GitHub Actions 链路和权限边界                     |
-| [docs/maintenance.md](docs/maintenance.md)                                 | 常见维护任务和排错                                |
-| [src/packages/python-tools/README.md](src/packages/python-tools/README.md) | Python 工具使用和打包                             |
-| [src/packages/types/src/schema.ts](src/packages/types/src/schema.ts)       | 数据结构类型定义                                  |
+| 文档                                                                         | 内容                                              |
+| ---------------------------------------------------------------------------- | ------------------------------------------------- |
+| [docs/architecture.md](docs/architecture.md)                                 | 分支职责、数据流、外部挂载模型                    |
+| [docs/metadata.md](docs/metadata.md)                                         | `._info.json`、`hold`、`redirect`、`mount_source` |
+| [docs/workflows.md](docs/workflows.md)                                       | GitHub Actions 链路和权限边界                     |
+| [docs/maintenance.md](docs/maintenance.md)                                   | 常见维护任务和排错                                |
+| [packages/cli/README.md](packages/cli/README.md)                             | Python CLI 使用和打包                             |
+| [packages/ui/src/share-file/schema.ts](packages/ui/src/share-file/schema.ts) | UI 内部数据结构类型定义                           |
 
 ## 许可证
 

@@ -56,10 +56,10 @@ pnpm run verify
 `verify` 包含：
 
 ```text
-check -> lint -> format:check
+check -> lint -> format:check -> test:contract
 ```
 
-这个 workflow 不生成索引、不提交文件、不部署页面。
+这个 workflow 只做代码查验，不生成索引、不提交文件、不构建页面、不部署页面。
 
 ## 准备 public 文件
 
@@ -93,7 +93,7 @@ permissions:
 checkout 触发检查的提交
 安装 pnpm / Node.js / Python
 安装依赖
-编译 Linux Python 工具
+编译 Linux Python CLI
 复制工具到 public/softwares/applications/tools/
 运行 pnpm run generate
 检查 public 是否变化
@@ -181,10 +181,10 @@ pnpm run generate
 pnpm run build
 ```
 
-Python 工具编译可参考：
+Python CLI 编译可参考：
 
 ```bash
-cd src/packages/python-tools
+cd packages/cli
 pip install -r requirements.txt
 pyinstaller build.spec
 ```

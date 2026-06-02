@@ -55,19 +55,19 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
-          cache-dependency-path: src/packages/python-tools/requirements.txt
+          cache-dependency-path: packages/cli/requirements.txt
 
       - name: 构建 Python 可执行文件
         run: |
-          cd src/packages/python-tools
+          cd packages/cli
           pip install -r requirements.txt
           pyinstaller build.spec
-          mkdir -p ../../../public/softwares/applications/tools
-          cp dist/generate-info ../../../public/softwares/applications/tools/generate-info-linux
-          cp dist/generate-share-file ../../../public/softwares/applications/tools/generate-share-file-linux
-          cp config.example.yaml ../../../public/softwares/applications/tools/
-          chmod +x ../../../public/softwares/applications/tools/generate-*
-          ls -lh ../../../public/softwares/applications/tools/
+          mkdir -p ../../public/softwares/applications/tools
+          cp dist/generate-info ../../public/softwares/applications/tools/generate-info-linux
+          cp dist/generate-share-file ../../public/softwares/applications/tools/generate-share-file-linux
+          cp config.example.yaml ../../public/softwares/applications/tools/
+          chmod +x ../../public/softwares/applications/tools/generate-*
+          ls -lh ../../public/softwares/applications/tools/
 
       - name: 生成 public 索引
         run: pnpm run generate

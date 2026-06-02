@@ -7,16 +7,16 @@
       "type": "file",
       "description": "EXAMPLE 文件",
       "created_at": "2026-05-29T14:41:06.000Z",
-      "updated_at": "2026-05-31T19:21:05.000Z",
-      "size": 1628,
-      "md5": "18c42f933ef3381af693cddfce3224ad",
-      "sha256": "2a4d0985935156c1c2b9d31c48b6c53ae0afc3cc0861bbad6c6f0bda58f93acf"
+      "updated_at": "2026-05-31T19:14:10.000Z",
+      "size": 1630,
+      "md5": "7cdcb925548467460aa54b0ce943f6cc",
+      "sha256": "68de3fbe9fd488cbd9ce2b4d5570799234c8d01cea536f6932bdfca4cbd15ad0"
     },
     "generate-info-linux": {
       "type": "file",
       "description": "文件",
       "created_at": "2026-05-29T15:55:26.000Z",
-      "updated_at": "2026-05-31T19:22:58.000Z",
+      "updated_at": "2026-05-31T19:29:19.000Z",
       "size": 20762480,
       "md5": "7c570c9298cc8f1f92ef3fe5534044f2",
       "sha256": "0508f318e51e446dec2d439f0285c333ebc27a97d3e7a2a197e6c9de89f27dec"
@@ -25,7 +25,7 @@
       "type": "file",
       "description": "文件",
       "created_at": "2026-05-29T15:55:26.000Z",
-      "updated_at": "2026-05-31T19:22:58.000Z",
+      "updated_at": "2026-05-31T19:29:19.000Z",
       "size": 20762600,
       "md5": "8952585db9fcc6741556c443c4b4b062",
       "sha256": "a7abb58f2145919369dd08536861c27e7dd1a2131eff060a9da7243e0335f648"

@@ -212,9 +212,8 @@ path_index
 
 新增字段时应优先沿用 snake_case，并同步更新：
 
-- `src/packages/types/src/schema.ts`
-- `src/packages/types/src/json-normalize.ts`
-- `src/packages/cli/src/generate-info.ts`
-- `src/packages/cli/src/generate-share-file.ts`
-- `src/packages/ui/src/*`
-- `src/packages/python-tools/*`
+- `packages/ui/src/share-file/schema.ts`
+- `packages/ui/src/share-file/json-normalize.ts`
+- `packages/cli/*`
+- `packages/ui/src/*`
+- `tests/contract/*`

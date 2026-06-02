@@ -7,12 +7,22 @@
 .Spotlight-V100
 .Trashes
 
-# Node modules
+# Node dependencies
 node_modules/
 
-# Build output
+# UI build output
 dist/
-*.tsbuildinfo
 public/assets/scripts/*
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Python CLI build output
+packages/cli/build/
+packages/cli/dist/
