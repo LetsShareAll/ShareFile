@@ -6,8 +6,8 @@
     "/softwares/applications": "softwares/applications",
     "/softwares/applications/tools": "softwares/applications/tools",
     "/softwares/applications/tools/config.example.yaml": "softwares/applications/tools/config.example.yaml",
-    "/softwares/applications/tools/generate-info-linux": "softwares/applications/tools/generate-info-linux",
-    "/softwares/applications/tools/generate-share-file-linux": "softwares/applications/tools/generate-share-file-linux"
+    "/softwares/applications/tools/generate-share-file-linux": "softwares/applications/tools/generate-share-file-linux",
+    "/softwares/applications/tools/generate-info-linux": "softwares/applications/tools/generate-info-linux"
   },
   "nodes": {
     "root": {
@@ -61,8 +61,8 @@
       "parent": "softwares/applications",
       "children": [
         "softwares/applications/tools/config.example.yaml",
-        "softwares/applications/tools/generate-info-linux",
-        "softwares/applications/tools/generate-share-file-linux"
+        "softwares/applications/tools/generate-share-file-linux",
+        "softwares/applications/tools/generate-info-linux"
       ],
       "description": "当前目录",
       "redirect_url": null,
@@ -77,29 +77,13 @@
       "children": [],
       "description": "EXAMPLE 文件",
       "created_at": "2026-05-29T14:41:06Z",
-      "updated_at": "2026-05-31T19:14:10Z",
+      "updated_at": "2026-06-02T09:28:24Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
       "size": 1630,
       "md5": "7cdcb925548467460aa54b0ce943f6cc",
       "sha256": "68de3fbe9fd488cbd9ce2b4d5570799234c8d01cea536f6932bdfca4cbd15ad0"
-    },
-    "softwares/applications/tools/generate-info-linux": {
-      "id": "softwares/applications/tools/generate-info-linux",
-      "name": "generate-info-linux",
-      "type": "file",
-      "parent": "softwares/applications/tools",
-      "children": [],
-      "description": "文件",
-      "created_at": "2026-05-29T15:55:26Z",
-      "updated_at": "2026-05-31T19:29:19Z",
-      "redirect_url": null,
-      "redirect_type": null,
-      "redirect_confirm_message": null,
-      "size": 20762480,
-      "md5": "7c570c9298cc8f1f92ef3fe5534044f2",
-      "sha256": "0508f318e51e446dec2d439f0285c333ebc27a97d3e7a2a197e6c9de89f27dec"
     },
     "softwares/applications/tools/generate-share-file-linux": {
       "id": "softwares/applications/tools/generate-share-file-linux",
@@ -113,9 +97,25 @@
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
-      "size": 20762600,
-      "md5": "8952585db9fcc6741556c443c4b4b062",
-      "sha256": "a7abb58f2145919369dd08536861c27e7dd1a2131eff060a9da7243e0335f648"
+      "size": 20762960,
+      "md5": "55e7338fde8cd225ab1535b369cf87d1",
+      "sha256": "2ef7aa4bda100fd6554370bd4b21659e366166d0396ab1a0c7cc1d7a782ce1e9"
+    },
+    "softwares/applications/tools/generate-info-linux": {
+      "id": "softwares/applications/tools/generate-info-linux",
+      "name": "generate-info-linux",
+      "type": "file",
+      "parent": "softwares/applications/tools",
+      "children": [],
+      "description": "文件",
+      "created_at": "2026-05-29T15:55:26Z",
+      "updated_at": "2026-05-31T19:29:19Z",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null,
+      "size": 20763704,
+      "md5": "930f9974448dc179215221e87c83703b",
+      "sha256": "9940a7cb158fbaa723ea3bbc9c85755e55a6f6f267554c7f5b7f8207da4b39f5"
     }
   }
 }
