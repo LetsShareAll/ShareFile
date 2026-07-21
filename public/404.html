@@ -147,11 +147,11 @@
   <body>
     <div class="card">
       <div class="icon">📁</div>
-      <h1>正在重定向…</h1>
+      <h1>正在打开文件路径…</h1>
       <p>
         您访问的路径<br />
         <span class="path-display" id="pathDisplay"></span><br />
-        即将跳转至文件分享主页。
+        即将返回应用并保留当前路径。
       </p>
       <div class="loader"></div>
       <br />
@@ -160,22 +160,34 @@
 
     <script>
       (function () {
+        var pendingRouteKey = 'share-file:pending-route';
         var path = window.location.pathname;
-        var displayEl = document.getElementById('pathDisplay');
-        if (displayEl) {
-          displayEl.textContent = path || '/';
+        var routePath = path;
+
+        try {
+          routePath = decodeURIComponent(path);
+        } catch (error) {
+          routePath = path;
         }
 
-        // 如果不是根路径，重定向到 /?path=...
+        var displayEl = document.getElementById('pathDisplay');
+        if (displayEl) {
+          displayEl.textContent = routePath || '/';
+        }
+
+        // GitHub Pages 会把不存在的 clean URL 交给 404.html。
+        // 保存目标路径后回到首页，由前端路由恢复为 /path/to/file。
         if (path !== '/' && path !== '') {
-          setTimeout(function () {
-            window.location.href = '/?path=' + encodeURIComponent(path);
-          }, 1500); // 1.5秒后跳转，让用户看清页面
+          try {
+            sessionStorage.setItem(pendingRouteKey, routePath);
+          } catch (error) {
+            window.location.replace('/?path=' + encodeURIComponent(routePath));
+            return;
+          }
+
+          window.location.replace('/');
         } else {
-          // 根路径就直接跳转到首页，无需参数
-          setTimeout(function () {
-            window.location.href = '/';
-          }, 800);
+          window.location.replace('/');
         }
       })();
     </script>

@@ -74,6 +74,30 @@ dev=true  -> share-file.json
 dev=false -> share-file.cdn.json
 ```
 
+## 前端路由模型
+
+站内目录使用 clean URL：
+
+```text
+https://file.lssa.fun/location/to/file
+```
+
+物理文件节点的复制链接和下载链接优先使用真实静态资源地址。因此这类链接可以被 `wget`、`curl` 等命令行工具直接下载：
+
+```text
+wget https://file.lssa.fun/softwares/applications/tools/generate-info-linux
+```
+
+外部挂载文件也遵循同样原则：前端会把它们重写成可直接访问的上游资源 URL，而不是站内页面路由。
+
+旧版查询参数链接仍然兼容：
+
+```text
+https://file.lssa.fun/?path=/location/to/file
+```
+
+浏览器端会把旧链接规范化为 clean URL。由于 GitHub Pages 对不存在的静态路径会返回 `404.html`，`public/404.html` 会把访问路径临时写入 `sessionStorage`，再回到首页，由前端恢复为原始路径并渲染对应节点。
+
 ## 外部挂载模型
 
 `mount_source` 可以放在目录节点上。前端发现后会：

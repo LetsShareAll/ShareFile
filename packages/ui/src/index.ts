@@ -43,6 +43,7 @@ let globalNodePathIndex = new Map<string, string>();
 let searchQuery = '';
 let previewRequestId = 0;
 const DEFAULT_NODE_DESCRIPTION = '我也不知道这个文件是啥呢！(lll￢ω￢)';
+const PENDING_ROUTE_STORAGE_KEY = 'share-file:pending-route';
 
 function buildNodePathIndex(shareData: ShareFile): Map<string, string> {
   return new Map(
@@ -58,15 +59,98 @@ function setShareData(shareData: ShareFile): void {
   globalNodePathIndex = buildNodePathIndex(shareData);
 }
 
+function normalizeRoutePath(value: string): string {
+  if (!value) return '/';
+
+  const withLeadingSlash = value.startsWith('/') ? value : `/${value}`;
+  const withoutTrailingSlash = withLeadingSlash.replace(/\/+$/, '');
+
+  return withoutTrailingSlash || '/';
+}
+
+function formatBrowserPath(path: string): string {
+  const normalizedPath = normalizeRoutePath(path);
+  return normalizedPath === '/' ? '/' : encodeURI(normalizedPath);
+}
+
+function getQueryPath(): string {
+  const params = new URLSearchParams(window.location.search);
+  const path = params.get('path');
+
+  return path ? normalizeRoutePath(path) : '/';
+}
+
+function getPathnamePath(): string {
+  try {
+    return normalizeRoutePath(decodeURIComponent(window.location.pathname));
+  } catch {
+    return normalizeRoutePath(window.location.pathname);
+  }
+}
+
+function getPendingRoute(): string | null {
+  try {
+    return sessionStorage.getItem(PENDING_ROUTE_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function clearPendingRoute(): void {
+  try {
+    sessionStorage.removeItem(PENDING_ROUTE_STORAGE_KEY);
+  } catch {
+    // Storage may be disabled; query-path fallback still works.
+  }
+}
+
+function bootstrapPendingRoute(): void {
+  const pendingRoute = getPendingRoute();
+  const pathname = getPathnamePath();
+
+  if (!pendingRoute) {
+    const queryPath = getQueryPath();
+
+    if (pathname === '/' && queryPath !== '/') {
+      window.history.replaceState(
+        { path: queryPath },
+        '',
+        formatBrowserPath(queryPath),
+      );
+    }
+
+    return;
+  }
+
+  clearPendingRoute();
+
+  const normalizedPendingRoute = normalizeRoutePath(pendingRoute);
+  if (pathname === normalizedPendingRoute) return;
+
+  window.history.replaceState(
+    { path: normalizedPendingRoute },
+    '',
+    formatBrowserPath(normalizedPendingRoute),
+  );
+}
+
 // ────────────── SPA 路由 ──────────────
 function getCurrentPath(): string {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('path') || '/';
+  const pathname = getPathnamePath();
+  if (pathname !== '/') return pathname;
+
+  const pendingRoute = getPendingRoute();
+  if (pendingRoute) {
+    return normalizeRoutePath(pendingRoute);
+  }
+
+  return getQueryPath();
 }
 
 function navigateTo(newPath: string): void {
-  const newUrl = `?path=${encodeURIComponent(newPath)}`;
-  window.history.pushState({ path: newPath }, '', newUrl);
+  const normalizedPath = normalizeRoutePath(newPath);
+  const newUrl = formatBrowserPath(normalizedPath);
+  window.history.pushState({ path: normalizedPath }, '', newUrl);
   renderCurrentView();
 }
 
@@ -121,9 +205,12 @@ function renderBreadcrumb(path: string): void {
   const segments = path.split('/').filter(Boolean);
 
   const rootLink = document.createElement('a');
-  rootLink.href = 'javascript:void(0)';
+  rootLink.href = '/';
   rootLink.textContent = 'root';
-  rootLink.onclick = () => navigateTo('/');
+  rootLink.onclick = event => {
+    event.preventDefault();
+    navigateTo('/');
+  };
   DOM.breadcrumb.appendChild(rootLink);
 
   let accumulatedPath = '';
@@ -627,13 +714,12 @@ async function renderContent(currentPath: string): Promise<void> {
       childNode.type === 'folder' ? '/' + childNode.id : filePath;
     const copyUrl =
       childNode.redirect_url ||
-      childNode.url ||
-      new URL(
-        childNode.type === 'folder'
-          ? `/?path=${encodeURIComponent(nodePath)}`
-          : nodePath,
-        window.location.origin,
-      ).href;
+      (childNode.type === 'folder'
+        ? new URL(
+            `/?path=${encodeURIComponent(nodePath)}`,
+            window.location.origin,
+          ).href
+        : childNode.url || new URL(nodePath, window.location.origin).href);
 
     const iconSpan = document.createElement('span');
     iconSpan.className = `item-icon ${typeInfo.className}`;
@@ -981,6 +1067,7 @@ async function refreshAllExternalSources(): Promise<void> {
 // ────────────── 启动入口 ──────────────
 async function main(): Promise<void> {
   initThemeAndView();
+  bootstrapPendingRoute();
 
   try {
     // 加载本地 share-file.json
