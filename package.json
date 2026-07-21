@@ -12,7 +12,7 @@
     "lint:ui": "pnpm --filter @share-file/ui run lint",
     "test": "pnpm run test:contract",
     "test:contract": "node scripts/run-python.mjs -m unittest discover -s tests/contract",
-    "format": "pnpm run format:ui && pnpm exec prettier --write .github/workflows package.json pnpm-workspace.yaml eslint.config.mjs prettier.config.mjs scripts/*.mjs",
+    "format": "pnpm run format:ui && pnpm exec prettier --write .github/workflows package.json pnpm-workspace.yaml eslint.config.mjs prettier.config.mjs scripts/*.mjs && pnpm --filter @share-file/ui exec eslint src --fix && pnpm exec eslint scripts/*.mjs --fix",
     "format:ui": "pnpm --filter @share-file/ui run format",
     "format:check": "pnpm exec prettier --check .github/workflows package.json pnpm-workspace.yaml eslint.config.mjs prettier.config.mjs scripts/*.mjs",
     "verify": "pnpm run check && pnpm run lint && pnpm run format:check && pnpm run test:contract",
