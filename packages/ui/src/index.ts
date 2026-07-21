@@ -140,6 +140,7 @@ function getCurrentPath(): string {
   if (pathname !== '/') return pathname;
 
   const pendingRoute = getPendingRoute();
+
   if (pendingRoute) {
     return normalizeRoutePath(pendingRoute);
   }
@@ -207,10 +208,12 @@ function renderBreadcrumb(path: string): void {
   const rootLink = document.createElement('a');
   rootLink.href = '/';
   rootLink.textContent = 'root';
+
   rootLink.onclick = event => {
     event.preventDefault();
     navigateTo('/');
   };
+
   DOM.breadcrumb.appendChild(rootLink);
 
   let accumulatedPath = '';
