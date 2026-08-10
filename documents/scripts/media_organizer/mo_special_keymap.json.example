@@ -1,0 +1,19 @@
+{
+  "menu": ["Menu", "菜单", "メニュー"],
+  "cm": ["CM", "广告", "コマーシャル"],
+  "pv": ["PV", "宣传片", "プロモーションビデオ"],
+  "ncop": ["NCOP", "无字幕片头", "ノンクレジットオープニング"],
+  "nced": ["NCED", "无字幕片尾", "ノンクレジットエンディング"],
+  "trailer": ["Trailer", "预告片", "トレーラー"],
+  "teaser": ["Teaser", "先行预告", "ティザー"],
+  "preview": ["Preview", "预告片", "予告"],
+  "webpreview": "preview",
+  "event": ["Event", "活动", "イベント"],
+  "sp": ["Special", "特别篇", "スペシャル"],
+  "special": ["Special", "特别篇", "スペシャル"],
+  "opening": ["Opening", "片头曲", "オープニング"],
+  "ending": ["Ending", "片尾曲", "エンディング"],
+  "mv": ["Music Video", "音乐视频", "ミュージックビデオ"],
+  "musicvideo": "mv",
+  "interview": ["Interview", "访谈", "インタビュー"]
+}

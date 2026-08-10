@@ -1,0 +1,297 @@
+################################################################################
+# 配置文件示例 (.mo_env)
+#
+# 说明：
+#   1. 复制此文件为 .mo_env 并填写你的 API 密钥
+#   2. 设置文件权限为 600：chmod 600 .mo_env
+#   3. 不要将此文件提交到版本控制系统
+#
+# 配置优先级：环境变量 > .mo_env 文件 > 脚本默认值
+#
+################################################################################
+
+# ====== 第一步：TMDB API 认证（必填）======
+#
+# 必须至少填写以下之一：
+#   1. TMDB_API_RA_TOKEN（推荐）- Read Access Token
+#   2. TMDB_API_KEY（可选）- v3 API Key
+#
+# 获取位置：https://www.themoviedb.org/settings/api
+#
+
+# TMDB v3 API Key（较旧的认证方式，如已有 RA_TOKEN 可留空）
+# 默认值：（空，必须手动填写）
+TMDB_API_KEY=
+
+# TMDB Read Access Token（推荐使用，优先级更高）
+# 默认值：（空，必须手动填写）
+TMDB_API_RA_TOKEN=
+
+# ====== 第二步：基础 TMDB 配置（可选，通常使用默认值）======
+
+# TMDB API 查询语言
+# 常见值：zh-CN (中文简体), zh-TW (中文繁体), en-US (英文), ja-JP (日语)
+# 默认值：zh-CN
+TMDB_LANG=zh-CN
+
+# 两次 TMDB 请求间的延迟（秒）
+# 避免 API 限流，TMDB 限制约 4 请求/秒
+# 默认值：1
+TMDB_DELAY=1
+
+# TMDB 网络配置
+# TMDB_CURL_RETRY：curl 重试次数，默认值：3
+# TMDB_CURL_CONNECT_TIMEOUT：连接超时（秒），默认值：10
+# TMDB_CURL_MAX_TIME：请求最大时长（秒），默认值：30
+TMDB_CURL_RETRY=3
+TMDB_CURL_CONNECT_TIMEOUT=10
+TMDB_CURL_MAX_TIME=30
+
+# ====== 第三步：文件类型配置（可选，通常使用默认值）======
+
+# 需要处理的视频文件扩展名（逗号分隔，不含点号）
+# 默认值：mp4,mkv,avi,mov,wmv,flv,m4v,ts,m2ts,webm
+VIDEO_EXTS=mp4,mkv,avi,mov,wmv,flv,m4v,ts,m2ts,webm
+
+# 需要处理的音频文件扩展名（含官方音频容器 mka）
+# 注意：纯音频 mkv/mp4/webm 请改容器为 mka/m4a（Jellyfin 规范）
+# 默认值：mp3,flac,aac,ogg,wma,m4a,mka,ac3,dts,wav,opus
+AUDIO_EXTS=mp3,flac,aac,ogg,wma,m4a,mka,ac3,dts,wav,opus
+
+# 字幕文件扩展名（作为配套文件跟随视频）
+# 默认值：srt,ass,ssa,sub,idx,vtt,sup
+SUB_EXTS=srt,ass,ssa,sub,idx,vtt,sup
+
+# ====== 第四步：缓存与映射配置（可选）======
+
+# 缓存目录路径
+# 默认值：$PWD/mo_cache 或 $SCRIPT_DIR/mo_cache（优先级：环境变量 > 执行目录 > 脚本目录）
+# 留空使用默认值（推荐）
+CACHE_DIR=
+
+# 特典/番外篇关键词映射文件路径
+# 格式（仅支持 JSON）：{"Jellyfin/TMDB标准名": ["别称1", "别称2", ...]}
+#   键为 Jellyfin/TMDB 能够识别的标准字符串，值为其它语言的别称（可配多个）
+# 默认值：$PWD/mo_config/mo_special_keymap.json 或 $SCRIPT_DIR/mo_config/mo_special_keymap.json
+# 留空使用默认值（推荐）
+SPECIAL_MAP_FILE=
+
+# 季数偏移配置文件路径（仅支持 JSON 对象格式）
+# 用于处理 TMDB 季数与实际不符的情况
+# 格式：{"剧名": 偏移值, "id:TMDB_ID": 偏移值}
+# 默认值：$PWD/mo_config/season_offset.json 或 $SCRIPT_DIR/mo_config/season_offset.json
+# 留空使用默认值（推荐）
+SEASON_OFFSET_FILE=
+
+# ====== 第五步：输出与调试（可选）======
+
+# 彩色输出开关
+# 值：true (启用) / false (禁用)
+# 默认值：true
+COLOR_OUTPUT=true
+
+# 调试级别
+# 值：0 (禁用) / 1 (基础) / 2 (详细)
+# 默认值：0
+DEBUG_LEVEL=0
+
+# ====== 第六步：AI 辅助识别配置（可选）======
+#
+# 配置此部分可使用 AI 辅助识别无法匹配的文件
+# 支持 OpenAI API 和 Ollama 等兼容 API
+#
+# 如果不需要 AI 功能，将 AI_API_KEY 留空即可
+#
+
+# AI API 密钥
+# OpenAI 获取：https://platform.openai.com/api-keys
+# 默认值：（空，留空则禁用 AI 功能）
+AI_API_KEY=
+
+# AI API 基础 URL（OpenAI 兼容端点）
+# 常见值：
+#   - https://api.deepseek.com （DeepSeek 官方，默认）
+#   - https://api.openai.com （OpenAI 官方）
+#   - http://localhost:11434 （本地 Ollama）
+# 默认值：https://api.deepseek.com
+AI_BASE_URL=https://api.deepseek.com
+
+# AI API 完整端点 URL（高级选项，留空使用默认）
+# 默认值：{AI_BASE_URL}/v1/chat/completions
+AI_FULL_URL=
+
+# AI 模型名称
+# 默认值：DeepSeek-V4-Flash
+AI_MODEL=DeepSeek-V4-Flash
+
+# 单次运行最多 AI 批次调用次数（成本控制；每批 AI_BATCH_SIZE 条）
+# 范围：1-100
+# 默认值：10
+AI_MAX_CALLS=10
+
+# AI 每批处理条目数（搜索/特典/艺术家/匹配四类各自的上限）
+# 默认值：50
+AI_BATCH_SIZE=50
+
+# AI 干运行模式（测试 AI 功能而不产生费用）
+# 默认值：false
+AI_DRY_RUN=false
+
+# AI 网络配置
+# AI_CURL_RETRY：curl 重试次数，默认值：3
+# AI_CURL_CONNECT_TIMEOUT：连接超时（秒），默认值：10
+# AI_CURL_MAX_TIME：请求最大时长（秒），默认值：30
+AI_CURL_RETRY=3
+AI_CURL_CONNECT_TIMEOUT=10
+AI_CURL_MAX_TIME=30
+
+# ====== 第七步：自动化模式日志配置（可选）======
+#
+# 脚本运行在 --automated 模式下时写入日志
+#
+
+# 普通日志文件路径
+# 默认值：/var/log/media_organizer.log
+LOG_FILE=/var/log/media_organizer.log
+
+# 跳过记录日志文件路径（无法处理的文件）
+# 默认值：/var/log/media_organizer_skip.log
+SKIP_LOG_FILE=/var/log/media_organizer_skip.log
+
+# ====== 第十一步：目的目录命名与识别池（可选）======
+#
+# 目的目录根名默认跟随系统语言（locale 含 zh → 中文名），
+# 也可在此显式覆盖。Season NN / SxxExx 为 Jellyfin 解析格式，不可本地化。
+# 留空使用默认值（推荐）
+FOLDER_MOVIES=
+FOLDER_SHOWS=
+FOLDER_MUSIC=
+FOLDER_MUSICVIDEOS=
+FOLDER_UNKNOWN=
+
+# 识别池并发数（视频/音频共用；范围 1-8）
+# TMDB 限流约 4 请求/秒，并发提高时建议同步增大 TMDB_DELAY
+# 默认值：4
+MEDIA_WORKERS=4
+
+# ====== 第八步：高级选项（通常不需要修改）======
+
+# 跳过硬链接检查（不建议启用）
+# 仅在确定源和目标在同一文件系统时使用
+# 默认值：false
+SKIP_HARDLINK_CHECK=false
+
+# ====== 第九步：缓存配置（可选）======
+
+# 正常缓存有效天数（搜索/详情/季数据）
+# 超过后自动重新请求
+# 默认值：30
+CACHE_TTL_DAYS=30
+
+# 无结果缓存有效天数（404/空结果的哨兵缓存）
+# 较短，便于发现新增内容
+# 默认值：3
+CACHE_EMPTY_TTL_DAYS=3
+
+# ====== 第十步：运行模式（可选，通常由命令行指定）======
+#
+# 也可在此设置（优先级：CLI > 环境变量 > mo_env > 默认值）：
+#   AUTOMATED=true  等同命令行 --automated
+#   DRY_RUN=true    等同命令行 --dry-run
+# 命令行可用 --no-automated / --no-dry-run 反向覆盖此处设置
+#
+# 注意：--list-cache / --update-cache / --refresh-cache 仅限命令行指定
+#
+# 自动化模式（写入日志文件，跳过无法处理的项目）
+# 默认值：false
+AUTOMATED=false
+
+# 干运行模式（不创建链接、不写缓存与日志；网络请求照常但不落盘）
+# 默认值：false
+DRY_RUN=false
+
+################################################################################
+# 使用说明
+################################################################################
+
+# 1. 保存此文件为 .mo_env
+#    cp .mo_env.example .mo_env
+
+# 2. 设置文件权限为 600（重要！）
+#    chmod 600 .mo_env
+
+# 3. 编辑 .mo_env 并填写必要的配置项
+#    vim .mo_env
+
+# 4. 测试配置（干运行模式）
+#    ./media_organizer.sh --dry-run /downloads /media
+
+# 5. 正式运行
+#    ./media_organizer.sh /downloads /media
+
+# 6. 自动化模式（如需定时运行）
+#    ./media_organizer.sh --automated /downloads /media
+
+################################################################################
+# 配置优先级示例
+################################################################################
+
+# 假设配置如下：
+# .mo_env 中：TMDB_DELAY=2
+# 环境变量：export TMDB_DELAY=3
+
+# 脚本实际使用的值：3（环境变量优先）
+
+# 如果都没有设置，使用脚本默认值：1
+
+################################################################################
+# 常见配置场景
+################################################################################
+
+# 【场景 1】基础用户 - 仅使用默认设置
+# 只需填写：TMDB_API_RA_TOKEN
+# 其余保持默认值
+
+# 【场景 2】日本动画专用 - 针对日语字幕和特典
+# TMDB_LANG=ja-JP
+# SPECIAL_MAP_FILE=/path/to/anime_special_map.json
+# SEASON_OFFSET_FILE=/path/to/anime_offset.json
+
+# 【场景 3】大规模处理 - 优化性能和成本
+# TMDB_DELAY=2
+# AI_MAX_CALLS=50
+# CACHE_DIR=/var/cache/media_organizer
+# DEBUG_LEVEL=1
+
+# 【场景 4】测试模式 - 不产生成本
+# AI_DRY_RUN=true
+# DEBUG_LEVEL=2
+
+# 【场景 5】网络不稳定环境
+# TMDB_CURL_RETRY=5
+# TMDB_CURL_MAX_TIME=60
+# AI_CURL_MAX_TIME=60
+# TMDB_DELAY=2
+
+################################################################################
+# 故障排除快速参考
+################################################################################
+
+# 问题：Permission denied .mo_env
+# 解决：chmod 600 .mo_env
+
+# 问题：TMDB API 请求超时
+# 解决：增大 TMDB_CURL_MAX_TIME=60, TMDB_DELAY=2
+
+# 问题：识别准确度低
+# 解决：配置 AI_API_KEY，启用 AI 辅助
+
+# 问题：AI 成本过高
+# 解决：减小 AI_MAX_CALLS=5，或改用免费 Ollama
+
+# 问题：无法读取配置文件
+# 解决：检查文件权限和所有者
+#      stat -l .mo_env
+#      chown $(whoami) .mo_env
+
+################################################################################

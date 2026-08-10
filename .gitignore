@@ -16,3 +16,10 @@ dist/
 public/assets/scripts/*
 __pycache__/
 *.pyc
+
+# media_organizer 运行时与临时文件
+documents/scripts/media_organizer/mo_cache/
+documents/scripts/media_organizer/mo_config/
+documents/scripts/media_organizer/*.bak
+documents/scripts/media_organizer/*_v*.sh
+documents/scripts/media_organizer/.tmp_*
