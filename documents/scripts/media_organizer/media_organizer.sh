@@ -1570,18 +1570,14 @@ cache_put_empty() {
   mv "$tmp" "$path" 2>/dev/null || return 1
 }
 
-# 清空缓存（--refresh-cache）：无参数清全部，有参数清指定子目录。
+# 清空全部缓存（--refresh-cache）。
 # 干运行模式下跳过清理（零持久化副作用），并提示其不生效。
 cache_clear() {
   if [[ "${DRY_RUN:-false}" == "true" ]]; then
     _log 警告 "干运行模式下跳过缓存清理"
     return 0
   fi
-  if [[ -n "${1:-}" ]]; then
-    rm -rf "$CACHE_DIR/$1" 2>/dev/null || true
-  else
-    rm -rf "$CACHE_DIR" 2>/dev/null || true
-  fi
+  rm -rf "$CACHE_DIR" 2>/dev/null || true
 }
 
 # 列出缓存条目（--list-cache 一键反查）。可选 filter 过滤参数串。
@@ -1713,7 +1709,8 @@ tmdb_api() {
   # 并发去重（识别池多 worker 可能同时 miss 同一查询）：
   # flock 跨进程互斥（内核锁，进程退出自动释放，无残留）→ 锁内双检缓存。
   # 锁文件放 /tmp（复用不删除；不污染缓存目录，干运行零持久化副作用）。
-  local lockfile="/tmp/mo_lock_$(cache_key_hash "$path")"
+  local lockfile
+  lockfile="/tmp/mo_lock_$(cache_key_hash "$path")"
   local locked=false
   if [[ "${UPDATE_CACHE:-false}" != "true" ]]; then
     exec 9>"$lockfile"
@@ -2011,13 +2008,14 @@ parse_media_filename() {
     season="${BASH_REMATCH[2]}"
     episode="${BASH_REMATCH[3]}"
     # 多集区间：匹配点之后的 -E## / E## 段（可连续扩展）
-    local range_tail="${cleaned#*${BASH_REMATCH[0]}}"
+    # 注意：${BASH_REMATCH[0]} 作 glob pattern 可能含元字符——整体引号按字面匹配（SC2295）
+    local range_tail="${cleaned#*"${BASH_REMATCH[0]}"}"
     if [[ "$range_tail" =~ ^[\ ._-]*[Ee]([0-9]{1,2}) ]]; then
       episode_end="${BASH_REMATCH[1]}"
-      local tail2="${range_tail#*${BASH_REMATCH[0]}}"
+      local tail2="${range_tail#*"${BASH_REMATCH[0]}"}"
       while [[ "$tail2" =~ ^[\ ._-]*[Ee]([0-9]{1,2}) ]]; do
         episode_end="${BASH_REMATCH[1]}"
-        tail2="${tail2#*${BASH_REMATCH[0]}}"
+        tail2="${tail2#*"${BASH_REMATCH[0]}"}"
       done
     fi
     title=$(strip_season_suffix "$title")
@@ -2513,13 +2511,11 @@ build_tv_dest() {
   season0_json=$(tmdb_api "/tv/${show_id}/season/0" 2>/dev/null || echo "")
 
   local original_season=$season
-  local shifted=false
   # 10# 强制十进制，避免 season 前导 0（如 08）被当八进制
   if ((10#${season:-0} > 1)) && ((10#${total_seasons:-0} < 10#${season:-0})); then
     if [[ "$s1_ep_count" -gt 0 ]]; then
       episode=$((episode + s1_ep_count))
       season=1
-      shifted=true
       _log 警告 "TMDB 仅 $total_seasons 季，自动偏移 +$s1_ep_count"
     else
       local offset
@@ -2527,7 +2523,6 @@ build_tv_dest() {
       if [[ -n "$offset" ]]; then
         episode=$((episode + offset))
         season=1
-        shifted=true
         _log 警告 "手动偏移 $offset 将 S${original_season} 映射到 S01E${episode}"
       else
         # 无法计算季偏移 → 交调用方（识别→AI 匹配甄别）
@@ -3545,7 +3540,7 @@ process_one_audio() {
   elif [[ -n "$meta_artist" ]]; then
     # 拆分多艺术家（ID3v2 常用 / 或 \ 分隔）
     local -a arts=() cleaned_arts=() a
-    IFS='/\\' read -ra arts <<<"$meta_artist"
+    IFS=$'/\\' read -ra arts <<<"$meta_artist"
     for a in "${arts[@]}"; do
       a=$(echo "$a" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
       [[ -n "$a" ]] && cleaned_arts+=("$a")
@@ -3939,10 +3934,8 @@ link_media() {
       continue
     fi
 
-    local already_linked=false
     if [[ -e "$destination_file" ]] && same_inode "$video" "$destination_file"; then
       # 幂等：目标已存在且同 inode（上次运行已链接）
-      already_linked=true
       LINK_SUCCESS_COUNT=$((LINK_SUCCESS_COUNT + 1))
       _log 跳过 "硬链接已存在: $destination_file"
     else
