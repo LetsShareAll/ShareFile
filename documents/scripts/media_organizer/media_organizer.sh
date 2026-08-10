@@ -1881,6 +1881,105 @@ count_main_videos() {
 	echo "$count"
 }
 
+# 特典识别（Season 00）：文件名含特典标记（可带可不带数字），或父目录为特典目录。
+# 如 "2nd Season [Menu01]"、" [NCOP]"、"CM01.mkv"（在 SPs 目录）均识别为特典。
+# 输出（stdout 协议，空=非特典）：
+#   skip|movie_extra|<year>|<season>|<episode>|<episode_end>|<fragment>  电影特典（TMDB 不收录，跳过）
+#   tv|<title>|<year>|0|<ep_num>|<fragment>                             剧集特典（归 Season 00）
+detect_special() {
+	local file="$1" base="$2" cleaned="$3" year="$4" season="$5" episode="$6" episode_end="$7"
+	# 词表来自 mo_special_words.json（SPECIAL_WORDS，语义=特典类别词）；
+	# 空格归一化后子串匹配（纯字符串匹配，词表内容不当作正则；"nc op" == "ncop"）。
+	local is_special=false
+	local frag=""
+	local tag=""
+	local i
+	if [[ ${#SPECIAL_WORDS[@]} -gt 0 ]] && echo "$base" | grep -qE '\[[^]]*\]'; then
+		local t_line w_norm t_norm
+		while IFS= read -r t_line; do
+			[[ -z "$t_line" ]] && continue
+			t_norm="${t_line//[[:space:]]/}"
+			t_norm="${t_norm,,}"
+			for i in "${!SPECIAL_WORDS[@]}"; do
+				w_norm="${SPECIAL_WORDS[$i]//[[:space:]]/}"
+				w_norm="${w_norm,,}"
+				[[ -z "$w_norm" ]] && continue
+				if [[ "$t_norm" == *"$w_norm"* ]]; then
+					is_special=true
+					frag="$w_norm"
+					tag="[$t_line]"
+					break 2
+				fi
+			done
+		done < <(echo "$base" | grep -oE '\[[^]]*\]' | tr -d '[]')
+	fi
+	# 父目录为特典目录（SPs/Specials/CDs/Bonus/Extras 等）
+	if ! $is_special; then
+		local parent_dir
+		parent_dir=$(basename "$(dirname "$file")")
+		if echo "$parent_dir" | grep -qiE '^(sp|sps|special|specials|cd|cds|bonus|bonuses|extra|extras|特典|特番|花絮)$'; then
+			is_special=true
+		fi
+	fi
+	if ! $is_special; then
+		return 0
+	fi
+
+	local ep_num sp_frag stripped
+	# 电影/剧集特典归属（不依赖下载目录，合集种子可能混合电影与剧集）：
+	# 媒体目录仅 1 个正片 → 电影特典（TMDB 不收录，跳过不整理）；
+	# 多个正片 → 剧集特典（归 Season 00）。
+	local show_path main_count
+	show_path=$(find_show_path_from_file "$file")
+	if [[ -n "$show_path" ]]; then
+		main_count=$(count_main_videos "$show_path")
+		if (( main_count == 1 )); then
+			echo "skip|movie_extra|${year}|${season}|${episode}|${episode_end}|"
+			return 0
+		fi
+	fi
+	# 特典编号与片段：
+	# - 文件名标记匹配到特典词时（frag 非空），用 frag+编号（如 Preview02）
+	# - 仅父目录判断（SPs 等）时，从方括号标记中挑选特典片段（跳过压制组/编码/画质
+	#   格式标记），避免用完整文件名（会导致 S00 前缀超长且后续 translate 误替换）
+	if [[ -n "$frag" ]]; then
+		ep_num=$(echo "$tag" | grep -oE '[0-9]+' | head -1)
+		sp_frag="${frag}${ep_num:-}"
+	else
+		local pick="" tag_line
+		while IFS= read -r tag_line; do
+			[[ -z "$tag_line" ]] && continue
+			if ! echo "$tag_line" | grep -qiE \
+				'vcb|studio|team|ma10p|hi10p|x26[45]|flac|aac|opus|ac3|dts|1080p|720p|480p|2160p'; then
+				pick="$tag_line"
+				break
+			fi
+		done < <(echo "$base" | grep -oE '\[[^]]*\]' | tr -d '[]')
+		if [[ -n "$pick" ]]; then
+			sp_frag="$pick"
+		elif [[ -n "$cleaned" ]]; then
+			# 无方括号特典标记（如裸特典 CM01.mkv）：用 clean_name 后的文件名
+			sp_frag="$cleaned"
+		else
+			sp_frag="SP"
+		fi
+		ep_num=$(echo "$sp_frag" | grep -oE '[0-9]+' | head -1)
+	fi
+	local title
+	title=$(echo "$cleaned" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+	# 若标题仅由特典标记构成（无剧名），从父目录链向上查找剧名目录
+	stripped=""
+	if [[ -n "$frag" ]]; then
+		stripped=$(echo "$title" | sed -E "s/${frag}[0-9]*//Ig" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+	fi
+	if [[ -z "$stripped" ]]; then
+		title=$(find_show_dir_from_path "$file")
+		[[ -n "$title" ]] && title=$(clean_name "$title")
+		[[ -z "$title" ]] && title="$cleaned"
+	fi
+	echo "tv|${title}|${year}|0|${ep_num:-1}|${sp_frag}"
+}
+
 # 解析媒体文件名，输出：type|title|year|season|episode|special_fragment
 # type：movie（电影正片）/ tv（剧集，含特典 Season 00）/ skip（电影特典，跳过不整理）/ unknown（识别不出，交 AI）
 parse_media_filename() {
@@ -1936,97 +2035,10 @@ parse_media_filename() {
 
 	# 特典识别（Season 00）：文件名含特典标记（可带可不带数字），或父目录为特典目录。
 	# 如 "2nd Season [Menu01]"、" [NCOP]"、"CM01.mkv"（在 SPs 目录）均识别为特典。
-	# 词表来自 mo_special_words.json（SPECIAL_WORDS，语义=特典类别词）；
-	# 空格归一化后子串匹配（纯字符串匹配，词表内容不当作正则；"nc op" == "ncop"）。
-	local is_special=false
-	local frag=""
-	local tag=""
-	local i
-	if [[ ${#SPECIAL_WORDS[@]} -gt 0 ]] && echo "$base" | grep -qE '\[[^]]*\]'; then
-		local t_line w_norm t_norm
-		while IFS= read -r t_line; do
-			[[ -z "$t_line" ]] && continue
-			t_norm="${t_line//[[:space:]]/}"
-			t_norm="${t_norm,,}"
-			for i in "${!SPECIAL_WORDS[@]}"; do
-				w_norm="${SPECIAL_WORDS[$i]//[[:space:]]/}"
-				w_norm="${w_norm,,}"
-				[[ -z "$w_norm" ]] && continue
-				if [[ "$t_norm" == *"$w_norm"* ]]; then
-					is_special=true
-					frag="$w_norm"
-					tag="[$t_line]"
-					break 2
-				fi
-			done
-		done < <(echo "$base" | grep -oE '\[[^]]*\]' | tr -d '[]')
-	fi
-	# 父目录为特典目录（SPs/Specials/CDs/Bonus/Extras 等）
-	if ! $is_special; then
-		local parent_dir
-		parent_dir=$(basename "$(dirname "$file")")
-		if echo "$parent_dir" | grep -qiE '^(sp|sps|special|specials|cd|cds|bonus|bonuses|extra|extras|特典|特番|花絮)$'; then
-			is_special=true
-		fi
-	fi
-	if $is_special; then
-		local ep_num sp_frag stripped
-		# 电影/剧集特典归属（不依赖下载目录，合集种子可能混合电影与剧集）：
-		# 媒体目录仅 1 个正片 → 电影特典（TMDB 不收录，跳过不整理）；
-		# 多个正片 → 剧集特典（归 Season 00）。
-		local show_path main_count
-		show_path=$(find_show_path_from_file "$file")
-		if [[ -n "$show_path" ]]; then
-			main_count=$(count_main_videos "$show_path")
-			if (( main_count == 1 )); then
-				type="skip"
-				title="movie_extra"
-				echo "$type|$title|$year|$season|$episode|${episode_end:-}|$special_fragment"
-				return
-			fi
-		fi
-		# 特典编号与片段：
-		# - 文件名标记匹配到特典词时（frag 非空），用 frag+编号（如 Preview02）
-		# - 仅父目录判断（SPs 等）时，从方括号标记中挑选特典片段（跳过压制组/编码/画质
-		#   格式标记），避免用完整文件名（会导致 S00 前缀超长且后续 translate 误替换）
-		if [[ -n "$frag" ]]; then
-			ep_num=$(echo "$tag" | grep -oE '[0-9]+' | head -1)
-			sp_frag="${frag}${ep_num:-}"
-		else
-			local pick="" tag_line
-			while IFS= read -r tag_line; do
-				[[ -z "$tag_line" ]] && continue
-				if ! echo "$tag_line" | grep -qiE \
-					'vcb|studio|team|ma10p|hi10p|x26[45]|flac|aac|opus|ac3|dts|1080p|720p|480p|2160p'; then
-					pick="$tag_line"
-					break
-				fi
-			done < <(echo "$base" | grep -oE '\[[^]]*\]' | tr -d '[]')
-			if [[ -n "$pick" ]]; then
-				sp_frag="$pick"
-			elif [[ -n "$cleaned" ]]; then
-				# 无方括号特典标记（如裸特典 CM01.mkv）：用 clean_name 后的文件名
-				sp_frag="$cleaned"
-			else
-				sp_frag="SP"
-			fi
-			ep_num=$(echo "$sp_frag" | grep -oE '[0-9]+' | head -1)
-		fi
-		season="0"
-		special_fragment="$sp_frag"
-		title=$(echo "$cleaned" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-		# 若标题仅由特典标记构成（无剧名），从父目录链向上查找剧名目录
-		stripped=""
-		if [[ -n "$frag" ]]; then
-			stripped=$(echo "$title" | sed -E "s/${frag}[0-9]*//Ig" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-		fi
-		if [[ -z "$stripped" ]]; then
-			title=$(find_show_dir_from_path "$file")
-			[[ -n "$title" ]] && title=$(clean_name "$title")
-			[[ -z "$title" ]] && title="$cleaned"
-		fi
-		type="tv"
-		echo "$type|$title|$year|$season|${ep_num:-1}|$special_fragment"
+	local special_result
+	special_result=$(detect_special "$file" "$base" "$cleaned" "$year" "$season" "$episode" "${episode_end:-}")
+	if [[ -n "$special_result" ]]; then
+		echo "$special_result"
 		return
 	fi
 
@@ -2712,18 +2724,9 @@ identify_tv_show() {
 # 无条目的一类返回 {}。解析后：
 #   - search 部分更新 PENDING_AI_SEARCH（追加 |搜索词|年份）
 #   - special 部分写入特典映射文件与内存映射（AI 学习）
-ai_batch_request() {
-	# 无待处理项直接返回
-	if [[ $PENDING_SEARCH_COUNT -eq 0 ]] &&
-		[[ $PENDING_SPECIAL_COUNT -eq 0 ]] &&
-		[[ $PENDING_ARTIST_COUNT -eq 0 ]] &&
-		[[ $PENDING_MATCH_COUNT -eq 0 ]]; then
-		return
-	fi
-	_log 智能 "AI 批量请求（搜索 $PENDING_SEARCH_COUNT + 特典 $PENDING_SPECIAL_COUNT + 艺术家 $PENDING_ARTIST_COUNT + 匹配 $PENDING_MATCH_COUNT）"
-
-	# 构造输入 JSON（jq 安全转义：文件名含引号/反斜杠不破坏 JSON；每类最多 AI_BATCH_SIZE 条）。
-	# 记录本批 key 集合：消费端只处理 AI 响应覆盖的条目，批外条目留待下一批。
+# 构造 AI 批处理输入 JSON（jq 安全转义：文件名含引号/反斜杠不破坏 JSON；每类最多 AI_BATCH_SIZE 条）。
+# 记录本批 key 集合（AI_BATCH_KEYS_*）：消费端只处理 AI 响应覆盖的条目，批外条目留待下一批。
+build_ai_input_json() {
 	local input_json='{"search_entries":[],"special_entries":[],"artist_entries":[],"match_entries":[]}'
 	local batch_limit="${AI_BATCH_SIZE:-50}"
 	AI_BATCH_KEYS_SEARCH=()
@@ -2788,7 +2791,21 @@ ai_batch_request() {
 		AI_BATCH_KEYS_MATCH+=("$key")
 		count=$((count + 1))
 	done
+	echo "$input_json"
+}
 
+ai_batch_request() {
+	# 无待处理项直接返回
+	if [[ $PENDING_SEARCH_COUNT -eq 0 ]] &&
+		[[ $PENDING_SPECIAL_COUNT -eq 0 ]] &&
+		[[ $PENDING_ARTIST_COUNT -eq 0 ]] &&
+		[[ $PENDING_MATCH_COUNT -eq 0 ]]; then
+		return
+	fi
+	_log 智能 "AI 批量请求（搜索 $PENDING_SEARCH_COUNT + 特典 $PENDING_SPECIAL_COUNT + 艺术家 $PENDING_ARTIST_COUNT + 匹配 $PENDING_MATCH_COUNT）"
+
+	local input_json
+	input_json=$(build_ai_input_json)
 	local full_prompt="$AI_BATCH_PROMPT"$'\n\n'"Input: $input_json"
 
 	local payload
@@ -2887,10 +2904,15 @@ ai_batch_request() {
 		- ${#AI_RESPONDED_SEARCH[@]} - ${#AI_RESPONDED_ARTIST[@]} - ${#AI_RESPONDED_MATCH[@]} ))
 	(( missing > 0 )) && _log 警告 "AI 响应缺失 $missing 个条目（留待下一批）"
 
-	# 解析 special 部分：AI 从该条 season0 候选关键字列表中选出与本地片段匹配的项，
-	# 写回 keymap 作为匹配关键字（可多语言数组）。
-	# 交叉验证：AI 返回的每个匹配关键字必须存在于该条 season0 候选列表（防 AI 幻觉污染映射）。
-	local tmdb_name
+	learn_special_keywords "$result_json"
+}
+
+# AI 学习写回：AI 从该条 season0 候选关键字列表中选出与本地片段匹配的项，
+# 写回 keymap 作为匹配关键字（可多语言数组）。
+# 交叉验证：AI 返回的每个匹配关键字必须存在于该条 season0 候选列表（防 AI 幻觉污染映射）。
+learn_special_keywords() {
+	local result_json="$1"
+	local tmdb_name key
 	for key in "${!PENDING_AI_SPECIAL[@]}"; do
 		local fragment key_lower season0_names
 		IFS='|' read -r _ fragment <<<"$key"
@@ -3545,7 +3567,14 @@ process_one_audio() {
 	emit "$audio" DEST "$destination_subdir|$(basename "$audio")"
 	_log 信息 "音频: $(basename "$audio") -> $destination_subdir/"
 
-	# 伴随文件（链接既有文件，不提取/不生成）：歌词（同名 lrc/elrc/txt）+ 专辑级封面
+	emit_audio_companions "$audio" "$cd_root" "$destination_subdir" "$artist" "$album"
+}
+
+# 音频伴随文件发射（链接既有文件，不提取/不生成）：歌词（同名 lrc/elrc/txt）+ 专辑级封面。
+# 歌词随曲目（含碟片相对路径）；封面在源专辑根目录（目标专辑根）。
+emit_audio_companions() {
+	local audio="$1" cd_root="$2" destination_subdir="$3" artist="$4" album="$5"
+	local base_name="${audio%.*}"
 	local c
 	for c in "${base_name}.lrc" "${base_name}.elrc" "${base_name}.txt"; do
 		[[ -f "$c" ]] && emit "$c" DEST "$destination_subdir|$(basename "$c")"
@@ -3949,29 +3978,34 @@ link_media() {
 		fi
 
 		# 处理伴随文件（字幕、音轨等；主文件已链接时也执行——新伴随文件需补链）
-		local base_name companion companion_ext dest_companion
-		base_name="${video%.*}"
-		for companion in "$base_name".*; do
-			[[ ! -f "$companion" ]] && continue
-			[[ "$companion" == "$video" ]] && continue
-
-			companion_ext="${companion##*.}"
-			if is_companion "$companion" "${video%.*}"; then
-				# 目标名保留伴随文件的语言后缀（如 .zh、.zh-tw），
-				# 避免多个伴随文件（.ass/.zh.ass/.zh-tw.ass）互相覆盖产生 .bak 堆积。
-				# 用字符串截取而非 ${var#pat}：base_name 含 [] 等 glob 特殊字符，
-				# ${var#pat} 的 pattern 是 glob，含 [ 时匹配不可靠。
-				local comp_suffix="${companion:${#base_name}}"
-				comp_suffix="${comp_suffix%.*}"
-				dest_companion="${destination_file%.*}${comp_suffix}.${companion_ext}"
-				_log 信息 "处理伴随文件: $(basename "$companion")"
-				if ! hardlink_or_dryrun "$companion" "$dest_companion"; then
-					_log 警告 "伴随文件硬链接失败: $(basename "$companion")"
-				fi
-			fi
-		done
+		link_companions "$video" "$destination_file"
 
 		pop_indent
+	done
+}
+
+# 链接主视频的伴随文件（字幕/音轨等）：目标名保留语言后缀（如 .zh、.zh-tw），
+# 避免多个伴随文件（.ass/.zh.ass/.zh-tw.ass）互相覆盖产生 .bak 堆积。
+link_companions() {
+	local video="$1" destination_file="$2"
+	local base_name companion companion_ext dest_companion
+	base_name="${video%.*}"
+	for companion in "$base_name".*; do
+		[[ ! -f "$companion" ]] && continue
+		[[ "$companion" == "$video" ]] && continue
+
+		companion_ext="${companion##*.}"
+		if is_companion "$companion" "${video%.*}"; then
+			# 用字符串截取而非 ${var#pat}：base_name 含 [] 等 glob 特殊字符，
+			# ${var#pat} 的 pattern 是 glob，含 [ 时匹配不可靠。
+			local comp_suffix="${companion:${#base_name}}"
+			comp_suffix="${comp_suffix%.*}"
+			dest_companion="${destination_file%.*}${comp_suffix}.${companion_ext}"
+			_log 信息 "处理伴随文件: $(basename "$companion")"
+			if ! hardlink_or_dryrun "$companion" "$dest_companion"; then
+				_log 警告 "伴随文件硬链接失败: $(basename "$companion")"
+			fi
+		fi
 	done
 }
 
