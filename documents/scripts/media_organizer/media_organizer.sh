@@ -3,7 +3,7 @@
 ################################################################################
 # Jellyfin 媒体库硬链接整理脚本
 #
-# 版本：9.0（缓存镜像 API 全量化 + 全脚本 Google 规范重构）
+# 版本：9.3（入口层/流水线执行/识别匹配/缓存/AI/特典映射六轮需求对齐）
 # 作者：LetsShareAll
 # 许可：MIT
 #
@@ -329,6 +329,11 @@ LOG_FILE=/var/log/media_organizer.log
 # 默认值：/var/log/media_organizer_skip.log
 SKIP_LOG_FILE=/var/log/media_organizer_skip.log
 
+# 日志轮转阈值（MB；0=禁用）
+# 超阈值时滚动保留 5 份（.1 最新）
+# 默认值：10
+LOG_ROTATE_MB=10
+
 # ====== 第八步：高级选项（通常不需要修改）======
 
 # 跳过硬链接检查（不建议启用）
@@ -619,6 +624,8 @@ AI_DRY_RUN="${AI_DRY_RUN:-}"
 # 日志文件
 LOG_FILE="${LOG_FILE:-}"
 SKIP_LOG_FILE="${SKIP_LOG_FILE:-}"
+# 日志轮转阈值（MB；0=禁用，超阈值时滚动保留 5 份）
+LOG_ROTATE_MB="${LOG_ROTATE_MB:-}"
 
 # 映射配置文件（init_special_map/init_season_offset/init_special_words 中解析默认路径）
 SPECIAL_MAP_FILE="${SPECIAL_MAP_FILE:-}"
@@ -995,10 +1002,29 @@ load_config() {
 	if [[ "$AUTOMATED" == "true" ]]; then
 		LOG_FILE="${LOG_FILE:-${moenv[LOG_FILE]:-/var/log/media_organizer.log}}"
 		SKIP_LOG_FILE="${SKIP_LOG_FILE:-${moenv[SKIP_LOG_FILE]:-/var/log/media_organizer_skip.log}}"
+		LOG_ROTATE_MB="${LOG_ROTATE_MB:-${moenv[LOG_ROTATE_MB]:-10}}"
+		[[ "$LOG_ROTATE_MB" =~ ^[0-9]+$ ]] || LOG_ROTATE_MB=10
 		# 干运行不创建日志目录（零持久化副作用）
 		if [[ "${DRY_RUN:-false}" != "true" ]]; then
 			mkdir -p "$(dirname "$LOG_FILE")" "$(dirname "$SKIP_LOG_FILE")" \
 				2>/dev/null || true
+			# 日志轮转：超阈值时滚动保留 5 份（.1 最新）
+			if (( LOG_ROTATE_MB > 0 )); then
+				local _limit=$((LOG_ROTATE_MB * 1024 * 1024)) _lf _size
+				for _lf in "$LOG_FILE" "$SKIP_LOG_FILE"; do
+					[[ -f "$_lf" ]] || continue
+					_size=$(stat -c '%s' "$_lf" 2>/dev/null) || _size=0
+					if (( _size > _limit )); then
+						rm -f "${_lf}.5"
+						mv -f "${_lf}.4" "${_lf}.5" 2>/dev/null || true
+						mv -f "${_lf}.3" "${_lf}.4" 2>/dev/null || true
+						mv -f "${_lf}.2" "${_lf}.3" 2>/dev/null || true
+						mv -f "${_lf}.1" "${_lf}.2" 2>/dev/null || true
+						mv -f "$_lf" "${_lf}.1"
+						_log 信息 "日志已轮转: $_lf -> ${_lf}.1"
+					fi
+				done
+			fi
 		fi
 	fi
 

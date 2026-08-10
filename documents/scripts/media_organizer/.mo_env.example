@@ -165,6 +165,11 @@ LOG_FILE=/var/log/media_organizer.log
 # 默认值：/var/log/media_organizer_skip.log
 SKIP_LOG_FILE=/var/log/media_organizer_skip.log
 
+# 日志轮转阈值（MB；0=禁用）
+# 超阈值时滚动保留 5 份（.1 最新）
+# 默认值：10
+LOG_ROTATE_MB=10
+
 # ====== 第十一步：目的目录命名与识别池（可选）======
 #
 # 目的目录根名默认跟随系统语言（locale 含 zh → 中文名），
