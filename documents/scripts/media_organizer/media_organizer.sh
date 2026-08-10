@@ -3677,7 +3677,7 @@ resolve_pending_artists() {
       [[ -f "$c" ]] && register_identified "$c" "$subdir" "$(basename "$c")"
     done
     _log 信息 "音频艺术家确定: $(basename "$audio") -> $subdir/"
-    unset PENDING_AI_ARTIST["$audio"]
+    unset "PENDING_AI_ARTIST[$audio]"
     PENDING_ARTIST_COUNT=$((PENDING_ARTIST_COUNT - 1))
   done
 }
@@ -3754,7 +3754,7 @@ reprocess_pending_searches() {
     fi
 
     pop_indent
-    unset PENDING_AI_SEARCH["$video"]
+    unset "PENDING_AI_SEARCH[$video]"
     PENDING_SEARCH_COUNT=$((PENDING_SEARCH_COUNT - 1))
   done
 }
@@ -3834,7 +3834,7 @@ resolve_pending_matches() {
     fi
 
     pop_indent
-    unset PENDING_AI_MATCH["$video"]
+    unset "PENDING_AI_MATCH[$video]"
     PENDING_MATCH_COUNT=$((PENDING_MATCH_COUNT - 1))
   done
 }
