@@ -254,6 +254,13 @@ SEASON_OFFSET_FILE=
 # 留空使用默认值（推荐）
 SPECIAL_WORDS_FILE=
 
+# 跳过目录词表文件路径（仅支持 JSON 数组格式）
+# 语义 = 不作为媒体名目录的目录词（特典/附带目录 + 分类目录，如 SPs/CDs/特典/视频/剧集/动画/电影）
+# 匹配为目录名精确比较（忽略大小写）；内容不当作正则
+# 默认值：$PWD/mo_config/mo_skip_dirs.json 或 $SCRIPT_DIR/mo_config/mo_skip_dirs.json
+# 留空使用默认值（推荐）
+SKIP_DIRS_FILE=
+
 # ====== 第五步：输出与调试（可选）======
 
 # 彩色输出开关
@@ -524,6 +531,17 @@ readonly SPECIAL_KEYMAP_TEMPLATE='{
 readonly SPECIAL_WORDS_TEMPLATE='["menu","ncop","nced","mini anime","pv","cm","sp","teaser","program","promo","trailer","special","music video","mv","opening","ending","特典","特番","花絮"]'
 
 # ----------------------------------------------------------------------------
+# SKIP_DIRS_TEMPLATE —— 跳过目录词表模板（mo_skip_dirs.json）
+#
+# 作用：
+#   不作为"媒体名目录"的目录词（特典/附带目录 + 分类目录）：
+#   - find_show_path_from_file / find_show_dir_from_path：目录名精确匹配（忽略大小写）
+#   - count_main_videos：路径段精确匹配
+#   内容不当作正则（纯字符串比较）。
+# ----------------------------------------------------------------------------
+readonly SKIP_DIRS_TEMPLATE='["sp","sps","special","specials","cd","cds","bonus","bonuses","extra","extras","scans","fonts","特典","特番","花絮","视频","剧集","动画","合集","电影","音乐","movies","series","shows","anime","collections"]'
+
+# ----------------------------------------------------------------------------
 # SEASON_OFFSET_TEMPLATE —— 季数偏移模板（season_offset.json）
 #
 # 作用：
@@ -631,8 +649,12 @@ LOG_ROTATE_MB="${LOG_ROTATE_MB:-}"
 SPECIAL_MAP_FILE="${SPECIAL_MAP_FILE:-}"
 SEASON_OFFSET_FILE="${SEASON_OFFSET_FILE:-}"
 SPECIAL_WORDS_FILE="${SPECIAL_WORDS_FILE:-}"
+SKIP_DIRS_FILE="${SKIP_DIRS_FILE:-}"
 # 特典识别词表（init_special_words 加载；worker 经 fork 复制可见）
 declare -a SPECIAL_WORDS=()
+# 跳过目录词表（init_skip_dirs 加载；SKIP_DIRS_LOWER 为小写化版本供精确匹配）
+declare -a SKIP_DIRS=()
+declare -a SKIP_DIRS_LOWER=()
 
 # 关联数组
 # 特典映射（本地关键字符串 -> TMDB 字符串，一对一）
@@ -1059,6 +1081,7 @@ load_config() {
 	SPECIAL_MAP_FILE="${SPECIAL_MAP_FILE:-${moenv[SPECIAL_MAP_FILE]:-}}"
 	SEASON_OFFSET_FILE="${SEASON_OFFSET_FILE:-${moenv[SEASON_OFFSET_FILE]:-}}"
 	SPECIAL_WORDS_FILE="${SPECIAL_WORDS_FILE:-${moenv[SPECIAL_WORDS_FILE]:-}}"
+	SKIP_DIRS_FILE="${SKIP_DIRS_FILE:-${moenv[SKIP_DIRS_FILE]:-}}"
 }
 
 # 选择 TMDB 认证方式并校验。无密钥时交互生成 mo_env 模板。
@@ -1150,6 +1173,50 @@ init_special_map() {
 		fi
 	fi
 	load_special_map "$file"
+}
+
+# 初始化跳过目录词表（mo_skip_dirs.json）：解析默认路径，缺失时交互创建或使用内置默认。
+# 语义 = 不作为媒体名目录的目录词（特典/附带 + 分类目录）；内容不当作正则（精确匹配）。
+init_skip_dirs() {
+	local file="$1"
+	if [[ -z "$file" ]]; then
+		if [[ -f "$PWD/mo_config/mo_skip_dirs.json" ]]; then
+			file="$PWD/mo_config/mo_skip_dirs.json"
+		else
+			file="$SCRIPT_DIR/mo_config/mo_skip_dirs.json"
+		fi
+		SKIP_DIRS_FILE="$file"
+	fi
+	if [[ ! -f "$file" ]]; then
+		if [[ "$AUTOMATED" == "true" ]]; then
+			_log 警告 "未找到跳过目录词表文件，自动化模式使用内置默认: $file"
+		else
+			_log 信息 "未找到跳过目录词表文件: $file"
+			_log 信息 "是否创建默认配置文件？(y/N)"
+			read -r answer || true   # EOF（非交互）时跳过创建
+			if [[ "$answer" =~ ^[Yy]$ ]]; then
+				(umask 077 && printf '%s\n' "$SKIP_DIRS_TEMPLATE" | jq . >"$file" 2>/dev/null) || true
+				if [[ ! -s "$file" ]]; then
+					echo '[]' >"$file"
+				fi
+				chmod 600 "$file" 2>/dev/null || _log 警告 "无法设置文件权限为 600: $file"
+				_log 信息 "已创建跳过目录词表文件: $file"
+			fi
+		fi
+	fi
+	SKIP_DIRS=()
+	SKIP_DIRS_LOWER=()
+	if [[ -f "$file" ]] && jq -e 'type == "array"' "$file" >/dev/null 2>&1; then
+		mapfile -t SKIP_DIRS < <(jq -r '.[] | select(. != "")' "$file" 2>/dev/null)
+	fi
+	if [[ ${#SKIP_DIRS[@]} -eq 0 ]]; then
+		mapfile -t SKIP_DIRS < <(echo "$SKIP_DIRS_TEMPLATE" | jq -r '.[]')
+	fi
+	local d
+	for d in "${SKIP_DIRS[@]}"; do
+		SKIP_DIRS_LOWER+=("${d,,}")
+	done
+	_log 调试 "跳过目录词表 ${#SKIP_DIRS[@]} 个"
 }
 
 # 初始化特典识别词表（mo_special_words.json）：解析默认路径，缺失时交互创建或使用内置默认。
@@ -1722,7 +1789,7 @@ find_show_dir_from_path() {
 	while [[ -n "$dir" && "$dir" != "/" && "$dir" != "." ]]; do
 		parent=$(basename "$dir")
 		# 跳过特典目录与常见分类目录
-		if echo "$parent" | grep -qiE '^(sp|sps|special|specials|cd|cds|bonus|bonuses|extra|extras|特典|特番|花絮|视频|剧集|动画|合集|电影|音乐|movies|series|shows|anime|collections)$'; then
+		if [[ " ${SKIP_DIRS_LOWER[*]} " == *" ${parent,,} "* ]]; then
 			dir=$(dirname "$dir")
 			continue
 		fi
@@ -1750,7 +1817,7 @@ find_show_path_from_file() {
 	while [[ -n "$dir" && "$dir" != "/" && "$dir" != "." ]]; do
 		parent=$(basename "$dir")
 		# 跳过特典目录与常见分类目录
-		if echo "$parent" | grep -qiE '^(sp|sps|special|specials|cd|cds|bonus|bonuses|extra|extras|特典|特番|花絮|视频|剧集|动画|合集|电影|音乐|movies|series|shows|anime|collections)$'; then
+		if [[ " ${SKIP_DIRS_LOWER[*]} " == *" ${parent,,} "* ]]; then
 			dir=$(dirname "$dir")
 			continue
 		fi
@@ -1780,16 +1847,36 @@ count_main_videos() {
 		echo "${MAIN_COUNT_CACHE[$dir]}"
 		return
 	fi
+	# 用 VIDEO_EXTS 动态生成 find -name 列表（与配置一致，用户加扩展即生效）
+	local -a name_args=()
+	local ext
+	for ext in "${VIDEO_EXTS[@]}"; do
+		[[ -z "$ext" ]] && continue
+		name_args+=(-name "*.${ext}")
+	done
+	local -a find_args=(-maxdepth 2 -type f)
+	if [[ ${#name_args[@]} -gt 0 ]]; then
+		# name_args 是 -name/pattern 交替对——按对追加，-o 插在配对之间
+		local -a joined=()
+		local i
+		for ((i = 0; i < ${#name_args[@]}; i += 2)); do
+			joined+=("${name_args[$i]}" "${name_args[$((i + 1))]}")
+			(( i + 2 < ${#name_args[@]} )) && joined+=(-o)
+		done
+		find_args+=("(" "${joined[@]}" ")")
+	fi
 	while IFS= read -r -d '' f; do
-		# 跳过特典/附带子目录（SPs/CDs/Scans/Fonts 等）
-		if echo "$f" | grep -qiE '/(SPs?|Specials|CDs?|Bonus|Extras|Scans|Fonts|特典|特番|花絮)(/|$)'; then
-			continue
-		fi
+		# 跳过特典/附带子目录（SPs/CDs/Scans/Fonts 等，词表见 SKIP_DIRS）
+		local skip=false seg
+		for seg in ${f//\// }; do
+			if [[ " ${SKIP_DIRS_LOWER[*]} " == *" ${seg,,} "* ]]; then
+				skip=true
+				break
+			fi
+		done
+		$skip && continue
 		count=$((count + 1))
-	done < <(find "$dir" -maxdepth 2 -type f \
-		\( -name '*.mkv' -o -name '*.mp4' -o -name '*.avi' -o -name '*.mov' \
-			-o -name '*.wmv' -o -name '*.flv' -o -name '*.m4v' -o -name '*.ts' \
-			-o -name '*.m2ts' -o -name '*.webm' \) -print0 2>/dev/null)
+	done < <(find "$dir" "${find_args[@]}" -print0 2>/dev/null)
 	MAIN_COUNT_CACHE["$dir"]="$count"
 	echo "$count"
 }
@@ -1807,15 +1894,12 @@ parse_media_filename() {
 	local type="unknown" title="" year="" season="" episode="" episode_end="" special_fragment=""
 	# 输出契约：type|title|year|season|episode|episode_end|special_fragment（episode_end 空=单集）
 
-	# 电影格式：Title (Year)
-	if [[ "$base" =~ ^(.*)\(([0-9]{4})\)$ ]]; then
-		title="${BASH_REMATCH[1]}"
-		year="${BASH_REMATCH[2]}"
-		# 去尾部分隔符（参数展开是 glob 模式，$ 锚点无效——用 %% 最长匹配）
-		title="${title%%[\ _.-]*}"
-		type="movie"
-		echo "$type|$title|$year|$season|$episode|${episode_end:-}|$special_fragment"
-		return
+	# (YYYY) 年份提取：任意位置（Title (2020) [1080p]、Show (2020) S01E01、Movie (2020)）。
+	# 提取后从 base 移除并重新 clean；TV 规则命中时年份进 year 字段，否则判定为 movie。
+	if [[ "$base" =~ \(([0-9]{4})\) ]]; then
+		year="${BASH_REMATCH[1]}"
+		base="${base/\(${year}\)/}"
+		cleaned=$(clean_name "$base")
 	fi
 
 	# 电视剧格式：S##E##（季/集号 1-2 位均可；支持多集区间 S01E01-E02 及扩展 S01E01-E02E03）
@@ -1970,12 +2054,21 @@ parse_media_filename() {
 		fi
 	fi
 
+	# 电影判定：无任何 TV/特典特征且年份存在（(YYYY) 已提取）
+	if [[ -n "$year" ]]; then
+		title=$(echo "$cleaned" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+		type="movie"
+		echo "$type|$title|$year|$season|$episode|${episode_end:-}|$special_fragment"
+		return
+	fi
+
 	# 文件名无明确季集/年份特征（如压制组风格 [Group] Title [1080p]）：
 	# 不依赖下载目录（合集种子可能把剧场版电影放在剧集目录下），
 	# 根据媒体目录内正片数量判断：仅 1 个正片 → 电影；多个正片 → 剧集。
+	# 源根直属散放文件（show_path == SOURCE_DIR）不统计（共享目录误判风险）→ 交 AI。
 	local show_path main_count
 	show_path=$(find_show_path_from_file "$file")
-	if [[ -n "$show_path" ]]; then
+	if [[ -n "$show_path" ]] && [[ "$show_path" != "$SOURCE_DIR" ]]; then
 		main_count=$(count_main_videos "$show_path")
 		if (( main_count == 1 )); then
 			title="$cleaned"
@@ -3946,6 +4039,7 @@ main() {
 	check_dependencies
 	init_special_map "$SPECIAL_MAP_FILE"
 	init_special_words "$SPECIAL_WORDS_FILE"
+	init_skip_dirs "$SKIP_DIRS_FILE"
 	init_season_offset
 
 	# cache-only 形状：仅更新缓存后退出（无整理步骤，不做硬链接检查）

@@ -90,6 +90,13 @@ SEASON_OFFSET_FILE=
 # 留空使用默认值（推荐）
 SPECIAL_WORDS_FILE=
 
+# 跳过目录词表文件路径（仅支持 JSON 数组格式）
+# 语义 = 不作为媒体名目录的目录词（特典/附带目录 + 分类目录，如 SPs/CDs/特典/视频/剧集/动画/电影）
+# 匹配为目录名精确比较（忽略大小写）；内容不当作正则
+# 默认值：$PWD/mo_config/mo_skip_dirs.json 或 $SCRIPT_DIR/mo_config/mo_skip_dirs.json
+# 留空使用默认值（推荐）
+SKIP_DIRS_FILE=
+
 # ====== 第五步：输出与调试（可选）======
 
 # 彩色输出开关
