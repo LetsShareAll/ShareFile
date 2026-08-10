@@ -38,6 +38,24 @@ _Avoid_: target, dst（作概念名时）
 **过滤词 (filter keyword)**:
 `list` 模式的可选关键词，按类型/路径/参数过滤缓存条目。仅 CLI 提供（`--list-cache` 的值或 `=` 形式），不从配置读取。
 
+## Specials
+
+**特典类别词 (special category word)**:
+特典识别的判定词（`mo_special_words.json`，JSON 数组）——文件名方括号标记含这些词 → 判定为特典（Season 00）。语义 = 特典类别（Menu/CM/PV/NCOP/NCED 等）。匹配对空格不敏感（词表 `ncop` 可匹配文件里的 `nc op`）；词表内容不当作正则（纯字符串子串匹配）。
+_Avoid_: 特典名（"名"暗示具体条目，实际是类别判定词）
+
+**匹配关键字 (match keyword)**:
+keymap 值元素与 AI 学习产物的统一术语——`["Menu","菜单","メニュー"]` 中的每个元素都是匹配关键字：用于与 TMDB 特典候选列表条目做匹配（精确/最短前缀/contains 三级）。用户可写 TMDB 条目名，也可写自定义别名。
+_Avoid_: 特典名、集名（这些词本质是特典类别/关键词，不是"名字"）
+
+**TMDB 特典候选列表 (season0 candidate list)**:
+`tv/{id}/season/0` 的条目名列表（`PENDING_AI_SPECIAL` 值中的 `编号:名称` 串）。AI 学习时作为候选：**AI 从候选中选择与本地片段匹配的项**（选择判定，与 AI 匹配轮同构），产物必须是候选列表成员（交叉验证，防幻觉污染）。
+_Avoid_: 特典集名（暗示 AI "返回名字"，实际是"从候选中选择"）
+
+**特典映射 (special keymap)**:
+`mo_special_keymap.json`：`{"本地关键字符串": 匹配关键字数组 | 字符串引用}`——多键共享同一组匹配关键字用字符串引用（递归展开，防循环）；键小写化。AI 学习写回前交叉验证（产物必须在候选列表）。
+_Avoid_: 特典名映射
+
 ## Pipeline
 
 **识别池 (worker pool)**:

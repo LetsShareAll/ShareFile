@@ -125,7 +125,7 @@ readonly AI_BATCH_PROMPT='You are a media file organizer. You receive a JSON inp
 
 Return ONE top-level JSON object with exactly four keys:
 - "search": an object mapping each entry'"'"'s exact "file" string (copied byte-for-byte; keep full path, brackets, spaces, ampersands) to {"search_term": "...", "year": "..."}. search_term = clean title for TMDB search: strip only media/release tags (S01E30, S1, E12, [Menu01], [1080p], leading [Group]); if type is "tv" remove episode/season numbers BUT keep ordinal words like "2nd Season"; year = 4-digit year if identifiable, else "". If the input "type" is "unknown", also infer and return "media_type": "movie" or "tv" based on the filename/directory (e.g. contains season/episode markers -> "tv", ends with a year or no episode markers -> "movie").
-- "special": an object mapping each entry'"'"'s local "fragment" string (exact, keep digits, e.g. "Menu01", "Preview02", "CM01") to an ARRAY of TMDB special-season episode names from that entry'"'"'s "season0" list that match it, in any language (e.g. "Menu01" -> ["Menu", "菜单"], "Preview02" -> ["Preview", "预告片"], "CM01" -> ["CM", "广告"]). Use the exact names as written in season0; if no match, use [].
+- "special": an object mapping each entry'"'"'s local "fragment" string (exact, keep digits, e.g. "Menu01", "Preview02", "CM01") to an ARRAY of MATCH KEYWORDS — entries from that entry'"'"'s "season0" candidate list that match it, in any language (e.g. "Menu01" -> ["Menu", "菜单"], "Preview02" -> ["Preview", "预告片"], "CM01" -> ["CM", "广告"]). Use the exact strings as written in season0; if no match, use [].
 - "artist_choice": an object mapping each artist entry'"'"'s exact "file" string to a SINGLE artist string — pick the one most likely to be the album artist (the primary artist credited for the whole album). If truly undecidable, return "".
 - "match": an object mapping each match entry'"'"'s exact "file" string to {"choice": <id> | "", "season_shift": <int> | "", "search_term": "..."}. choice = the result id from "search" that matches this file; if the correct show is a season-with-suffix of a candidate (e.g. file "Toaru Kagaku no Railgun T S01E01" matches candidate 某科学的超电磁炮 whose season 3 is named 某科学的超电磁炮T), pick the candidate id AND set season_shift so that file season + season_shift = the correct TMDB season number (e.g. file S01 -> season_shift 2 -> S03). If the file is a movie, season_shift must be "". If no candidate matches but a corrected search would help, set choice "" and search_term to the corrected title. If truly no match and no correction, return {"choice": "", "season_shift": "", "search_term": ""}.
 
@@ -246,6 +246,13 @@ SPECIAL_MAP_FILE=
 # 默认值：$PWD/mo_config/season_offset.json 或 $SCRIPT_DIR/mo_config/season_offset.json
 # 留空使用默认值（推荐）
 SEASON_OFFSET_FILE=
+
+# 特典识别词表文件路径（仅支持 JSON 数组格式）
+# 语义 = 特典类别词（Menu/CM/PV 等），文件名方括号标记含这些词 → 判定为特典
+# 匹配对空格不敏感（"ncop" 可匹配 "nc op"）；内容不当作正则
+# 默认值：$PWD/mo_config/mo_special_words.json 或 $SCRIPT_DIR/mo_config/mo_special_words.json
+# 留空使用默认值（推荐）
+SPECIAL_WORDS_FILE=
 
 # ====== 第五步：输出与调试（可选）======
 
@@ -501,6 +508,17 @@ readonly SPECIAL_KEYMAP_TEMPLATE='{
 }'
 
 # ----------------------------------------------------------------------------
+# SPECIAL_WORDS_TEMPLATE —— 特典识别词表模板（mo_special_words.json）
+#
+# 作用：
+#   特典识别的判定词（文件名方括号标记含这些词 → 判定为特典）。
+#   语义 = 特典类别词（Menu/CM/PV/NCOP/NCED 等），匹配对空格不敏感
+#   （词表 "ncop" 可匹配文件名里的 "nc op"）。
+#   词表内容不当作正则（纯字符串子串匹配）。
+# ----------------------------------------------------------------------------
+readonly SPECIAL_WORDS_TEMPLATE='["menu","ncop","nced","mini anime","pv","cm","sp","teaser","program","promo","trailer","special","music video","mv","opening","ending","特典","特番","花絮"]'
+
+# ----------------------------------------------------------------------------
 # SEASON_OFFSET_TEMPLATE —— 季数偏移模板（season_offset.json）
 #
 # 作用：
@@ -602,9 +620,12 @@ AI_DRY_RUN="${AI_DRY_RUN:-}"
 LOG_FILE="${LOG_FILE:-}"
 SKIP_LOG_FILE="${SKIP_LOG_FILE:-}"
 
-# 映射配置文件（init_special_map/init_season_offset 中解析默认路径）
+# 映射配置文件（init_special_map/init_season_offset/init_special_words 中解析默认路径）
 SPECIAL_MAP_FILE="${SPECIAL_MAP_FILE:-}"
 SEASON_OFFSET_FILE="${SEASON_OFFSET_FILE:-}"
+SPECIAL_WORDS_FILE="${SPECIAL_WORDS_FILE:-}"
+# 特典识别词表（init_special_words 加载；worker 经 fork 复制可见）
+declare -a SPECIAL_WORDS=()
 
 # 关联数组
 # 特典映射（本地关键字符串 -> TMDB 字符串，一对一）
@@ -1007,10 +1028,11 @@ load_config() {
 	CACHE_TTL_DAYS="${CACHE_TTL_DAYS:-${moenv[CACHE_TTL_DAYS]:-30}}"
 	CACHE_EMPTY_TTL_DAYS="${CACHE_EMPTY_TTL_DAYS:-${moenv[CACHE_EMPTY_TTL_DAYS]:-3}}"
 
-	# 路径配置（空值时由 init_cache_dir / init_special_map / init_season_offset 解析默认路径）
+	# 路径配置（空值时由 init_cache_dir / init_special_map / init_season_offset / init_special_words 解析默认路径）
 	CACHE_DIR="${CACHE_DIR:-${moenv[CACHE_DIR]:-}}"
 	SPECIAL_MAP_FILE="${SPECIAL_MAP_FILE:-${moenv[SPECIAL_MAP_FILE]:-}}"
 	SEASON_OFFSET_FILE="${SEASON_OFFSET_FILE:-${moenv[SEASON_OFFSET_FILE]:-}}"
+	SPECIAL_WORDS_FILE="${SPECIAL_WORDS_FILE:-${moenv[SPECIAL_WORDS_FILE]:-}}"
 }
 
 # 选择 TMDB 认证方式并校验。无密钥时交互生成 mo_env 模板。
@@ -1088,7 +1110,7 @@ init_special_map() {
 		else
 			_log 信息 "未找到特典映射文件: $file"
 			_log 信息 "是否创建默认配置文件？(y/N)"
-			read -r answer
+			read -r answer || true   # EOF（非交互）时跳过创建
 			if [[ "$answer" =~ ^[Yy]$ ]]; then
 				# 子 shell 设置 umask 077，确保创建的文件权限即 600
 				(umask 077 && printf '%s\n' "$SPECIAL_KEYMAP_TEMPLATE" | jq . >"$file" 2>/dev/null) || true
@@ -1102,6 +1124,46 @@ init_special_map() {
 		fi
 	fi
 	load_special_map "$file"
+}
+
+# 初始化特典识别词表（mo_special_words.json）：解析默认路径，缺失时交互创建或使用内置默认。
+# 词表语义 = 特典类别词（Menu/CM/PV 等）；匹配对空格不敏感；内容不当作正则。
+init_special_words() {
+	local file="$1"
+	if [[ -z "$file" ]]; then
+		if [[ -f "$PWD/mo_config/mo_special_words.json" ]]; then
+			file="$PWD/mo_config/mo_special_words.json"
+		else
+			file="$SCRIPT_DIR/mo_config/mo_special_words.json"
+		fi
+		SPECIAL_WORDS_FILE="$file"
+	fi
+	if [[ ! -f "$file" ]]; then
+		if [[ "$AUTOMATED" == "true" ]]; then
+			_log 警告 "未找到特典词表文件，自动化模式使用内置默认: $file"
+		else
+			_log 信息 "未找到特典词表文件: $file"
+			_log 信息 "是否创建默认配置文件？(y/N)"
+			read -r answer || true   # EOF（非交互）时跳过创建
+			if [[ "$answer" =~ ^[Yy]$ ]]; then
+				(umask 077 && printf '%s\n' "$SPECIAL_WORDS_TEMPLATE" | jq . >"$file" 2>/dev/null) || true
+				if [[ ! -s "$file" ]]; then
+					echo '[]' >"$file"
+				fi
+				chmod 600 "$file" 2>/dev/null || _log 警告 "无法设置文件权限为 600: $file"
+				_log 信息 "已创建特典词表文件: $file"
+			fi
+		fi
+	fi
+	# 加载词表（JSON 数组）；缺失/非法/空 → 内置默认
+	SPECIAL_WORDS=()
+	if [[ -f "$file" ]] && jq -e 'type == "array"' "$file" >/dev/null 2>&1; then
+		mapfile -t SPECIAL_WORDS < <(jq -r '.[] | select(. != "")' "$file" 2>/dev/null)
+	fi
+	if [[ ${#SPECIAL_WORDS[@]} -eq 0 ]]; then
+		mapfile -t SPECIAL_WORDS < <(echo "$SPECIAL_WORDS_TEMPLATE" | jq -r '.[]')
+	fi
+	_log 调试 "特典识别词表 ${#SPECIAL_WORDS[@]} 个"
 }
 
 # 加载特典映射（JSON 对象：{"本地关键字符串": 值}）。
@@ -1243,11 +1305,18 @@ safe_printf_int() {
 # 先精确匹配片段（转小写），再匹配去数字后的核心（如 Menu01 -> menu）；无映射时返回原片段。
 translate_fragment() {
 	local fragment="$1"
+	# 查表键规范化（仅影响查找，不改存储/输出）：
+	# 去空白与连字符（"Menu 01"/"PV-01" → "menu01"/"pv01"）+ ASCII 全角转半角
+	# （sed y/ 按字符翻译；tr 对多字节 UTF-8 失效）
+	local norm
+	norm=$(printf '%s' "$fragment" |
+		sed -e 'y/０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/' \
+		-e 's/[[:space:]-]//g')
+	norm="${norm,,}"
 	local val core
-	val="${SPECIAL_MAP[${fragment,,}]:-}"
+	val="${SPECIAL_MAP[$norm]:-}"
 	if [[ -z "$val" ]]; then
-		core=$(printf '%s' "$fragment" | sed -E 's/[0-9]+$//' | sed -E 's/[[:space:]]+$//')
-		core="${core,,}"
+		core=$(printf '%s' "$norm" | sed -E 's/[0-9]+$//')
 		val="${SPECIAL_MAP[$core]:-}"
 	fi
 	if [[ -n "$val" ]]; then
@@ -1757,25 +1826,31 @@ parse_media_filename() {
 
 	# 特典识别（Season 00）：文件名含特典标记（可带可不带数字），或父目录为特典目录。
 	# 如 "2nd Season [Menu01]"、" [NCOP]"、"CM01.mkv"（在 SPs 目录）均识别为特典。
-	local special_words=(
-		"menu" "ncop" "nced" "nc[[:space:]]*op" "nc[[:space:]]*ed"
-		"mini[[:space:]]*anime" "pv" "cm" "sp" "teaser" "program"
-		"promo" "trailer" "special" "music[[:space:]]*video" "mv"
-		"opening" "ending" "特典" "特番" "花絮"
-	)
+	# 词表来自 mo_special_words.json（SPECIAL_WORDS，语义=特典类别词）；
+	# 空格归一化后子串匹配（纯字符串匹配，词表内容不当作正则；"nc op" == "ncop"）。
 	local is_special=false
 	local frag=""
 	local tag=""
 	local i
-	# 文件名特典词匹配（优先匹配方括号标记内的特典词，避免误判标题）
-	for i in "${!special_words[@]}"; do
-		if echo "$base" | grep -qiE "\[[^]]*${special_words[$i]}[^]]*\]"; then
-			is_special=true
-			frag=$(echo "$base" | grep -oiE "${special_words[$i]}" | head -1 | tr -d ' ')
-			tag=$(echo "$base" | grep -oiE "\[[^]]*${special_words[$i]}[^]]*\]" | head -1)
-			break
-		fi
-	done
+	if [[ ${#SPECIAL_WORDS[@]} -gt 0 ]] && echo "$base" | grep -qE '\[[^]]*\]'; then
+		local t_line w_norm t_norm
+		while IFS= read -r t_line; do
+			[[ -z "$t_line" ]] && continue
+			t_norm="${t_line//[[:space:]]/}"
+			t_norm="${t_norm,,}"
+			for i in "${!SPECIAL_WORDS[@]}"; do
+				w_norm="${SPECIAL_WORDS[$i]//[[:space:]]/}"
+				w_norm="${w_norm,,}"
+				[[ -z "$w_norm" ]] && continue
+				if [[ "$t_norm" == *"$w_norm"* ]]; then
+					is_special=true
+					frag="$w_norm"
+					tag="[$t_line]"
+					break 2
+				fi
+			done
+		done < <(echo "$base" | grep -oE '\[[^]]*\]' | tr -d '[]')
+	fi
 	# 父目录为特典目录（SPs/Specials/CDs/Bonus/Extras 等）
 	if ! $is_special; then
 		local parent_dir
@@ -2202,18 +2277,33 @@ match_special_episode() {
 		done < <(echo "$val" | jq -r 'if type == "array" then .[] else . end' 2>/dev/null)
 	fi
 
+	# 三级匹配优先级（可信度递减）：
+	#   1) 精确：候选词 == 特典条目名（忽略大小写）——最强信号
+	#   2) 最短前缀：条目名以候选词开头，多个命中取最短的条目名（"Menu Card" vs "Menu" 取 "Menu"）
+	#   3) contains：子串包含（多语言/翻译场景兜底）
 	local best_ep="" term term_lower ep
-	for term in "${terms[@]}"; do
-		term_lower="${term,,}"
-		[[ -z "$term_lower" ]] && continue
-		ep=$(echo "$season0_json" | jq --arg frag "$term_lower" -r \
-			'.episodes[] | select(.name | ascii_downcase | contains($frag)) | .episode_number' 2>/dev/null || true)
-		ep=$(echo "$ep" | head -1 | tr -d ' \t\r\n')
-		if [[ -n "$ep" ]]; then
-			best_ep="$ep"
-			_log 匹配 "特典匹配成功（词: $term），TMDB集号: $best_ep"
-			break
-		fi
+	local tier=1
+	for tier in 1 2 3; do
+		for term in "${terms[@]}"; do
+			term_lower="${term,,}"
+			[[ -z "$term_lower" ]] && continue
+			if [[ $tier -eq 1 ]]; then
+				ep=$(echo "$season0_json" | jq -r --arg frag "$term_lower" \
+					'[.episodes[] | select(.name | ascii_downcase == $frag) | .episode_number] | .[0] // empty' 2>/dev/null || true)
+			elif [[ $tier -eq 2 ]]; then
+				ep=$(echo "$season0_json" | jq -r --arg frag "$term_lower" \
+					'[.episodes[] | select(.name | ascii_downcase | startswith($frag)) | {n: .episode_number, len: (.name | length)}] | sort_by(.len) | .[0].n // empty' 2>/dev/null || true)
+			else
+				ep=$(echo "$season0_json" | jq -r --arg frag "$term_lower" \
+					'[.episodes[] | select(.name | ascii_downcase | contains($frag)) | .episode_number] | .[0] // empty' 2>/dev/null || true)
+			fi
+			ep=$(echo "$ep" | head -1 | tr -d ' \t\r\n')
+			if [[ -n "$ep" ]]; then
+				best_ep="$ep"
+				_log 匹配 "特典匹配成功（词: $term，级别 $tier），TMDB集号: $best_ep"
+				break 2
+			fi
+		done
 	done
 
 	if [[ -n "$best_ep" ]]; then
@@ -2221,7 +2311,7 @@ match_special_episode() {
 		return 0
 	fi
 
-	_log 警告 "未匹配到特典名称，使用原始片段: $fallback"
+	_log 警告 "未匹配到特典关键字，使用原始片段: $fallback"
 	echo "$fallback"
 	return 1
 }
@@ -2678,15 +2768,28 @@ ai_batch_request() {
 		- ${#AI_RESPONDED_SEARCH[@]} - ${#AI_RESPONDED_ARTIST[@]} - ${#AI_RESPONDED_MATCH[@]} ))
 	(( missing > 0 )) && _log 警告 "AI 响应缺失 $missing 个条目（留待下一批）"
 
-	# 解析 special 部分：AI 判定本地关键字符串 → TMDB 特典名（可多语言），写入 keymap 数组
-	# 新格式 {"本地字符串": ["TMDB名1", "TMDB名2", ...]}——值可为字符串或数组，统一归并为数组
+	# 解析 special 部分：AI 从该条 season0 候选关键字列表中选出与本地片段匹配的项，
+	# 写回 keymap 作为匹配关键字（可多语言数组）。
+	# 交叉验证：AI 返回的每个匹配关键字必须存在于该条 season0 候选列表（防 AI 幻觉污染映射）。
 	local tmdb_name
 	for key in "${!PENDING_AI_SPECIAL[@]}"; do
-		local fragment key_lower
+		local fragment key_lower season0_names
 		IFS='|' read -r _ fragment <<<"$key"
 		key_lower="${fragment,,}"
+		season0_names="${PENDING_AI_SPECIAL[$key]#*|}"
 		tmdb_name=$(echo "$result_json" | jq -r --arg k "$fragment" '.special[$k] // empty')
 		if [[ -n "$tmdb_name" ]] && [[ "$tmdb_name" != "null" ]]; then
+			# 交叉验证：过滤掉不在候选列表中的项（数组逐项 / 字符串单项）。
+			# 注意：`$s0 | contains(.)` 中 . 指管道输入（$s0 自身）——须先捕获元素为 $item
+			local valid_name
+			valid_name=$(echo "$tmdb_name" | jq -r --arg s0 "$season0_names" \
+				'if type == "array" then ([.[] | select(. as $item | ($item != "") and ($s0 | contains($item)))] | if length > 0 then . else empty end)
+				  else (if (. != "") and ($s0 | contains(.)) then . else empty end) end' 2>/dev/null) || valid_name=""
+			if [[ -z "$valid_name" ]] || [[ "$valid_name" == "null" ]]; then
+				_log 警告 "AI 特典匹配关键字不在候选列表，丢弃: $fragment -> $tmdb_name"
+				continue
+			fi
+			tmdb_name="$valid_name"
 			# 确保映射文件存在（不存在则创建空 JSON，AI 学到的映射需要持久化）
 			if [[ ! -f "$SPECIAL_MAP_FILE" ]]; then
 				echo '{}' >"$SPECIAL_MAP_FILE" 2>/dev/null || true
@@ -3816,6 +3919,7 @@ main() {
 	select_auth
 	check_dependencies
 	init_special_map "$SPECIAL_MAP_FILE"
+	init_special_words "$SPECIAL_WORDS_FILE"
 	init_season_offset
 
 	# cache-only 形状：仅更新缓存后退出（无整理步骤，不做硬链接检查）

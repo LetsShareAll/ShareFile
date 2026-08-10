@@ -83,6 +83,13 @@ SPECIAL_MAP_FILE=
 # 留空使用默认值（推荐）
 SEASON_OFFSET_FILE=
 
+# 特典识别词表文件路径（仅支持 JSON 数组格式）
+# 语义 = 特典类别词（Menu/CM/PV 等），文件名方括号标记含这些词 → 判定为特典
+# 匹配对空格不敏感（"ncop" 可匹配 "nc op"）；内容不当作正则
+# 默认值：$PWD/mo_config/mo_special_words.json 或 $SCRIPT_DIR/mo_config/mo_special_words.json
+# 留空使用默认值（推荐）
+SPECIAL_WORDS_FILE=
+
 # ====== 第五步：输出与调试（可选）======
 
 # 彩色输出开关
