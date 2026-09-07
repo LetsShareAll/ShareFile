@@ -1,0 +1,16 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "148421653_p0-哥伦比娅.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2026-09-07T08:47:32.000Z",
+      "updated_at": "2026-09-07T08:47:32.000Z",
+      "size": 10116809,
+      "md5": "97fa1017a92ed8b01318ec305605c08b",
+      "sha256": "4d810b957030de05ac9a37f52d3f92fcffe3aa6a3fff0aa46a3d4faafe3ff263"
+    }
+  }
+}

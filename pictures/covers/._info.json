@@ -1,0 +1,16 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-07T08:47:32.000Z",
+      "updated_at": "2026-09-07T08:47:32.000Z",
+      "size": 138027,
+      "md5": "bd9af2ae911201c2e07499baf9ac4c46",
+      "sha256": "61a4d755f4e7ec7a0f4f813b8a1a3324ad5a86c3012693899a17deaacaad07c3"
+    }
+  }
+}

@@ -141,11 +141,13 @@
     "/pictures/notes-dark.svg": "pictures/notes-dark.svg",
     "/pictures/notes-light.svg": "pictures/notes-light.svg",
     "/pictures/clash-light.png": "pictures/clash-light.png",
-    "/pictures/148421653_p0-哥伦比娅.png": "pictures/148421653_p0-哥伦比娅.png",
     "/pictures/snow-pear-gradient.svg": "pictures/snow-pear-gradient.svg",
     "/pictures/icon.webp": "pictures/icon.webp",
     "/pictures/qq.svg": "pictures/qq.svg",
-    "/pictures/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg": "pictures/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg",
+    "/pictures/covers": "pictures/covers",
+    "/pictures/covers/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg": "pictures/covers/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg",
+    "/pictures/wallpapers": "pictures/wallpapers",
+    "/pictures/wallpapers/148421653_p0-哥伦比娅.png": "pictures/wallpapers/148421653_p0-哥伦比娅.png",
     "/pictures/archive.jpg": "pictures/archive.jpg",
     "/pictures/linux.png": "pictures/linux.png",
     "/music": "music",
@@ -2143,11 +2145,11 @@
         "pictures/notes-dark.svg",
         "pictures/notes-light.svg",
         "pictures/clash-light.png",
-        "pictures/148421653_p0-哥伦比娅.png",
         "pictures/snow-pear-gradient.svg",
         "pictures/icon.webp",
         "pictures/qq.svg",
-        "pictures/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg",
+        "pictures/covers",
+        "pictures/wallpapers",
         "pictures/archive.jpg",
         "pictures/linux.png"
       ],
@@ -2362,23 +2364,6 @@
       "sha256": "0d48a2ea1ee05ad4579b6e6996889548fa8a61a5ff6c85a32f7622cddfcb5782",
       "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/pictures/clash-light.png"
     },
-    "pictures/148421653_p0-哥伦比娅.png": {
-      "id": "pictures/148421653_p0-哥伦比娅.png",
-      "name": "148421653_p0-哥伦比娅.png",
-      "type": "file",
-      "parent": "pictures",
-      "children": [],
-      "description": "PNG 图像",
-      "created_at": "2026-09-07T08:14:54Z",
-      "updated_at": "2026-09-07T08:14:54Z",
-      "redirect_url": null,
-      "redirect_type": null,
-      "redirect_confirm_message": null,
-      "size": 10116809,
-      "md5": "97fa1017a92ed8b01318ec305605c08b",
-      "sha256": "4d810b957030de05ac9a37f52d3f92fcffe3aa6a3fff0aa46a3d4faafe3ff263",
-      "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/pictures/148421653_p0-%E5%93%A5%E4%BC%A6%E6%AF%94%E5%A8%85.png"
-    },
     "pictures/snow-pear-gradient.svg": {
       "id": "pictures/snow-pear-gradient.svg",
       "name": "snow-pear-gradient.svg",
@@ -2430,22 +2415,65 @@
       "sha256": "71e444fbfcabadcceb43576e55e0ee042c3962c45c621286932dc4ac63062787",
       "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/pictures/qq.svg"
     },
-    "pictures/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg": {
-      "id": "pictures/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg",
+    "pictures/covers": {
+      "id": "pictures/covers",
+      "name": "covers",
+      "type": "folder",
+      "parent": "pictures",
+      "children": [
+        "pictures/covers/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg"
+      ],
+      "description": "当前目录",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null
+    },
+    "pictures/covers/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg": {
+      "id": "pictures/covers/《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg",
       "name": "《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg",
       "type": "file",
-      "parent": "pictures",
+      "parent": "pictures/covers",
       "children": [],
       "description": "JPEG 图像",
-      "created_at": "2024-07-03T13:26:50Z",
-      "updated_at": "2026-05-30T17:10:20Z",
+      "created_at": "2026-09-07T08:47:32Z",
+      "updated_at": "2026-09-07T08:47:32Z",
       "redirect_url": null,
       "redirect_type": null,
       "redirect_confirm_message": null,
       "size": 138027,
       "md5": "bd9af2ae911201c2e07499baf9ac4c46",
       "sha256": "61a4d755f4e7ec7a0f4f813b8a1a3324ad5a86c3012693899a17deaacaad07c3",
-      "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/pictures/%E3%80%8A%E5%B4%A9%E5%9D%8F%EF%BC%9A%E6%98%9F%E7%A9%B9%E9%93%81%E9%81%93%E3%80%8BEP%EF%BC%9A%E3%80%8C%E5%B8%8C%E6%9C%9B%E6%9C%89%E7%BE%BD%E6%AF%9B%E5%92%8C%E7%BF%85%E8%86%80%E3%80%8D.jpg"
+      "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/pictures/covers/%E3%80%8A%E5%B4%A9%E5%9D%8F%EF%BC%9A%E6%98%9F%E7%A9%B9%E9%93%81%E9%81%93%E3%80%8BEP%EF%BC%9A%E3%80%8C%E5%B8%8C%E6%9C%9B%E6%9C%89%E7%BE%BD%E6%AF%9B%E5%92%8C%E7%BF%85%E8%86%80%E3%80%8D.jpg"
+    },
+    "pictures/wallpapers": {
+      "id": "pictures/wallpapers",
+      "name": "wallpapers",
+      "type": "folder",
+      "parent": "pictures",
+      "children": [
+        "pictures/wallpapers/148421653_p0-哥伦比娅.png"
+      ],
+      "description": "当前目录",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null
+    },
+    "pictures/wallpapers/148421653_p0-哥伦比娅.png": {
+      "id": "pictures/wallpapers/148421653_p0-哥伦比娅.png",
+      "name": "148421653_p0-哥伦比娅.png",
+      "type": "file",
+      "parent": "pictures/wallpapers",
+      "children": [],
+      "description": "PNG 图像",
+      "created_at": "2026-09-07T08:47:32Z",
+      "updated_at": "2026-09-07T08:47:32Z",
+      "redirect_url": null,
+      "redirect_type": null,
+      "redirect_confirm_message": null,
+      "size": 10116809,
+      "md5": "97fa1017a92ed8b01318ec305605c08b",
+      "sha256": "4d810b957030de05ac9a37f52d3f92fcffe3aa6a3fff0aa46a3d4faafe3ff263",
+      "url": "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/pictures/wallpapers/148421653_p0-%E5%93%A5%E4%BC%A6%E6%AF%94%E5%A8%85.png"
     },
     "pictures/archive.jpg": {
       "id": "pictures/archive.jpg",

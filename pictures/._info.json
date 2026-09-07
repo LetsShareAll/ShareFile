@@ -113,15 +113,6 @@
       "md5": "ab67026231c772c19b923846e6cd65ee",
       "sha256": "0d48a2ea1ee05ad4579b6e6996889548fa8a61a5ff6c85a32f7622cddfcb5782"
     },
-    "148421653_p0-哥伦比娅.png": {
-      "type": "file",
-      "description": "PNG 图像",
-      "created_at": "2026-09-07T08:14:54.000Z",
-      "updated_at": "2026-09-07T08:14:54.000Z",
-      "size": 10116809,
-      "md5": "97fa1017a92ed8b01318ec305605c08b",
-      "sha256": "4d810b957030de05ac9a37f52d3f92fcffe3aa6a3fff0aa46a3d4faafe3ff263"
-    },
     "snow-pear-gradient.svg": {
       "type": "file",
       "description": "可缩放矢量图形",
@@ -149,14 +140,13 @@
       "md5": "61dc1754bcfed311fb9839ea9b02385a",
       "sha256": "71e444fbfcabadcceb43576e55e0ee042c3962c45c621286932dc4ac63062787"
     },
-    "《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.jpg": {
-      "type": "file",
-      "description": "JPEG 图像",
-      "created_at": "2024-07-03T13:26:50.000Z",
-      "updated_at": "2026-05-30T17:10:20.000Z",
-      "size": 138027,
-      "md5": "bd9af2ae911201c2e07499baf9ac4c46",
-      "sha256": "61a4d755f4e7ec7a0f4f813b8a1a3324ad5a86c3012693899a17deaacaad07c3"
+    "covers": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "wallpapers": {
+      "type": "folder",
+      "description": "文件夹"
     },
     "archive.jpg": {
       "type": "file",
