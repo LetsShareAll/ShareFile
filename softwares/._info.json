@@ -5,15 +5,15 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
+    "system": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "applications": {
       "type": "folder",
       "description": "文件夹"
     },
     "games": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "system": {
       "type": "folder",
       "description": "文件夹"
     }

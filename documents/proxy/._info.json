@@ -9,11 +9,11 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "chain": {
+    "ruleset": {
       "type": "folder",
       "description": "文件夹"
     },
-    "ruleset": {
+    "chain": {
       "type": "folder",
       "description": "文件夹"
     }

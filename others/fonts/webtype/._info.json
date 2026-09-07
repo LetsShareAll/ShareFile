@@ -3,11 +3,11 @@
     "description": "当前目录"
   },
   "children": {
-    "sarasa": {
+    "smiley": {
       "type": "folder",
       "description": "文件夹"
     },
-    "smiley": {
+    "sarasa": {
       "type": "folder",
       "description": "文件夹"
     }

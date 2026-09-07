@@ -5,6 +5,14 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
+    "Mario Kart 8 Deluxe": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "Contra Anniversary Collection": {
+      "type": "folder",
+      "description": "文件夹"
+    },
     "The Legend of Zelda Breath of the Wild": {
       "type": "folder",
       "description": "文件夹"
@@ -13,7 +21,11 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "The Legend of Zelda Tears of the Kingdom": {
+    "Kirby`s Return to Dream Land Deluxe": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "Hyrule Warriors Age of Calamity": {
       "type": "folder",
       "description": "文件夹"
     },
@@ -21,27 +33,15 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "Contra Anniversary Collection": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "Mario Kart 8 Deluxe": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "Leyendas Pokemon Arceus": {
-      "type": "folder",
-      "description": "文件夹"
-    },
     "Kirby and the Forgotten Land": {
       "type": "folder",
       "description": "文件夹"
     },
-    "Kirby`s Return to Dream Land Deluxe": {
+    "The Legend of Zelda Tears of the Kingdom": {
       "type": "folder",
       "description": "文件夹"
     },
-    "Hyrule Warriors Age of Calamity": {
+    "Leyendas Pokemon Arceus": {
       "type": "folder",
       "description": "文件夹"
     }

@@ -5,20 +5,20 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
-    "movies": {
-      "type": "folder",
-      "description": "文件夹"
-    },
     "《崩坏：星穹铁道》EP：「希望有羽毛和翅膀」.mp4": {
       "type": "file",
       "description": "MP4 视频",
       "created_at": "2024-07-03T13:26:50.000Z",
-      "updated_at": "2026-05-31T01:10:20+08:00",
+      "updated_at": "2026-05-30T17:10:20.000Z",
       "size": 70082833,
       "md5": "3a80f71f5d310e5dc6f8fe1be4151349",
       "sha256": "d49c7f4a4c6f9833b1f42803433b00fe472f89bf17369632ebe8734115fd54c8"
     },
     "series": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "movies": {
       "type": "folder",
       "description": "文件夹"
     }

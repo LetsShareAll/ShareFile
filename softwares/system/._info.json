@@ -9,11 +9,11 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "nintendo": {
+    "android": {
       "type": "folder",
       "description": "文件夹"
     },
-    "android": {
+    "nintendo": {
       "type": "folder",
       "description": "文件夹"
     },

@@ -3,11 +3,7 @@
     "description": "当前目录"
   },
   "children": {
-    "segoe": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "sarasa": {
+    "foundertype": {
       "type": "folder",
       "description": "文件夹"
     },
@@ -15,7 +11,11 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "foundertype": {
+    "sarasa": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "segoe": {
       "type": "folder",
       "description": "文件夹"
     },
