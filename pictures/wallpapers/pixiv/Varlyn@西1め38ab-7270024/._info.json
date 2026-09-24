@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "144667595_p00-桜の少女-女孩子,少女,原神,GenshinImpact,哥伦比娅（原神）,樱,原神1000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1293887,
+      "md5": "af3202a998b6b6ab36ed218f0d9e1401",
+      "sha256": "6047a768bb103529df4a4c01093dfe781ea094974fe64d2f2efa5b6e66d7db3f"
+    },
+    "144667595_p00-桜の少女-女孩子,少女,原神,GenshinImpact,哥伦比娅（原神）,樱,原神1000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1635,
+      "md5": "23de7ecd7098b659bb9ff9322ae9abdb",
+      "sha256": "b4948e9ad821329e7fd04a26f3f97b8c04730e7dab4d256b6031e578bf838729"
+    }
+  }
+}

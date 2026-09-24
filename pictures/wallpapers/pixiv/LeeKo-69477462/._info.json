@@ -1,0 +1,34 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "142849778_p00-コロンビナ - Welkin Moon's Homecoming-女孩子,原神,GenshinImpact,哥伦比娅,美少女,原神イラスト,WelkinMoonsHomecoming,少女,Columbina,赤脚-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 90,
+      "md5": "d793684c5447aedebf3e598ab70cf71d",
+      "sha256": "204626652445e2eab8bc8322f6c17cf6e5df33adf20c9b1fa6897bf1e8595f09"
+    },
+    "142849778_p00-コロンビナ - Welkin Moon's Homecoming-女孩子,原神,GenshinImpact,哥伦比娅,美少女,原神イラスト,WelkinMoonsHomecoming,少女,Columbina,赤脚.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 505071,
+      "md5": "c97c7e43429efc3d6eb8492857d4331f",
+      "sha256": "0931c480639fb3ea6f7b76efdb09665c63e4706127148d366cbcd78e0663ebfc"
+    },
+    "142849778_p00-コロンビナ - Welkin Moon's Homecoming-女孩子,原神,GenshinImpact,哥伦比娅,美少女,原神イラスト,WelkinMoonsHomecoming,少女,Columbina,赤脚-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1865,
+      "md5": "99272aeb1f8f96a851e8e3c9bdb49d1e",
+      "sha256": "f7d418864347d78c868f8979dda9ff7feb685cb5a494b72ca30dab4fe0b9efae"
+    }
+  }
+}

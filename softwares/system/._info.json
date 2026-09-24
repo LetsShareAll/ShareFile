@@ -5,7 +5,11 @@
     "updated_at": "2025-11-28T12:44:31Z"
   },
   "children": {
-    "linux": {
+    "nintendo": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "apple": {
       "type": "folder",
       "description": "文件夹"
     },
@@ -13,11 +17,7 @@
       "type": "folder",
       "description": "文件夹"
     },
-    "nintendo": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "apple": {
+    "linux": {
       "type": "folder",
       "description": "文件夹"
     }

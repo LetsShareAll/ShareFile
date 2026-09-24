@@ -3,19 +3,11 @@
     "description": "当前目录"
   },
   "children": {
-    "videos": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "documents": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "others": {
-      "type": "folder",
-      "description": "文件夹"
-    },
     "softwares": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "videos": {
       "type": "folder",
       "description": "文件夹"
     },
@@ -24,6 +16,14 @@
       "description": "文件夹"
     },
     "music": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "documents": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    "others": {
       "type": "folder",
       "description": "文件夹"
     }

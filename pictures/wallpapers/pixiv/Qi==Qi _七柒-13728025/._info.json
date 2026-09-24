@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "138443389_p00-无垠长眠——哥伦比娅逐月计划-女孩子,背景,原神,哥伦比娅（原神）,原神1000收藏,赤脚-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1611,
+      "md5": "ff69bdd97a02c36f662d4a7ac7adbc0e",
+      "sha256": "839e3f392bdfb11206482cce32b2821d2466d645c94858d27f15c14df3ee8ffd"
+    },
+    "138443389_p00-无垠长眠——哥伦比娅逐月计划-女孩子,背景,原神,哥伦比娅（原神）,原神1000收藏,赤脚.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 3377524,
+      "md5": "c4e9dc77d621cecd4b32b47b4beb0acc",
+      "sha256": "78f1946cb69ce755609ebc731eaf59858d93c1e736073c8527979a971b7657a6"
+    }
+  }
+}

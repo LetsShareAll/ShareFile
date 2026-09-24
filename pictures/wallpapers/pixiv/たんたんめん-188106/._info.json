@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "82937438_p00-山田エルフ先生-埃罗芒阿老师,山田エルフ,提起裙摆,埃罗芒阿老师1000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 413861,
+      "md5": "a3bf673b818f8076de213be8864beb4f",
+      "sha256": "c4d2808d514858ae3557f2d921b132c138b19dc9e018a7a02ee3b021eb0da67a"
+    },
+    "82937438_p00-山田エルフ先生-埃罗芒阿老师,山田エルフ,提起裙摆,埃罗芒阿老师1000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1565,
+      "md5": "1bbd55f66e3ccdf0a6e49cdd3f560405",
+      "sha256": "0669aaa49dbec351bf5e2e57e6cd39b1f973325c7f1ead83a15b2bdae116f78a"
+    }
+  }
+}

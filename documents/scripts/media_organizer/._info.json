@@ -1,0 +1,75 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "test_parse.sh": {
+      "type": "file",
+      "description": "Shell 脚本",
+      "created_at": "2026-08-10T08:15:02.000Z",
+      "updated_at": "2026-08-10T08:15:02.000Z",
+      "size": 1745,
+      "md5": "513e1e9a5b11e48adb03f9b4fb56ae4a",
+      "sha256": "1efccfc1e34de9d551b15e1498ea4b3b5b4fa0b240f3f9bda2382e3dde934b32"
+    },
+    "CONTEXT.md": {
+      "type": "file",
+      "description": "Markdown 文档",
+      "created_at": "2026-08-10T08:15:02.000Z",
+      "updated_at": "2026-08-10T12:36:07.000Z",
+      "size": 12436,
+      "md5": "9ab001a68c26e008f86c12d349fb74b9",
+      "sha256": "9b5c7c80e5e7c9c9479d06e582598f7891ac8f0418e511e971b67fe96077c0b5"
+    },
+    "season_offset.json.example": {
+      "type": "file",
+      "description": "EXAMPLE 文件",
+      "created_at": "2026-08-10T08:15:02.000Z",
+      "updated_at": "2026-08-10T08:15:02.000Z",
+      "size": 344,
+      "md5": "287b5acf83778351777f47ed1ff34f7f",
+      "sha256": "8099e35b2f28689575ac2a4676e7448dd2aaddc3a5a172c609f42c97905a9729"
+    },
+    "media_organizer.sh": {
+      "type": "file",
+      "description": "Shell 脚本",
+      "created_at": "2026-08-10T08:15:02.000Z",
+      "updated_at": "2026-08-10T15:30:55.000Z",
+      "size": 166776,
+      "md5": "0041297d1ab5f14d94205ca24e9f3d26",
+      "sha256": "ee8e1e317d207a50bbc58560db0c8ec6f2437dd1f7895d4ff4539e8cc83b7bda"
+    },
+    "mo_special_keymap.json.example": {
+      "type": "file",
+      "description": "EXAMPLE 文件",
+      "created_at": "2026-08-10T08:15:02.000Z",
+      "updated_at": "2026-08-10T08:15:02.000Z",
+      "size": 949,
+      "md5": "c141fc3fae334bbd1bb5501c7b3ef493",
+      "sha256": "f943498caf8808539b28da7bf5539e80a895713568bffc8a70bc69d7db3e48c0"
+    },
+    "test_setup.sh": {
+      "type": "file",
+      "description": "Shell 脚本",
+      "created_at": "2026-08-10T08:15:02.000Z",
+      "updated_at": "2026-08-10T08:15:02.000Z",
+      "size": 7943,
+      "md5": "4bd4e61f8632abbf13efa8a1d0a55294",
+      "sha256": "8b293d5f75a5d9e44bcdc5da011cb0e407c5e6e57520f4183ed9229301c48812"
+    },
+    "docs": {
+      "type": "folder",
+      "description": "文件夹"
+    },
+    ".mo_env.example": {
+      "type": "file",
+      "description": "EXAMPLE 文件",
+      "hidden": true,
+      "created_at": "2026-08-10T08:15:02.000Z",
+      "updated_at": "2026-08-10T12:10:13.000Z",
+      "size": 10622,
+      "md5": "e73d501442df8421d38eeb421390a444",
+      "sha256": "bdf6a8b2e460ff597af8392192abb9355388ff89cfc60babe0b49ba9d884b876"
+    }
+  }
+}

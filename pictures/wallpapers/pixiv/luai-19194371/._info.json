@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "141030104_p00-～-原神,GenshinImpact,哥伦比娅（原神）,Columbina,赤脚,美腿,羽翼,瞑目,原神1000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1706,
+      "md5": "359e1cfe29be08d65ee99c0e142f6e40",
+      "sha256": "58c4b2a4e8e40472bfdda06f427f6682bf84316f552a0cb2e4d2a4a6907fb316"
+    },
+    "141030104_p00-～-原神,GenshinImpact,哥伦比娅（原神）,Columbina,赤脚,美腿,羽翼,瞑目,原神1000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 4600714,
+      "md5": "925ad2e74894760825be4947c442f4dd",
+      "sha256": "ed626679563157958195394b41779c33a94d12c998db140b0746a3e006e0fa0c"
+    }
+  }
+}

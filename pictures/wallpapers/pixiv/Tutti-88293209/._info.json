@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "147494425_p00-月神-Genshin,插画,二次创作,GenshinImpact,哥伦比娅,columbina,赤脚-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1571,
+      "md5": "32060a46e3cd90a456cfc62a1984f32d",
+      "sha256": "31d15289a843b7fba1253e3ff9183a349f736c3b7086119128f2bb548054f5f8"
+    },
+    "147494425_p00-月神-Genshin,插画,二次创作,GenshinImpact,哥伦比娅,columbina,赤脚.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 24729884,
+      "md5": "cf7f1010c34b24453afbe9cdc37d0761",
+      "sha256": "3eae2024ec5c4501fadf8357f1b39de98ebccce8875fec71f0864de7fe2bb185"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "149918180_p00-月-女孩子,少女,插画,GenshinImpact,原神,哥伦比娅,哥伦比娅（原神）,哥伦比娅·希珀塞莱尼娅.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 614598,
+      "md5": "3c6be34bf2f8028490a4509607f39a65",
+      "sha256": "1e1fa08c8bc6fb5c5c03f6da0f39e3640d5aa6713d240afd11a5519372ccb936"
+    },
+    "149918180_p00-月-女孩子,少女,插画,GenshinImpact,原神,哥伦比娅,哥伦比娅（原神）,哥伦比娅·希珀塞莱尼娅-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1811,
+      "md5": "18dc41964dc89ded98197cdb429acd15",
+      "sha256": "73121b7bd16b1839611b904970f5a14f80861d61f3df9eeb8f0d953129b60c78"
+    },
+    "149918180_p00-月-女孩子,少女,插画,GenshinImpact,原神,哥伦比娅,哥伦比娅（原神）,哥伦比娅·希珀塞莱尼娅-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 13,
+      "md5": "8c946e9fb297972723a157af768c5191",
+      "sha256": "77d8bf839b8e5f126fa1140b6753c2ad4b216a2ac62a2e41b90db75c653fe6bf"
+    }
+  }
+}

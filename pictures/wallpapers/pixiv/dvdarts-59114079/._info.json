@@ -1,0 +1,34 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "135772043_p00-Columbina-哥伦比娅（原神）,原神,GenshinImpact,Columbina,赤脚,瞑目,原神1000收藏,挪德卡莱,愚人众.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 28199732,
+      "md5": "b440cdec6d1e01ea64fdaae6fe40e59b",
+      "sha256": "b8e25cd86b2fdf0dcdf97516fab8c8c00a7cc6214fafdfa12915e28bfc24f3d3"
+    },
+    "135772043_p00-Columbina-哥伦比娅（原神）,原神,GenshinImpact,Columbina,赤脚,瞑目,原神1000收藏,挪德卡莱,愚人众-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1884,
+      "md5": "2187748f1bdd190a3e91010a09763941",
+      "sha256": "85faadc0f6fe126b4cda28afe1b2374d7a1f7d54f929189fbba3e16af698f696"
+    },
+    "135772043_p00-Columbina-哥伦比娅（原神）,原神,GenshinImpact,Columbina,赤脚,瞑目,原神1000收藏,挪德卡莱,愚人众-简介-links.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 31,
+      "md5": "f528733dd283788178e2b0defbd3ecf8",
+      "sha256": "ce774f4935d25f3450a510dc678442fb4f3c354ae4338f5e66705f4297c33a70"
+    }
+  }
+}

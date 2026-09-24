@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "149453497_p00-ヴェスナ-Vesna,原神,原神500收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 675770,
+      "md5": "862531a31eb263bbfea3a736a3f5f765",
+      "sha256": "a56a6cfc80858d8d1f2f405d05809402c06bd3da448f328f3d6aa3e4bd550586"
+    },
+    "149453497_p00-ヴェスナ-Vesna,原神,原神500收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1373,
+      "md5": "aefbd9e36d9b978c642a0c22de93f89d",
+      "sha256": "a60fe24b9b05b692b402898e8d0ecc3d1c37110954c71842f215268b217c9dea"
+    }
+  }
+}

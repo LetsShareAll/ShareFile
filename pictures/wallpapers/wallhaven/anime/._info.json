@@ -1,0 +1,43 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "x8qqzd_2000x1125_anime,anime girls,Kamisato Ayaka (Genshin Impact),Genshin Impact,feet-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 2517,
+      "md5": "3f4cd688f540f61418c5d5c1c1e776cd",
+      "sha256": "4d1192ec6c9ab7d06c4d7a492385978fce05e7e0dd8f9dcef48f6bc69425708a"
+    },
+    "zmz15g_5700x3201_anime girls,long hair,anime,green eyes,red ribbon,painting,drawing,digital art,artwork,Azur Lane,Admiral Hipper (Azur Lane),Doitsu no Kagaku,blonde,flowers,apron-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 4936,
+      "md5": "5f57161faab9c8faf03f1d35c2a93e68",
+      "sha256": "6a8efe17604c7266fe97d45f9b20162195aea11eccf40240f6a46514275780c3"
+    },
+    "zmz15g_5700x3201_anime girls,long hair,anime,green eyes,red ribbon,painting,drawing,digital art,artwork,Azur Lane,Admiral Hipper (Azur Lane),Doitsu no Kagaku,blonde,flowers,apron.jpeg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 3527348,
+      "md5": "7c3abf24e1e8fc1fabd2da7b5325cc85",
+      "sha256": "6673c778590a9f9bcabcb087f20e12971ea28bf01c03d2dabc5643fe38e62456"
+    },
+    "x8qqzd_2000x1125_anime,anime girls,Kamisato Ayaka (Genshin Impact),Genshin Impact,feet.jpeg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 2940374,
+      "md5": "5801c6f51c2a6c38f48da8b18de7bff4",
+      "sha256": "2949e5090d6e89fb845c3e1d2361b00ae92212d8034767d69496b18b26b2b8c0"
+    }
+  }
+}

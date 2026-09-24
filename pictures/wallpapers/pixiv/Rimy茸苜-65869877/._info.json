@@ -1,0 +1,34 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "135523593_p00-少女-哥伦比娅（原神）,原神,GenshinImpact,Columbina,哥伦比娅,月,原神100收藏,原神1000收藏,赤脚,usersタグ整理推奨-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1894,
+      "md5": "bbf46528b28829734653da53520b03b9",
+      "sha256": "8f733753771ea2d608833d7ac80246ce91ef37d5bca8607c12382f8e67d16a8d"
+    },
+    "135523593_p00-少女-哥伦比娅（原神）,原神,GenshinImpact,Columbina,哥伦比娅,月,原神100收藏,原神1000收藏,赤脚,usersタグ整理推奨-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 30,
+      "md5": "66e70fba46d119f9658796a1bacd9cbb",
+      "sha256": "75db9741a4accf9a0fec7baa3ae453559908a4dc0942d216640635c816debdb8"
+    },
+    "135523593_p00-少女-哥伦比娅（原神）,原神,GenshinImpact,Columbina,哥伦比娅,月,原神100收藏,原神1000收藏,赤脚,usersタグ整理推奨.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 3562363,
+      "md5": "e28a89d3700db6ff7b9d37e9e0912bbd",
+      "sha256": "29fc95c040fd09f9bfbf07f8966c5313ad26979da185727bd39ff6bd1f48ade3"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "148364730_p00-🚂･❆＊ ﾟ✲＊･-原神,哥伦比娅,原神1000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1375,
+      "md5": "6a0289c7c26d0fa4e0104a170ee3f884",
+      "sha256": "7df2e3eda885658e2164328a956b1953bda315b4baaddefd0774198f83f5c31e"
+    },
+    "148364730_p00-🚂･❆＊ ﾟ✲＊･-原神,哥伦比娅,原神1000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 3095403,
+      "md5": "d3401f2eef18d745347522f6e81cbe1e",
+      "sha256": "d7da2e37aa80a666208d1f38f3c5321e6f5c2714b8bfd960f35e608eecfd4db8"
+    }
+  }
+}

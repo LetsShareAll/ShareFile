@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "149382777_p00-在月亮上等你-原神,GenshinImpact,女孩子,哥伦比娅（原神）,哥伦比娅,原神1000收藏,赤脚,裙子,满月-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1774,
+      "md5": "287f187c87037213f26c2406a15bb8d1",
+      "sha256": "4514e471959a57711a3218e93eec7dfc7d5817f1ebc3447fd2a7385383952910"
+    },
+    "149382777_p00-在月亮上等你-原神,GenshinImpact,女孩子,哥伦比娅（原神）,哥伦比娅,原神1000收藏,赤脚,裙子,满月.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 6303976,
+      "md5": "61c72bd634813e4395b8a1a4a6aed249",
+      "sha256": "8ed1e1ccbb4d25bba655a278a37bee66a85a06bbeca20364e95b8a0e8a478383"
+    }
+  }
+}

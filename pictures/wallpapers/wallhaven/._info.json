@@ -3,11 +3,7 @@
     "description": "当前目录"
   },
   "children": {
-    "wallhaven": {
-      "type": "folder",
-      "description": "文件夹"
-    },
-    "pixiv": {
+    "anime": {
       "type": "folder",
       "description": "文件夹"
     }

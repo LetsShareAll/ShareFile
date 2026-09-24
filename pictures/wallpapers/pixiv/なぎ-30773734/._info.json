@@ -1,0 +1,34 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "99660527_p00-少女-原神,Columbina,哥伦比娅（原神）,原神10000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 4374890,
+      "md5": "ad3ae689ded747c8af1e2c2602f1d532",
+      "sha256": "7856544f1a4d600b879e26e08ca51f73ce4f07ec450c7112462ef28a5571063b"
+    },
+    "99660527_p00-少女-原神,Columbina,哥伦比娅（原神）,原神10000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1492,
+      "md5": "c9f57a60bde55704f7f96583e1b421a2",
+      "sha256": "85bb1b15dcb3b446603ea599e25a4447c92b6eaf200043cb93d8eeb313b3ca90"
+    },
+    "99660527_p00-少女-原神,Columbina,哥伦比娅（原神）,原神10000收藏-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 45,
+      "md5": "b5e817998b3b0e08797a4cc41773391a",
+      "sha256": "1bbf172eb63792bd207a5f98257802fa5ffdfdac3a8aba4583dd6939dcfa08d4"
+    }
+  }
+}

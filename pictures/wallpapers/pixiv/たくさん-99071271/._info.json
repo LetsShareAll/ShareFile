@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "148843900_p00-星を超え集う者たち-AI生成,原创,昔涟,哥伦比娅（原神）,遐蝶,Sandrone-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1594,
+      "md5": "b0187653cc8eb79ee45a9ef58a176e78",
+      "sha256": "194553e88647d40f9825ba740f39b7f1ea798433504a61b00e226267971c136a"
+    },
+    "148843900_p00-星を超え集う者たち-AI生成,原创,昔涟,哥伦比娅（原神）,遐蝶,Sandrone.png": {
+      "type": "file",
+      "description": "PNG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 2959632,
+      "md5": "7e37c49e71e9362ff24e7e171cd2f6fa",
+      "sha256": "5c27870ceb58e69d38a9f0e8015983b43acd6528ff727d5ca94e8a972f93d4a8"
+    }
+  }
+}

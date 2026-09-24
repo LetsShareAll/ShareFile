@@ -1,0 +1,88 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "140368429_p00-虞美人-原神,哥伦比娅,哥伦比娅（原神）,哥伦比娅·希珀塞莱尼娅,原神5000收藏,花和女孩子,Elegant.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 2642726,
+      "md5": "8e3fe77c424f3f121600763c8898538f",
+      "sha256": "55a50289d6ef9a56ac52c4c9a3ce3f37b79b6ffdc74445ec7f491f553b1f0449"
+    },
+    "118143641_p00-流萤小裙子～-崩坏星穹铁道,流萤,星穹铁道生日会,流萤（星穹铁道）,崩壊：スターレイル,崩坏：星穹铁道10000收藏,紙飛行機.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 4139696,
+      "md5": "fd88015497cb45ee72845dd4b412df7b",
+      "sha256": "260655b6e5d6fb2b56b070b617be9e42ccec2acd08396f6b189cbb5f19ad411c"
+    },
+    "140974822_p00-蓝花楹-原神,哥伦比娅,哥伦比娅（原神）,挪德卡莱,原神5000收藏,Elegant.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 3100595,
+      "md5": "f798884642032e16cf17a2d14d5119e0",
+      "sha256": "1bce1bae1439aab0c3ab582396728f6e343eb6f1b58ed2c5d84f70f7b9f07779"
+    },
+    "141440461_p00-玫瑰-原神,哥伦比娅,哥伦比娅（原神）,原神5000收藏,中国画,Elegant.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 3394055,
+      "md5": "db0227966bbee29e1bdd88be1c5bfd7f",
+      "sha256": "13690a40576140bd351ea1b2ca8e5ca298ae5d7b6ef1e89482c69e16921d2b75"
+    },
+    "141440461_p00-玫瑰-原神,哥伦比娅,哥伦比娅（原神）,原神5000收藏,中国画,Elegant-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1586,
+      "md5": "cd7a360f864c04e684c8128b059b1e62",
+      "sha256": "d54dbe5b4f8b8cf7d4dd76a7241a9ad9039aa7de04a2c88a4a9e45755f1c2b93"
+    },
+    "140368429_p00-虞美人-原神,哥伦比娅,哥伦比娅（原神）,哥伦比娅·希珀塞莱尼娅,原神5000收藏,花和女孩子,Elegant-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1810,
+      "md5": "132de76e4c6123fd7776bf7baae45d82",
+      "sha256": "613baae7cef4627fd93224641d253c57bedde8b828118dba2567c9d3d43b4acc"
+    },
+    "140974822_p00-蓝花楹-原神,哥伦比娅,哥伦比娅（原神）,挪德卡莱,原神5000收藏,Elegant-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1629,
+      "md5": "e4e272c237bb903028db7724f47447e5",
+      "sha256": "06adadb37de548333cc8db8f8f1e60135c664c05b854b80bc92167e65e515e54"
+    },
+    "118143641_p00-流萤小裙子～-崩坏星穹铁道,流萤,星穹铁道生日会,流萤（星穹铁道）,崩壊：スターレイル,崩坏：星穹铁道10000收藏,紙飛行機-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1845,
+      "md5": "f6d39cb8b5500928ce604e6b3e9cfc00",
+      "sha256": "58ae41148232d05fc282b1d6ef20968e288ec6ccb85112532a6bf4fcb62085c0"
+    },
+    "118143641_p00-流萤小裙子～-崩坏星穹铁道,流萤,星穹铁道生日会,流萤（星穹铁道）,崩壊：スターレイル,崩坏：星穹铁道10000收藏,紙飛行機-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 30,
+      "md5": "859d1c25e87cb0f6c51c91e6776d1a43",
+      "sha256": "c8cc65d6822205719c469b922d784eefb238e2be4f153e6ed80d16eae644c61d"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "140090036_p00-少女-哥伦比娅（原神）,哥伦比娅·希珀塞莱尼娅,原神,ルオンノタル,挪德卡莱,原神1000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 7341208,
+      "md5": "ea8c6386cb174f7dc961eecf122f85e4",
+      "sha256": "c02dff2ae02067468fac520aa079012e75902c9a2c689a12d580cf6eda52fa3a"
+    },
+    "140090036_p00-少女-哥伦比娅（原神）,哥伦比娅·希珀塞莱尼娅,原神,ルオンノタル,挪德卡莱,原神1000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1751,
+      "md5": "79671222a3b4c34cbb334e18a6b2c330",
+      "sha256": "1f3b4ec34a90289a81fe9743161bc5b811ec2c2937ede5eecf90e8d77f72d867"
+    }
+  }
+}

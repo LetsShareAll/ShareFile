@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "149353730_p00-哥伦比娅-原神,GenshinImpact,哥伦比娅（原神）,原神1000收藏,赤脚-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1525,
+      "md5": "0a1c8d3d371cc6a089ca4e7e90c62355",
+      "sha256": "2132ec49eefdfbeaf3f10470db37de86659c59fd08bac81ac294846496015962"
+    },
+    "149353730_p00-哥伦比娅-原神,GenshinImpact,哥伦比娅（原神）,原神1000收藏,赤脚.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 2007719,
+      "md5": "0cba4277bb2ac9df9419b792acdfd2f6",
+      "sha256": "949e4b746f4aeb73d29ee9bab74372cfd5e1d38c00cc25be9d32b96274c36ffd"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "147544274_p00-コロンビーナの夢幻の眠り-原神,哥伦比娅,插画,少女,ルオンノタル.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1137038,
+      "md5": "5e91cb42c15ce22fc5c0d524dd10c0d9",
+      "sha256": "acb2fddc0612fddaa09880644a4408920fc6576bac1f43d0b07e615ae4e58f50"
+    },
+    "147544274_p00-コロンビーナの夢幻の眠り-原神,哥伦比娅,插画,少女,ルオンノタル-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1775,
+      "md5": "3a4b22cbe98c43d874b6b5324c65b9f4",
+      "sha256": "f6d128ad57663426c44f4529ea3b638764f8ecb287843d95db4f8c6e82a6b69f"
+    },
+    "147544274_p00-コロンビーナの夢幻の眠り-原神,哥伦比娅,插画,少女,ルオンノタル-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 306,
+      "md5": "31f39600eb353c1e90ac5ccacd072b87",
+      "sha256": "84ccc132dcf51751c8f5ce55d6ae686c04bf1d0c967fb0f49eafc439ba186124"
+    }
+  }
+}

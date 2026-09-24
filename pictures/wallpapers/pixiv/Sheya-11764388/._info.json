@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "107648113_p00-太卜司-女孩子,星穹铁道,崩壊：スターレイル,符玄,崩坏：星穹铁道10000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 12340057,
+      "md5": "fe7b54cd43097b19a0d783bc90fd554b",
+      "sha256": "6807abc777874edc9fa752d39ee7ba2901dbb2f1eeab643236c80cbaa7b7256e"
+    },
+    "107648113_p00-太卜司-女孩子,星穹铁道,崩壊：スターレイル,符玄,崩坏：星穹铁道10000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1605,
+      "md5": "a68cfe73ddd092f36ae1518819769c2d",
+      "sha256": "c29987fa2ac67e7d5d0e2e4807beadf17cf0078943625834896421b148faebdc"
+    }
+  }
+}

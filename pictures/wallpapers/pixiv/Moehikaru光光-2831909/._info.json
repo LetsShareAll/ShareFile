@@ -1,0 +1,52 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "141050669_p00-空月为你低垂-哥伦比娅,Columbina,哥伦比娅（原神）,原神,GenshinImpact,少女.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1842570,
+      "md5": "7f56bf4d22ea82204148fcbf7387d653",
+      "sha256": "44b34362d82a8d87c5e49d646aaac07579320edda9fed23a357bf9c1600db146"
+    },
+    "141050669_p02-空月为你低垂-哥伦比娅,Columbina,哥伦比娅（原神）,原神,GenshinImpact,少女.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1539818,
+      "md5": "6d2e791af94a4b0f24d1faefbd271f3e",
+      "sha256": "3474e365284676294dd9329c62d1c1cc82a1fdcae161750c3092eaef6a6f6385"
+    },
+    "141050669_p01-空月为你低垂-哥伦比娅,Columbina,哥伦比娅（原神）,原神,GenshinImpact,少女.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 4316914,
+      "md5": "c3ae078b81bf80c0e1bf8c416c1f744e",
+      "sha256": "debcaacf2474dd2e42faf7538d6fff860e08cda611c97b05e1aea9f9945c8545"
+    },
+    "141050669_p00-空月为你低垂-哥伦比娅,Columbina,哥伦比娅（原神）,原神,GenshinImpact,少女-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 24,
+      "md5": "a09fdd78304ab67f52a331905142349e",
+      "sha256": "b712a84e3d7d5f89a918ade33bd6dc8dd11b3e728708909f193da4a8e8c5b429"
+    },
+    "141050669_p00-空月为你低垂-哥伦比娅,Columbina,哥伦比娅（原神）,原神,GenshinImpact,少女-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1585,
+      "md5": "a87cebe44705bbec38fc4d21bd08670a",
+      "sha256": "a5723fcdcbdf587540a5cb90fc5852d5aae351d187a56595965ce23a8848758c"
+    }
+  }
+}

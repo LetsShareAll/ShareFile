@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "97122886_p00-稻妻-GenshinImpact,原神,八重神子,雷电将军,神里绫华,珊瑚宫心海,宵宫,稲妻(原神),原神5000收藏-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1686,
+      "md5": "421dbf4a57a06ee4f1a2b474afa4af40",
+      "sha256": "58f1bd687a18f6971d8308e27de4b4f7619a9036e3a44519351126489f4cdffb"
+    },
+    "97122886_p00-稻妻-GenshinImpact,原神,八重神子,雷电将军,神里绫华,珊瑚宫心海,宵宫,稲妻(原神),原神5000收藏.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 4072733,
+      "md5": "a76b047d8d279763ed642213fd36efa7",
+      "sha256": "03397d512d15a7b90387609750e9c32eeec8c1c5578cb30bf43362e26ef4c907"
+    }
+  }
+}

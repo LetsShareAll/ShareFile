@@ -1,0 +1,34 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "142809167_p00-少女-哥伦比娅（原神）,哥伦比娅,Columbina,原神,GenshinImpact,少女,芭蕾,白丝袜,原神5000收藏,tutu-简介.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 4,
+      "md5": "870e3df2eecaa947d264b80131b9aedb",
+      "sha256": "b565bfd8ffee39aff2215d60449c9224bb07ab5c708341354560af1140e595ad"
+    },
+    "142809167_p00-少女-哥伦比娅（原神）,哥伦比娅,Columbina,原神,GenshinImpact,少女,芭蕾,白丝袜,原神5000收藏,tutu-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1819,
+      "md5": "80acef6e4c032d03a3d6f9baed9b0e7d",
+      "sha256": "a76a6e9728164dfd44456738cc2f3a73f463d3e808e83ad7df4664e6033280b2"
+    },
+    "142809167_p00-少女-哥伦比娅（原神）,哥伦比娅,Columbina,原神,GenshinImpact,少女,芭蕾,白丝袜,原神5000收藏,tutu.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 3754747,
+      "md5": "d2cb06f98832084c85731ac5ded55ec2",
+      "sha256": "1d287b32540fa8b744808661731ddfde232c230dcd4d6c3741bd74e86c2b5e84"
+    }
+  }
+}

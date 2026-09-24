@@ -1,0 +1,25 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "95994837_p00-新年快乐～甘雨带你过海灯节-原创,二次元,极上乳房,插画,原神,甘雨,申鹤,新年,申鶴,yanfei-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1617,
+      "md5": "72a83c619e6da3660f302f88746b5f12",
+      "sha256": "066077eacd992cdb199cab3a1940578aceecc08f736e8d9ce105af53a0d01bff"
+    },
+    "95994837_p00-新年快乐～甘雨带你过海灯节-原创,二次元,极上乳房,插画,原神,甘雨,申鹤,新年,申鶴,yanfei.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 16092757,
+      "md5": "e0deaf78cea6cd18efd18d0b7e1afd57",
+      "sha256": "dc409ca65c0cc726262674f4cc71a0ccdbcd7baf5e6fbc55853cfc8b54ccbd52"
+    }
+  }
+}

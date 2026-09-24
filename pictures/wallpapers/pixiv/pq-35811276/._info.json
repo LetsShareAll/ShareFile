@@ -1,0 +1,52 @@
+{
+  "self": {
+    "description": "当前目录"
+  },
+  "children": {
+    "140686909_p00-원신 콜롬비나 팬아트-原创,원신,女孩子,哥伦比娅,GenshinImpact,콜롬비나,Columbina,illust,插画,赤脚-meta.json": {
+      "type": "file",
+      "description": "JSON 数据文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 1840,
+      "md5": "48b261220fd55d937867068a0c827e6f",
+      "sha256": "5ae5bfac955ada95c59d3fb65da438ad79941b88cc3a99b623a5a9ed3c0ed5e5"
+    },
+    "140686909_p00-원신 콜롬비나 팬아트-原创,원신,女孩子,哥伦比娅,GenshinImpact,콜롬비나,Columbina,illust,插画,赤脚-简介-links.txt": {
+      "type": "file",
+      "description": "纯文本文件",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 37,
+      "md5": "72a5c3652b0e8c4f37f74105c7623f92",
+      "sha256": "e2c574b0deaebfea4ff013526a4d09be686de17cc0cdc749a8d89b2c0f585361"
+    },
+    "140686909_p02-원신 콜롬비나 팬아트-原创,원신,女孩子,哥伦比娅,GenshinImpact,콜롬비나,Columbina,illust,插画,赤脚.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 376314,
+      "md5": "4b902867aac27352c074f61b7afd7db7",
+      "sha256": "c1ca023d972b0696b2b81db5ec5619c66287df93dd496fc8dac6c3dc8225fec9"
+    },
+    "140686909_p01-원신 콜롬비나 팬아트-原创,원신,女孩子,哥伦比娅,GenshinImpact,콜롬비나,Columbina,illust,插画,赤脚.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 369750,
+      "md5": "23f4c0bdcb82a80987a0cb13d1df238b",
+      "sha256": "2a4fc7a1e1fa51c630db6fae5e7eb7118bbc7b068af967d16511daaa60214053"
+    },
+    "140686909_p00-원신 콜롬비나 팬아트-原创,원신,女孩子,哥伦比娅,GenshinImpact,콜롬비나,Columbina,illust,插画,赤脚.jpg": {
+      "type": "file",
+      "description": "JPEG 图像",
+      "created_at": "2026-09-24T09:21:24.000Z",
+      "updated_at": "2026-09-24T09:21:24.000Z",
+      "size": 7303054,
+      "md5": "7d8c41da1f41bd7eb1d4990c7198cac1",
+      "sha256": "59b2072210272f58eaeef70f842c44ffa7cfc40cdb67e39c58c41713b6827783"
+    }
+  }
+}
