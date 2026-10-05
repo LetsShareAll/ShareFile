@@ -102,6 +102,15 @@ export default defineConfig([
       ...sharedRules,
       // 所有 v-html 内容都经 src/platform/sanitize.ts 白名单消毒后再渲染。
       'vue/no-v-html': 'off',
+      // 模板排版交给 Prettier，避免 eslint --fix 与 prettier 互相覆写。
+      'vue/html-closing-bracket-newline': 'off',
+      'vue/html-closing-bracket-spacing': 'off',
+      'vue/html-indent': 'off',
+      'vue/html-self-closing': 'off',
+      'vue/max-attributes-per-line': 'off',
+      'vue/multiline-html-element-content-newline': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/first-attribute-linebreak': 'off',
     },
   },
 
