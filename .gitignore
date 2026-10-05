@@ -18,8 +18,9 @@ dist/
 public/index.html
 public/assets/scripts/*
 public/assets/styles/index.css
-public/assets/index-*.js
-public/assets/index-*.css
+public/assets/*.js
+public/assets/*.js.map
+public/assets/*.css
 
 # TypeScript cache
 *.tsbuildinfo

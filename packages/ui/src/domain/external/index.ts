@@ -1,0 +1,35 @@
+export {
+  CACHE_KEY_PREFIX,
+  CACHE_TTL_MS,
+  LEGACY_CACHE_KEY_PREFIXES,
+  clearAllExternalCache,
+  clearMountPointCache,
+  getCacheKey,
+  getCacheKeyBody,
+  getLegacyCacheKeys,
+  isExternalCacheKey,
+  loadExternalCache,
+  saveExternalCache,
+  type KeyValueStorage,
+} from './cache';
+export {
+  collectMountPoints,
+  filterExternalNodes,
+  getRelativeExternalNodeId,
+  joinMountedNodeId,
+  mergeExternalNodes,
+  rewriteExternalNodes,
+  type ExternalNodesResult,
+  type MountPointInfo,
+} from './merge';
+export {
+  GITHUB_RAW_BASE_URL,
+  GITHUB_RAW_HOST,
+  buildExternalFileUrl,
+  buildExternalIndexUrl,
+  getExpectedFileUrlPrefix,
+  hasRequiredCdnFileUrls,
+  isUsableExternalFileUrl,
+  joinUrl,
+  trimUrlSegment,
+} from './url';
