@@ -67,12 +67,14 @@ public/assets/data/share-file.cdn.json
 public/assets/data/share-file.json
 ```
 
-构建脚本通过 `SHARE_FILE_NAME` 注入索引文件名。`packages/ui/scripts/esbuild.config.mjs` 中的规则是：
+构建脚本通过 `__SHARE_FILE_NAME__` 注入索引文件名。`packages/ui/vite.config.ts` 中的规则是：
 
 ```text
-dev=true  -> share-file.json
-dev=false -> share-file.cdn.json
+mode=development | mode=local -> share-file.json
+其余（含 mode=production）     -> share-file.cdn.json
 ```
+
+前端为 Vue 3 + Vite 工程（路由、状态、领域层与插件体系的分层见 [frontend.md](frontend.md)）。
 
 ## 前端路由模型
 
@@ -88,7 +90,10 @@ https://file.lssa.fun/location/to/file
 wget https://file.lssa.fun/softwares/applications/tools/generate-info-linux
 ```
 
-外部挂载文件也遵循同样原则：前端会把它们重写成可直接访问的上游资源 URL，而不是站内页面路由。
+外部挂载文件也遵循同样原则：前端会把它们重写成可直接访问的上游资源 URL（自有 CDN 域），而不是站内页面路由。
+
+> [!IMPORTANT]
+> 页面深链（`/location/to/file`）对**外挂**文件返回的是前端 HTML，取字节请用直链；完整清单见 `public/assets/data/files.jsonl`（构建期生成，含本地与外挂条目）。
 
 旧版查询参数链接仍然兼容：
 

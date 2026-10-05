@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 const uiRoot = fileURLToPath(new URL('.', import.meta.url));
 const publicRoot = fileURLToPath(new URL('../../public', import.meta.url));
 
-const DEV_PORT = 4173;
+const DEV_PORT = Number(process.env.PORT ?? 4173);
 
 export default defineConfig(({ command, mode }) => {
   const useLocalIndex = mode === 'development' || mode === 'local';

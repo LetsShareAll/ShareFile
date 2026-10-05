@@ -40,6 +40,8 @@ https://file.lssa.fun/
 - 虚拟节点：支持虚拟文件、虚拟目录、外部链接和确认跳转。
 - 外部挂载：通过 `mount_source` 在运行时加载其他仓库或分支的索引。
 - 简洁路由：站内节点可直接使用 `/location/to/file` 形式访问，并兼容旧版 `?path=` 链接。
+- 命令行获取：构建期生成 `files.jsonl` 直链清单，页面上每个文件都可一键复制直链或 `curl` 命令。
+- Vue 3 前端：Vite 构建、路由与状态分层，预览重库按需加载（首屏 gzip 约 43 KB）。
 - 前端预览：支持图片、Markdown、文本、代码、PDF、音频、视频等常见类型。
 - 离线工具：Python CLI 是索引生成的权威实现，可打包成无需 Node.js 的可执行文件。
 
@@ -82,21 +84,22 @@ file 分支
 │   └── deploy-github-pages.yml
 ├── docs/
 │   ├── architecture.md
+│   ├── frontend.md
 │   ├── maintenance.md
 │   ├── metadata.md
+│   ├── migration-vue3.md
 │   └── workflows.md
 ├── public/
-│   ├── index.html
 │   ├── 404.html
 │   ├── ._info.json
 │   ├── assets/
-│   │   ├── data/
-│   │   ├── scripts/
-│   │   └── styles/
+│   │   ├── data/          # 索引与 files.jsonl（入库）
+│   │   ├── scripts/       # Vite 产物（不入库）
+│   │   └── styles/        # Vite 产物（不入库）
 │   └── softwares/applications/tools/
 ├── packages/
 │   ├── cli/
-│   └── ui/
+│   └── ui/                # Vue 3 前端（domain / features / platform / stores / plugins / styles）
 ├── package.json
 └── pnpm-workspace.yaml
 ```
@@ -106,7 +109,7 @@ file 分支
 | 路径           | 职责                                                    |
 | -------------- | ------------------------------------------------------- |
 | `packages/cli` | Python CLI，维护 `._info.json` 并生成 `share-file.json` |
-| `packages/ui`  | 浏览器端文件列表、搜索、预览、主题和外部挂载加载逻辑    |
+| `packages/ui`  | Vue 3 前端：浏览视图、搜索、预览、主题与外部挂载合并    |
 
 ## 快速开始
 
@@ -136,6 +139,9 @@ pnpm run dev
 http://127.0.0.1:4173/
 ```
 
+> [!NOTE]
+> `public/index.html` 与 `public/assets/*.js|css` 是 Vite 构建产物、不进入 git；clone 之后必须先 `pnpm dev` 或 `pnpm build`，否则 `public/` 里没有页面。
+
 修改端口：
 
 ```powershell
@@ -159,19 +165,40 @@ pnpm run build
 
 ## 常用脚本
 
-| 命令                           | 说明                                                          |
-| ------------------------------ | ------------------------------------------------------------- |
-| `pnpm run dev`                 | 生成一次索引，启动本地静态服务器，并监听 UI 源码变更          |
-| `pnpm run generate`            | 使用 Python CLI 运行 `generate-info` 和 `generate-share-file` |
-| `pnpm run generate-info`       | 使用 Python CLI 扫描 `public/` 并维护目录级 `._info.json`     |
-| `pnpm run generate-share-file` | 使用 Python CLI 根据 `._info.json` 生成前端索引               |
-| `pnpm run check`               | 执行 UI TypeScript、Python 语法和脚本路径检查                 |
-| `pnpm run lint`                | 执行 UI ESLint 和根级脚本 ESLint                              |
-| `pnpm run format`              | 格式化 UI、workflow、根配置文件和根级脚本                     |
-| `pnpm run format:check`        | 检查 workflow、根配置文件和根级脚本格式                       |
-| `pnpm run verify`              | 执行 `check`、`lint`、`format:check` 和契约测试               |
-| `pnpm run build`               | 构建站点 UI                                                   |
-| `pnpm run build:site`          | 直接调用 UI 包构建脚本                                        |
+| 命令                           | 说明                                                                              |
+| ------------------------------ | --------------------------------------------------------------------------------- |
+| `pnpm run dev`                 | 生成一次索引并启动 Vite dev server（默认 `127.0.0.1:4173`，可用 `PORT` 覆盖）     |
+| `pnpm run build`               | 清理旧产物并构建到 `public/`（默认加载 CDN 索引）                                 |
+| `pnpm run generate`            | Python CLI 依次执行 `generate-info` → `generate-share-file` → `generate-manifest` |
+| `pnpm run generate-info`       | 扫描 `public/` 并维护目录级 `._info.json`                                         |
+| `pnpm run generate-share-file` | 根据 `._info.json` 生成前端索引                                                   |
+| `pnpm run generate-manifest`   | 生成 `files.jsonl` 直链清单（外挂源抓取失败时保留上一次的行）                     |
+| `pnpm run check`               | UI 类型检查（vue-tsc）与 Python 语法检查                                          |
+| `pnpm run lint`                | UI ESLint 与根级脚本 ESLint                                                       |
+| `pnpm run test:ui`             | Vitest 单元测试                                                                   |
+| `pnpm run test:e2e`            | Playwright 冒烟（构建 + `vite preview` 生产产物）                                 |
+| `pnpm run size`                | 首屏体积门禁（gzip ≤ 250KB）                                                      |
+| `pnpm run verify`              | 依次执行 check、lint、format:check、test:ui、契约测试、build、size                |
+| `pnpm run format`              | 格式化 UI、workflow、根配置文件和根级脚本                                         |
+
+## 命令行获取
+
+每个文件都可以直接用命令行取用：
+
+- `public/assets/data/files.jsonl`：构建期生成的清单，每行一个文件，字段为 `id / name / path / size / url / source / mount_point`，`source` 为 `local` 或 `external`。
+- 页面上每个文件提供「复制页面链接」「复制直链」「复制 curl 命令」「下载」四个动作；外挂文件的直链同样走自有 CDN 域。
+- 清单生成失败保护：某个挂载源抓取失败时保留该挂载点上一次的条目并告警，避免第三方抖动导致清单内容回退。
+
+```bash
+# 拉清单并按后缀过滤
+curl -sS https://file.lssa.fun/assets/data/files.jsonl | grep '\.7z"'
+
+# 下载直链（返回字节）
+curl -L -O 'https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/documents/example.7z'
+```
+
+> [!IMPORTANT]
+> 页面深链（`https://file.lssa.fun/documents/example.7z`）对**外挂**文件返回的是前端页面，取字节请用直链；站内物理文件的路径本身就是真实文件，可直接 `curl`。外挂直链固定到分支（`@branch`），内容随上游提交变化，不保证可复现。
 
 ## 数据与元数据
 
@@ -292,14 +319,16 @@ GitHub Actions 已拆成三段：
 
 ## 更多文档
 
-| 文档                                                                         | 内容                                              |
-| ---------------------------------------------------------------------------- | ------------------------------------------------- |
-| [docs/architecture.md](docs/architecture.md)                                 | 分支职责、数据流、外部挂载模型                    |
-| [docs/metadata.md](docs/metadata.md)                                         | `._info.json`、`hold`、`redirect`、`mount_source` |
-| [docs/workflows.md](docs/workflows.md)                                       | GitHub Actions 链路和权限边界                     |
-| [docs/maintenance.md](docs/maintenance.md)                                   | 常见维护任务和排错                                |
-| [packages/cli/README.md](packages/cli/README.md)                             | Python CLI 使用和打包                             |
-| [packages/ui/src/share-file/schema.ts](packages/ui/src/share-file/schema.ts) | UI 内部数据结构类型定义                           |
+| 文档                                                                                       | 内容                                              |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| [docs/architecture.md](docs/architecture.md)                                               | 分支职责、数据流、外部挂载模型                    |
+| [docs/frontend.md](docs/frontend.md)                                                       | 前端分层、构建链路、插件扩展指南、测试与门禁      |
+| [docs/migration-vue3.md](docs/migration-vue3.md)                                           | Vue 3 重构的决策记录、假设、验收标准与不做清单    |
+| [docs/metadata.md](docs/metadata.md)                                                       | `._info.json`、`hold`、`redirect`、`mount_source` |
+| [docs/workflows.md](docs/workflows.md)                                                     | GitHub Actions 链路和权限边界                     |
+| [docs/maintenance.md](docs/maintenance.md)                                                 | 常见维护任务和排错                                |
+| [packages/cli/README.md](packages/cli/README.md)                                           | Python CLI 使用和打包                             |
+| [packages/ui/src/domain/share-file/schema.ts](packages/ui/src/domain/share-file/schema.ts) | UI 内部数据结构类型定义                           |
 
 ## 许可证
 
