@@ -1,3 +1,5 @@
+import type { NodePlugin } from '../../domain/plugins';
+
 import { archivePlugin } from './archivePlugin';
 import { audioPlugin } from './audioPlugin';
 import { codePlugin } from './codePlugin';
@@ -12,7 +14,6 @@ import { pdfPlugin } from './pdfPlugin';
 import { textPlugin } from './textPlugin';
 import { unknownPlugin } from './unknownPlugin';
 import { videoPlugin } from './videoPlugin';
-import { NodePlugin } from './types';
 
 export const builtinNodePlugins: NodePlugin[] = [
   markdownPlugin,

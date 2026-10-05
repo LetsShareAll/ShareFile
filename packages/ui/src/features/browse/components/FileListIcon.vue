@@ -43,22 +43,15 @@ function activate(row: NodeRow): void {
       @keydown.enter.prevent="activate(row)"
     >
       <div class="item-main">
-        <span
-          class="item-icon"
-          :class="row.display.className"
-        >
+        <span class="item-icon" :class="row.display.className">
           <i :class="row.display.iconClass" />
         </span>
         <div class="item-copy">
-          <span
-            class="item-name"
-            :title="row.node.name"
-          >
+          <span class="item-name" :title="row.node.name">
             <span class="item-name-text">{{ row.node.name }}</span>
-            <span
-              v-if="row.node.version"
-              class="version-badge"
-            >v{{ row.node.version }}</span>
+            <span v-if="row.node.version" class="version-badge"
+              >v{{ row.node.version }}</span
+            >
             <span
               v-if="row.node.source === 'external'"
               class="external-indicator"
@@ -70,12 +63,9 @@ function activate(row: NodeRow): void {
           <span
             class="item-description"
             :title="row.node.description || DEFAULT_NODE_DESCRIPTION"
-          >{{ row.node.description || DEFAULT_NODE_DESCRIPTION }}</span>
-          <span
-            v-if="showPath"
-            class="item-path"
-            :title="row.path"
-          >{{
+            >{{ row.node.description || DEFAULT_NODE_DESCRIPTION }}</span
+          >
+          <span v-if="showPath" class="item-path" :title="row.path">{{
             row.path
           }}</span>
         </div>

@@ -1,5 +1,4 @@
-import { createNodePlugin } from '../../utils/nodePluginFactory';
-import { renderMarkdownPreview } from '../../utils/previewRenderers';
+import { createNodePlugin } from '../../domain/plugins';
 
 export const markdownPlugin = createNodePlugin({
   id: 'markdown',
@@ -11,5 +10,7 @@ export const markdownPlugin = createNodePlugin({
   extensions: {
     md: { mime: 'text/markdown' },
   },
-  preview: input => renderMarkdownPreview(input),
+  preview: async () =>
+    (await import('../../features/preview/renderers/MarkdownPreview.vue'))
+      .default,
 });

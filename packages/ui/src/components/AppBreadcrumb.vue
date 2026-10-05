@@ -23,18 +23,9 @@ function navigate(path: string): void {
 </script>
 
 <template>
-  <nav
-    class="breadcrumb"
-    aria-label="面包屑导航"
-  >
-    <a
-      href="/"
-      @click.prevent="navigate('/')"
-    >root</a>
-    <template
-      v-for="segment in segments"
-      :key="segment.path"
-    >
+  <nav class="breadcrumb" aria-label="面包屑导航">
+    <a href="/" @click.prevent="navigate('/')">root</a>
+    <template v-for="segment in segments" :key="segment.path">
       <span> / </span>
       <span
         v-if="segment.isCurrent"

@@ -1,4 +1,4 @@
-import { createNodePlugin } from '../../utils/nodePluginFactory';
+import { createNodePlugin } from '../../domain/plugins';
 
 export const fontPlugin = createNodePlugin({
   id: 'font',

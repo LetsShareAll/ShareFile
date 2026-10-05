@@ -19,11 +19,7 @@ const emit = defineEmits<{ select: [mode: ThemeMode] }>();
 </script>
 
 <template>
-  <div
-    class="theme-switch"
-    role="group"
-    aria-label="外观主题"
-  >
+  <div class="theme-switch" role="group" aria-label="外观主题">
     <button
       v-for="option in THEME_OPTIONS"
       :key="option.mode"

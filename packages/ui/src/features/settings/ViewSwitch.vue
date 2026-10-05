@@ -18,11 +18,7 @@ const emit = defineEmits<{ select: [mode: ViewMode] }>();
 </script>
 
 <template>
-  <div
-    class="view-switch"
-    role="group"
-    aria-label="视图模式"
-  >
+  <div class="view-switch" role="group" aria-label="视图模式">
     <button
       v-for="option in VIEW_OPTIONS"
       :key="option.mode"

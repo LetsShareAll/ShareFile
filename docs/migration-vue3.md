@@ -10,26 +10,26 @@
 
 ## 决策清单
 
-| 决策域 | 结论 |
-| --- | --- |
-| 动机 · 范围 | 可维护性 + 新能力；只重写 `packages/ui` 与外壳 HTML；CLI 仅新增清单产物，`404.html` 与 `scripts/*.mjs` 不动 |
-| 部署 · 产物 | Pages 静态部署不变；UI 产物（`index.html`、样式、`assets/*.js`）全部不进 git；`public/` 只留数据、二进制、清单、`404.html` |
-| 兼容红线 | 深链 clean URL、JSON 契约、ES2022+ 浏览器不破；离线 = 本地起服务 + `--no-cdn`；`file://` 不作承诺（绝对路径 + module script 下它本来就打不开） |
-| 外挂直跳 | `node.url`（自有 `cdn-file.lssa.fun` 构造 + 前缀校验）恢复直跳/直下；第三方索引自带的 `redirect_url` 一律走确认弹窗 |
-| 命令行获取 | 文件双按钮（页面链接 / 直链 + `curl -L -O`）；构建期 `files.jsonl`（本地 + 外挂索引快照，抓取失败只告警并保留上游快照行）；文档说明深链返回 HTML、直链返回字节 |
-| SSR 定位 | 不做运行时 SSR；构建期注入 meta/OG；代码保持 SSR-safe（工厂化 store、平台层封装浏览器 API） |
-| 迭代方式 | `feat/vue3` 分支大爆炸重写，阶段提交、单 PR 切换，合并前打 tag `pre-vue3` 作为回滚点 |
-| 路由 · 状态 | vue-router 4 history + `404.html` sessionStorage 握手 + `?path=` 收敛为 clean URL；Pinia setup stores（library / ui / preview / notifications） |
-| CSS 策略 | 旧 35KB CSS 以机械搬迁为主（选择器与类名不变）+ 组件 `scoped`；零预处理器；只做两处局部重构（通知与弹窗补正式样式、图标视图行高换纯 CSS） |
-| 工具链 | Vite：`root=packages/ui`、`build.outDir=public`、`emptyOutDir=false`、`publicDir` 仅 dev 生效；`--mode local` 替代 `--no-cdn`；dev 端口 4173 保留 |
-| 插件体系 | 14 个插件不合并；`match`/`getInfo` 保持同步纯函数，`preview` 改为返回 `Promise<Component \| false>`；重库按需加载 |
-| 安全 | 所有 `v-html` 经 `platform/sanitize.ts`（DOMPurify 白名单）；`redirect_url` 强制确认；路由输入白名单（拒绝 `..`、`//`、含 `:` 的段） |
-| 通知 · 弹窗 | 通知 store + 宿主组件（保留 `#notification-container`）；`await confirmDialog()` 命令式 API；`ErrorState` / `EmptyState` 组件 |
-| 历史包袱 | 5 处死代码删除；`?path=` 保留只读兼容；外挂 legacy 缓存前缀再保留一个大版本 |
-| 文案 | `messages.ts` 单一来源，不引 vue-i18n |
-| 质量门禁 | `verify` = vue-tsc → eslint → prettier → Vitest → Python 契约 → build → 体积检查；Playwright 5 条冒烟进 CI；首屏主包 gzip ≤ 250 KB |
-| 代码规范 | 强制 `script setup` + TS 类型式 props + 仅 Composition API + 禁 `any`；eslint-plugin-vue `flat/recommended` |
-| 文档 | 更新 README 与 `docs/architecture.md`；新增本文件与 `docs/frontend.md` |
+| 决策域      | 结论                                                                                                                                                           |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 动机 · 范围 | 可维护性 + 新能力；只重写 `packages/ui` 与外壳 HTML；CLI 仅新增清单产物，`404.html` 与 `scripts/*.mjs` 不动                                                    |
+| 部署 · 产物 | Pages 静态部署不变；UI 产物（`index.html`、样式、`assets/*.js`）全部不进 git；`public/` 只留数据、二进制、清单、`404.html`                                     |
+| 兼容红线    | 深链 clean URL、JSON 契约、ES2022+ 浏览器不破；离线 = 本地起服务 + `--no-cdn`；`file://` 不作承诺（绝对路径 + module script 下它本来就打不开）                 |
+| 外挂直跳    | `node.url`（自有 `cdn-file.lssa.fun` 构造 + 前缀校验）恢复直跳/直下；第三方索引自带的 `redirect_url` 一律走确认弹窗                                            |
+| 命令行获取  | 文件双按钮（页面链接 / 直链 + `curl -L -O`）；构建期 `files.jsonl`（本地 + 外挂索引快照，抓取失败只告警并保留上游快照行）；文档说明深链返回 HTML、直链返回字节 |
+| SSR 定位    | 不做运行时 SSR；构建期注入 meta/OG；代码保持 SSR-safe（工厂化 store、平台层封装浏览器 API）                                                                    |
+| 迭代方式    | `feat/vue3` 分支大爆炸重写，阶段提交、单 PR 切换，合并前打 tag `pre-vue3` 作为回滚点                                                                           |
+| 路由 · 状态 | vue-router 4 history + `404.html` sessionStorage 握手 + `?path=` 收敛为 clean URL；Pinia setup stores（library / ui / preview / notifications）                |
+| CSS 策略    | 旧 35KB CSS 以机械搬迁为主（选择器与类名不变）+ 组件 `scoped`；零预处理器；只做两处局部重构（通知与弹窗补正式样式、图标视图行高换纯 CSS）                      |
+| 工具链      | Vite：`root=packages/ui`、`build.outDir=public`、`emptyOutDir=false`、`publicDir` 仅 dev 生效；`--mode local` 替代 `--no-cdn`；dev 端口 4173 保留              |
+| 插件体系    | 14 个插件不合并；`match`/`getInfo` 保持同步纯函数，`preview` 改为返回 `Promise<Component \| false>`；重库按需加载                                              |
+| 安全        | 所有 `v-html` 经 `platform/sanitize.ts`（DOMPurify 白名单）；`redirect_url` 强制确认；路由输入白名单（拒绝 `..`、`//`、含 `:` 的段）                           |
+| 通知 · 弹窗 | 通知 store + 宿主组件（保留 `#notification-container`）；`await confirmDialog()` 命令式 API；`ErrorState` / `EmptyState` 组件                                  |
+| 历史包袱    | 5 处死代码删除；`?path=` 保留只读兼容；外挂 legacy 缓存前缀再保留一个大版本                                                                                    |
+| 文案        | `messages.ts` 单一来源，不引 vue-i18n                                                                                                                          |
+| 质量门禁    | `verify` = vue-tsc → eslint → prettier → Vitest → Python 契约 → build → 体积检查；Playwright 5 条冒烟进 CI；首屏主包 gzip ≤ 250 KB                             |
+| 代码规范    | 强制 `script setup` + TS 类型式 props + 仅 Composition API + 禁 `any`；eslint-plugin-vue `flat/recommended`                                                    |
+| 文档        | 更新 README 与 `docs/architecture.md`；新增本文件与 `docs/frontend.md`                                                                                         |
 
 ## 关键假设
 

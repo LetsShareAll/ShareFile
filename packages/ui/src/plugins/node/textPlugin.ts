@@ -1,5 +1,4 @@
-import { createNodePlugin } from '../../utils/nodePluginFactory';
-import { renderPlainTextPreview } from '../../utils/previewRenderers';
+import { createNodePlugin } from '../../domain/plugins';
 
 export const textPlugin = createNodePlugin({
   id: 'text',
@@ -13,5 +12,6 @@ export const textPlugin = createNodePlugin({
     csv: { iconClass: 'fas fa-file-csv', mime: 'text/csv' },
     tsv: { mime: 'text/tab-separated-values' },
   },
-  preview: input => renderPlainTextPreview(input),
+  preview: async () =>
+    (await import('../../features/preview/renderers/TextPreview.vue')).default,
 });

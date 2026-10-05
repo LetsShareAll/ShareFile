@@ -1,4 +1,4 @@
-import { createNodePlugin } from '../../utils/nodePluginFactory';
+import { createNodePlugin } from '../../domain/plugins';
 
 export const archivePlugin = createNodePlugin({
   id: 'archive',

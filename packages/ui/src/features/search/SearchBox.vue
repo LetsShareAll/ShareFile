@@ -14,10 +14,7 @@ function onInput(event: Event): void {
 </script>
 
 <template>
-  <label
-    class="search-box"
-    aria-label="搜索文件"
-  >
+  <label class="search-box" aria-label="搜索文件">
     <i class="fas fa-search" />
     <input
       type="search"
@@ -26,6 +23,6 @@ function onInput(event: Event): void {
       aria-label="搜索文件"
       @input="onInput"
       @keydown.esc.prevent="emit('clear')"
-    >
+    />
   </label>
 </template>

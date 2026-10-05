@@ -1,5 +1,4 @@
-import { createNodePlugin } from '../../utils/nodePluginFactory';
-import { renderPdfPreview } from '../../utils/previewRenderers';
+import { createNodePlugin } from '../../domain/plugins';
 
 export const pdfPlugin = createNodePlugin({
   id: 'pdf',
@@ -10,5 +9,6 @@ export const pdfPlugin = createNodePlugin({
   extensions: {
     pdf: { mime: 'application/pdf' },
   },
-  preview: input => renderPdfPreview(input.fileUrl),
+  preview: async () =>
+    (await import('../../features/preview/renderers/PdfPreview.vue')).default,
 });

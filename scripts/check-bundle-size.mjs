@@ -35,10 +35,7 @@ function parseMaxGzipKb(argv) {
 
 function collectAssetRefs(html) {
   const refs = new Set();
-  const patterns = [
-    /<script[^>]+src="([^"]+)"/g,
-    /<link[^>]+href="([^"]+)"/g,
-  ];
+  const patterns = [/<script[^>]+src="([^"]+)"/g, /<link[^>]+href="([^"]+)"/g];
 
   for (const pattern of patterns) {
     for (const match of html.matchAll(pattern)) {
