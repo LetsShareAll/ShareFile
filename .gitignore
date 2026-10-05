@@ -10,9 +10,16 @@
 # Node dependencies
 node_modules/
 
-# UI build output
+# Scratch workspace (local comparison snapshots, throwaway tooling caches)
+.tmp/
+
+# UI build output (Vite writes it straight into public/, never commit it)
 dist/
+public/index.html
 public/assets/scripts/*
+public/assets/styles/index.css
+public/assets/index-*.js
+public/assets/index-*.css
 
 # TypeScript cache
 *.tsbuildinfo
