@@ -284,7 +284,7 @@ header h1 {
 
 .container.view-icon .file-item {
   display: grid;
-  grid-row: span 5;
+  grid-row: span 6;
   grid-template-rows: subgrid;
   row-gap: 0.25rem;
   min-height: 0;
@@ -297,7 +297,7 @@ header h1 {
 /* 非搜索态不渲染 .item-path，卡片就只跨 4 行，否则会多出一条空行线把卡片撑高；
    旧实现里空路径行占的那一格 gap 由下面 .item-stats 的 margin 补回。 */
 .container.view-icon .file-item:not(:has(.item-path)) {
-  grid-row: span 4;
+  grid-row: span 5;
 }
 
 /* 行容器不再生成盒子：名称/描述/路径直接落在卡片 subgrid 的行线上，
@@ -380,6 +380,10 @@ header h1 {
   margin-top: 0.55rem;
 }
 
+.container.view-icon .file-item:not(:has(.item-path)) .item-actions {
+  grid-row: 5;
+}
+
 .container.view-icon .meta-info {
   display: block;
   max-width: 100%;
@@ -388,35 +392,28 @@ header h1 {
   white-space: nowrap;
 }
 
-/* 操作区沿用旧实现：卡片右上角的悬浮按钮组（旧 CSS 第 523-544 行），
-   因此不占行、不参与行高对齐。隐藏态补 visibility/pointer-events，
-   避免透明覆盖层吞掉卡片点击（旧实现同样存在该问题）。 */
+/* 操作区改为卡片内正常流（第 6 行）：旧 CSS 的右上角悬浮层只承载 1 个按钮，
+   现在有 4 个（页面链接 / 直链 / curl / 下载），悬浮会把标题和描述盖住。 */
 .container.view-icon .item-actions {
   display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: -0.18rem;
-  right: -0.18rem;
-  z-index: 2;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  gap: 0.35rem;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translate(12%, 10%) scale(0.72);
-  transform-origin: top right;
-  transition:
-    opacity 0.18s ease,
-    visibility 0.18s ease,
-    transform 0.22s cubic-bezier(0.2, 0.9, 0.25, 1.15);
+  gap: 0.3rem;
+  width: 100%;
+  grid-row: 6;
 }
 
-.container.view-icon .file-item:hover .item-actions,
-.container.view-icon .file-item:focus-within .item-actions {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translate(6%, -8%) scale(1);
+/* 旧语义：图标视图不展示哈希按钮（旧 CSS 里 .hash-row 在此视图 display:none），
+   哈希只出现在详情视图与按钮的 title 提示里。 */
+.container.view-icon .item-actions .hash-value {
+  display: none;
+}
+
+/* 图标视图按钮更紧凑，4 个操作正好排成一行，卡片不必为按钮再长高。 */
+.container.view-icon .item-actions .action-btn {
+  padding: 0.3rem 0.45rem;
+  font-size: 0.8rem;
 }
 
 /* 详细列表视图 */
@@ -649,12 +646,6 @@ header h1 {
   }
   .container.view-icon .file-list {
     grid-template-columns: 1fr;
-  }
-  .container.view-icon .item-actions {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translate(6%, -8%) scale(1);
   }
   .container.view-detail .item-main {
     grid-template-columns: auto minmax(0, 1fr) auto;

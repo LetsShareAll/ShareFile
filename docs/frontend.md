@@ -88,4 +88,5 @@ src/
 
 - 图标视图的行高对齐由纯 CSS（grid + line-clamp）实现，取代旧的 JS 测量写 CSS 变量方案，允许细小视觉差异。
 - 预览重库（video.js / highlight.js / music-metadata / amplitudejs / marked / DOMPurify）全部动态 `import()`，首屏只保留应用自身代码。
+- 图标视图的操作区放在卡片内最后一行（4 个按钮一排），**不再用旧实现的右上角悬浮层**：旧 CSS 的悬浮层只承载 1 个按钮，而现在有页面链接 / 直链 / curl / 下载 4 个，悬浮会盖住标题与描述；哈希按钮遵循旧语义只在详情视图展示（图标视图 `display:none`）。
 - `packages/ui/phase5-probe/` 是阶段⑤ 迁移时的临时探针（已 gitignore），保留用于复现当时的插件等价性验证。
