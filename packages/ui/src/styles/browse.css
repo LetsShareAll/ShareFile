@@ -260,6 +260,16 @@ header h1 {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
+/* 外部节点列表项：旧 index.css 里这两条在 .file-item 之后（第 1641 行），
+   必须保持同样的层叠顺序，否则会被 .file-item 的 border/background 简写覆盖。 */
+.external-item {
+  border-left: 3px solid var(--external-accent, #2196f3);
+}
+
+.external-item:hover {
+  background: var(--external-hover-bg, rgba(33, 150, 243, 0.05));
+}
+
 /* 大图标视图 */
 /* 旧实现用 JS 测量（alignIconViewRows）把 --icon-row/--name-row/--description-row/
    --path-row/--meta-row/--actions-row 写到卡片上；现在改成纯 CSS：.file-list 是网格，
@@ -282,6 +292,12 @@ header h1 {
   text-align: center;
   overflow: visible;
   justify-items: center;
+}
+
+/* 非搜索态不渲染 .item-path，卡片就只跨 4 行，否则会多出一条空行线把卡片撑高；
+   旧实现里空路径行占的那一格 gap 由下面 .item-stats 的 margin 补回。 */
+.container.view-icon .file-item:not(:has(.item-path)) {
+  grid-row: span 4;
 }
 
 /* 行容器不再生成盒子：名称/描述/路径直接落在卡片 subgrid 的行线上，
@@ -356,6 +372,12 @@ header h1 {
   width: 100%;
   font-size: 0.76rem;
   align-self: center;
+}
+
+/* 少了路径行时元信息上移到第 4 行，并补回旧实现空路径行前后的间距。 */
+.container.view-icon .file-item:not(:has(.item-path)) .item-stats {
+  grid-row: 4;
+  margin-top: 0.55rem;
 }
 
 .container.view-icon .meta-info {
