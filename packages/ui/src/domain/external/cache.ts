@@ -90,7 +90,12 @@ export function loadExternalCache(
       return null;
     }
 
-    if (!hasRequiredCdnFileUrls(data, mountSource)) {
+    // 只有使用 CDN 索引的挂载源才要求自带直链；默认挂载的索引不含 url，
+    // 若无条件校验会把缓存全部判为无效（旧实现的历史缺陷）。
+    if (
+      getMountSourceUseCdnIndex(mountSource) &&
+      !hasRequiredCdnFileUrls(data, mountSource)
+    ) {
       storage.removeItem(cacheKey);
 
       return null;

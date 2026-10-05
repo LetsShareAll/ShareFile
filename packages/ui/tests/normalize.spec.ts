@@ -241,3 +241,44 @@ describe('normalizeShareFile 的 mount_points', () => {
     expect('mount_points' in result).toBe(false);
   });
 });
+
+describe('normalizeShareFile 的 children 归一化', () => {
+  it('children 缺失时归一为空数组', () => {
+    const result = requireShareFile(
+      makeRawShareFile({
+        nodes: { root: { id: 'root', name: 'root', type: 'folder' } },
+      }),
+    );
+
+    expect(result.nodes.root.children).toEqual([]);
+  });
+
+  it('children 中的非字符串项被丢弃', () => {
+    const result = requireShareFile(
+      makeRawShareFile({
+        nodes: {
+          root: {
+            id: 'root',
+            name: 'root',
+            type: 'folder',
+            children: ['a', 1, null, 'b'],
+          },
+        },
+      }),
+    );
+
+    expect(result.nodes.root.children).toEqual(['a', 'b']);
+  });
+
+  it('children 不是数组时归一为空数组', () => {
+    const result = requireShareFile(
+      makeRawShareFile({
+        nodes: {
+          root: { id: 'root', name: 'root', type: 'folder', children: 'a' },
+        },
+      }),
+    );
+
+    expect(result.nodes.root.children).toEqual([]);
+  });
+});

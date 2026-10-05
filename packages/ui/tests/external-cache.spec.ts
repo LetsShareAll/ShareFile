@@ -274,7 +274,7 @@ describe('loadExternalCache 的 CDN 直链校验', () => {
     expect(loadExternalCache(storage, cacheKey, cdnSource, now)).toEqual(data);
   });
 
-  it('未开启 CDN 索引时同样会因文件直链缺失而丢弃缓存（现状契约）', () => {
+  it('未开启 CDN 索引时不校验直链，缓存可以命中', () => {
     const storage = new MemoryStorage();
     const cacheKey = getCacheKey(mountPoint, source);
     const data = makeShareFile([
@@ -284,8 +284,8 @@ describe('loadExternalCache 的 CDN 直链校验', () => {
 
     saveExternalCache(storage, cacheKey, data, mountPoint, source, now);
 
-    expect(loadExternalCache(storage, cacheKey, source, now)).toBeNull();
-    expect(storage.getItem(cacheKey)).toBeNull();
+    // 默认挂载的索引本身不带 url，若在此处校验直链会让 12h 缓存永不命中。
+    expect(loadExternalCache(storage, cacheKey, source, now)).toEqual(data);
   });
 });
 

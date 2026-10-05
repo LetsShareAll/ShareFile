@@ -52,9 +52,18 @@ export function normalizeMountSource(
   };
 }
 
+function normalizeChildren(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.filter((child): child is string => typeof child === 'string');
+}
+
 function normalizeNode<T extends ShareNode>(value: T): T {
   const source = value as unknown as Record<string, unknown>;
-  const normalized: Record<string, unknown> = { ...source };
+  const normalized: Record<string, unknown> = {
+    ...source,
+    children: normalizeChildren(source.children),
+  };
   const mountSource = normalizeMountSource(source.mount_source);
 
   delete normalized.mount_source;

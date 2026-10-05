@@ -523,3 +523,54 @@ describe('mergeExternalNodes', () => {
     expect(merged.nodes['mnt/docs'].children).toEqual(['mnt/docs/ext.txt']);
   });
 });
+
+/** 模拟畸形外部索引：类型上 children 必填，但网络数据可能缺失。 */
+function nodeWithoutChildren(id: string, type: ShareNode['type']): ShareNode {
+  const node: Record<string, unknown> = { ...makeNode(id, type) };
+
+  delete node.children;
+
+  return node as unknown as ShareNode;
+}
+
+describe('外部节点缺失 children 时的容错', () => {
+  it('filterExternalNodes 不抛错并返回子树根', () => {
+    const data = makeShareFile([nodeWithoutChildren('root', 'folder')], {
+      '/root': 'root',
+    });
+
+    const filtered = filterExternalNodes(data, '/root');
+
+    expect(filtered?.rootNodeId).toBe('root');
+    expect(Object.keys(filtered?.nodes ?? {})).toEqual(['root']);
+  });
+
+  it('rewriteExternalNodes 把缺失的 children 当空数组处理', () => {
+    const rewritten = rewriteExternalNodes(
+      { root: nodeWithoutChildren('root', 'folder') },
+      'root',
+      'mnt',
+      mountSource,
+      true,
+    );
+
+    expect(rewritten.nodes.mnt.children).toEqual([]);
+    expect(rewritten.pathIndex['/mnt']).toBe('mnt');
+  });
+
+  it('mergeExternalNodes 在外部节点缺失 children 时不抛错', () => {
+    const localData = makeShareFile(
+      [
+        makeNode('root', 'folder', { children: ['mnt'] }),
+        makeNode('mnt', 'folder', { parent: 'root' }),
+      ],
+      { '/': 'root', '/mnt': 'mnt' },
+    );
+    const external: ExternalNodesResult = {
+      nodes: { mnt: nodeWithoutChildren('mnt', 'folder') },
+      pathIndex: { '/mnt': 'mnt' },
+    };
+
+    expect(() => mergeExternalNodes(localData, external, 'mnt')).not.toThrow();
+  });
+});

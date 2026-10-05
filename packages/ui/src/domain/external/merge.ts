@@ -73,7 +73,7 @@ export function filterExternalNodes(
     if (!node) return;
 
     filteredNodes[nodeId] = node;
-    node.children.forEach((childId: string) => collectNodes(childId));
+    (node.children ?? []).forEach((childId: string) => collectNodes(childId));
   }
 
   collectNodes(subPathNodeId);
@@ -140,7 +140,7 @@ export function rewriteExternalNodes(
       ...node,
       id: newId,
       parent: newParentId,
-      children: node.children.map(
+      children: (node.children ?? []).map(
         (childId: string) => idMapping[childId] || childId,
       ),
       source: 'external',
@@ -177,7 +177,7 @@ export function mergeExternalNodes(
 
     blockedExternalNodeIds.add(nodeId);
 
-    externalResult.nodes[nodeId]?.children.forEach(childId =>
+    (externalResult.nodes[nodeId]?.children ?? []).forEach(childId =>
       blockExternalSubtree(childId),
     );
   };
@@ -208,7 +208,12 @@ export function mergeExternalNodes(
         ...node,
         ...existingNode,
         source: existingNode.source ?? 'local',
-        children: [...new Set([...existingNode.children, ...node.children])],
+        children: [
+          ...new Set([
+            ...(existingNode.children ?? []),
+            ...(node.children ?? []),
+          ]),
+        ],
       };
 
       return;
@@ -250,7 +255,10 @@ export function mergeExternalNodes(
     mergedNodes[mountPointId] = {
       ...mountPointNode,
       children: [
-        ...new Set([...mountPointNode.children, ...externalRootChildren]),
+        ...new Set([
+          ...(mountPointNode.children ?? []),
+          ...externalRootChildren,
+        ]),
       ],
     };
   }
