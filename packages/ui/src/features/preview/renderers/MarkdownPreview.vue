@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
+import { loadDomPurify } from '../../../platform/sanitize';
 import PreviewLoading from './PreviewLoading.vue';
 
 const MARKDOWN_ALLOWED_TAGS = [
@@ -66,7 +67,7 @@ let sanitizerPromise: Promise<Sanitizer> | null = null;
 
 function getSanitizer(): Promise<Sanitizer> {
   sanitizerPromise ??= (async () => {
-    const { default: DOMPurify } = await import('dompurify');
+    const DOMPurify = await loadDomPurify();
 
     return (dirty: string) =>
       DOMPurify.sanitize(dirty, {
@@ -106,6 +107,5 @@ onMounted(load);
 <template>
   <PreviewLoading v-if="status === 'loading'" />
   <p v-else-if="status === 'error'" class="error">预览加载失败</p>
-  <!-- eslint-disable-next-line vue/no-v-html -- marked 输出已经过 DOMPurify 消毒 -->
   <div v-else class="rendered-markdown" v-html="html" />
 </template>

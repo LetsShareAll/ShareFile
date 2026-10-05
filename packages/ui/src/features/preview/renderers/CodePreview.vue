@@ -51,7 +51,6 @@ onMounted(load);
           class="code-preview-line"
         >
           <span class="code-line-number">{{ index + 1 }}</span>
-          <!-- eslint-disable-next-line vue/no-v-html -- highlight.js 输出已转义 -->
           <code class="code-line-content hljs" v-html="line || ' '" />
         </div>
       </div>

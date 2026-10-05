@@ -6,6 +6,10 @@ import AppBreadcrumb from '../../components/AppBreadcrumb.vue';
 import { getNodeFileUrl } from '../../domain/links';
 import { getBreadcrumbSegments } from '../../domain/paths';
 import { useLibraryStore } from '../../stores/library';
+import PreviewModal from '../preview/PreviewModal.vue';
+import { triggerFileDownload } from '../../platform/download';
+import type { ShareNode } from '../../domain/share-file';
+import { usePreviewStore } from '../../stores/preview';
 import { useNodeActivation } from './useNodeActivation';
 import { useUiStore } from '../../stores/ui';
 import SearchBox from '../search/SearchBox.vue';
@@ -19,6 +23,12 @@ const route = useRoute();
 const router = useRouter();
 const library = useLibraryStore();
 const { activateNode } = useNodeActivation();
+const preview = usePreviewStore();
+
+function downloadNode(target: ShareNode): void {
+  triggerFileDownload(target);
+}
+
 const ui = useUiStore();
 
 const currentPath = computed(() => {
@@ -158,6 +168,7 @@ function navigate(path: string): void {
           :rows="rows"
           :show-path="isSearching"
           @open="activateNode"
+          @download="downloadNode"
           @navigate="navigate"
         />
         <p v-else :class="emptyState.className">
@@ -165,6 +176,20 @@ function navigate(path: string): void {
         </p>
       </template>
     </main>
+
+    <PreviewModal
+      :visible="preview.isOpen"
+      :title="preview.title"
+      :loading="preview.loading"
+      @close="preview.close()"
+    >
+      <p v-if="preview.error" class="empty error">{{ preview.error }}</p>
+      <component
+        :is="preview.component"
+        v-else-if="preview.component"
+        v-bind="preview.componentProps"
+      />
+    </PreviewModal>
   </div>
 </template>
 

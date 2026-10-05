@@ -47,7 +47,7 @@ export function useNodeActivation() {
       return;
     }
 
-    preview.openFile(node);
+    void preview.openFile(node);
   }
 
   return { activateNode };

@@ -28,6 +28,7 @@ const hasCodeContent = ref(false);
 let showTimer: number | undefined;
 let hideTimer: number | undefined;
 let previousOverflow: string | null = null;
+let bodyObserver: MutationObserver | null = null;
 
 function clearTimers(): void {
   if (showTimer !== undefined) {
@@ -45,6 +46,25 @@ function syncCodeContent(): void {
   hasCodeContent.value =
     bodyEl.value?.firstElementChild?.classList.contains('code-preview') ??
     false;
+}
+
+/**
+ * 插槽内容自身从加载态切换到 `.code-preview` 时弹窗不会重新渲染，
+ * 因此监听 body 子节点变化来同步 `modal-body-code`（沿用旧弹窗行为）。
+ */
+function observeBody(): void {
+  const body = bodyEl.value;
+
+  if (!body) return;
+
+  bodyObserver?.disconnect();
+  bodyObserver = new MutationObserver(syncCodeContent);
+  bodyObserver.observe(body, { childList: true, subtree: true });
+}
+
+function stopObservingBody(): void {
+  bodyObserver?.disconnect();
+  bodyObserver = null;
 }
 
 function lockScroll(): void {
@@ -69,6 +89,7 @@ async function open(): Promise<void> {
   lockScroll();
   window.addEventListener('keydown', onKeydown);
   await nextTick();
+  observeBody();
   showTimer = window.setTimeout(() => {
     shown.value = true;
     showTimer = undefined;
@@ -78,6 +99,7 @@ async function open(): Promise<void> {
 
 function close(): void {
   clearTimers();
+  stopObservingBody();
   shown.value = false;
   unlockScroll();
   window.removeEventListener('keydown', onKeydown);
@@ -107,6 +129,7 @@ onUpdated(syncCodeContent);
 
 onBeforeUnmount(() => {
   clearTimers();
+  stopObservingBody();
   unlockScroll();
   window.removeEventListener('keydown', onKeydown);
 });

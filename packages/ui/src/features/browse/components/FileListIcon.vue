@@ -10,6 +10,7 @@ import NodeActions from './NodeActions.vue';
 defineProps<{ rows: readonly NodeRow[]; showPath?: boolean }>();
 
 const emit = defineEmits<{
+  download: [node: ShareNode];
   open: [node: ShareNode];
   navigate: [path: string];
 }>();
@@ -77,6 +78,7 @@ function activate(row: NodeRow): void {
           :page-url="row.pageUrl"
           :file-url="row.fileUrl"
           @open="emit('open', $event)"
+          @download="emit('download', $event)"
         />
       </div>
     </li>

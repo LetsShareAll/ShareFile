@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import {
   resolveConfirmDialog,
   useConfirmDialogState,
 } from '../composables/useConfirmDialog';
-import { sanitizeHtml } from '../platform/sanitize';
+import { sanitizeConfirmHtml } from '../platform/sanitize';
 
 const state = useConfirmDialogState();
 
-const sanitizedHtml = computed(() =>
-  state.options?.html ? sanitizeHtml(state.options.html) : '',
+const sanitizedHtml = ref('');
+
+watch(
+  () => state.options?.html ?? '',
+  async html => {
+    sanitizedHtml.value = html ? await sanitizeConfirmHtml(html) : '';
+  },
+  { immediate: true },
 );
 
 function close(confirmed: boolean): void {

@@ -2,6 +2,7 @@
 import { computed, onUnmounted, ref } from 'vue';
 
 import { formatFileSizeUnit } from '../../../domain/format';
+import { getCurlCommand } from '../../../domain/links';
 import type { ShareNode } from '../../../domain/share-file';
 import { copyText } from '../../../platform/clipboard';
 import { formatHashPreview } from '../nodeDisplay';
@@ -20,7 +21,10 @@ const props = defineProps<{
   fileUrl: string;
 }>();
 
-const emit = defineEmits<{ open: [node: ShareNode] }>();
+const emit = defineEmits<{
+  open: [node: ShareNode];
+  download: [node: ShareNode];
+}>();
 
 const hashes = computed<HashEntry[]>(() => {
   const entries: { kind: HashKind; label: string; value?: string }[] = [
@@ -78,9 +82,18 @@ onUnmounted(() => window.clearTimeout(resetTimer));
       <button
         type="button"
         class="action-btn"
+        title="复制 curl 命令"
+        aria-label="复制 curl 命令"
+        @click.stop="copyValue(getCurlCommand(fileUrl))"
+      >
+        <i class="fas fa-terminal" />
+      </button>
+      <button
+        type="button"
+        class="action-btn"
         :title="`下载文件 (${formatFileSizeUnit(node.size || 0)})`"
         aria-label="下载文件"
-        @click.stop="emit('open', node)"
+        @click.stop="emit('download', node)"
       >
         <i class="fas fa-download" />
       </button>
