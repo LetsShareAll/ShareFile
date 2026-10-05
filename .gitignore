@@ -13,6 +13,7 @@ node_modules/
 # Scratch workspace (local comparison snapshots, throwaway tooling caches)
 .tmp/
 .phase5/
+phase5-probe/
 
 # UI build output (Vite writes it straight into public/, never commit it)
 dist/
