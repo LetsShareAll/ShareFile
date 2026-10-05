@@ -6,6 +6,8 @@ import AppBreadcrumb from '../../components/AppBreadcrumb.vue';
 import { getNodeFileUrl } from '../../domain/links';
 import { getBreadcrumbSegments } from '../../domain/paths';
 import { useLibraryStore } from '../../stores/library';
+import { findDirectoryReadme } from '../../domain/readme';
+import DirectoryReadme from './components/DirectoryReadme.vue';
 import PreviewModal from '../preview/PreviewModal.vue';
 import { triggerFileDownload } from '../../platform/download';
 import type { ShareNode } from '../../domain/share-file';
@@ -68,6 +70,10 @@ const emptyState = computed(
     BROWSE_EMPTY_STATES[
       isSearching.value ? 'search' : currentNode.value ? 'directory' : 'missing'
     ],
+);
+
+const directoryReadme = computed(() =>
+  findDirectoryReadme(library.data, currentPath.value),
 );
 
 const breadcrumbExternalPaths = computed(() =>
@@ -174,6 +180,12 @@ function navigate(path: string): void {
         <p v-else :class="emptyState.className">
           <i :class="emptyState.iconClass" /> {{ emptyState.text }}
         </p>
+
+        <DirectoryReadme
+          v-if="!isSearching && rows.length && directoryReadme"
+          :node="directoryReadme"
+          :path="currentPath"
+        />
       </template>
     </main>
 

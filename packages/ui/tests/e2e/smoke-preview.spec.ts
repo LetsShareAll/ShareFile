@@ -12,7 +12,6 @@ async function openDirectory(
   await expect(page.locator('.file-item').first()).toBeVisible();
 }
 
-
 test('点击代码文件打开预览并高亮', async ({ page }) => {
   await page.goto('/documents/scripts');
 

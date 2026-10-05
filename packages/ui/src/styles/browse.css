@@ -366,14 +366,35 @@ header h1 {
   white-space: nowrap;
 }
 
-/* 与旧实现一致：图标视图的操作区也在卡片内正常流布局（旧 CSS 第 786 行），
-   行对齐交给网格；不要改成悬浮覆盖层——不可见的覆盖层会吞掉卡片点击。 */
+/* 操作区沿用旧实现：卡片右上角的悬浮按钮组（旧 CSS 第 523-544 行），
+   因此不占行、不参与行高对齐。隐藏态补 visibility/pointer-events，
+   避免透明覆盖层吞掉卡片点击（旧实现同样存在该问题）。 */
 .container.view-icon .item-actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
+  flex-direction: column;
+  position: absolute;
+  top: -0.18rem;
+  right: -0.18rem;
+  z-index: 2;
+  justify-content: center;
   gap: 0.35rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(12%, 10%) scale(0.72);
+  transform-origin: top right;
+  transition:
+    opacity 0.18s ease,
+    visibility 0.18s ease,
+    transform 0.22s cubic-bezier(0.2, 0.9, 0.25, 1.15);
+}
+
+.container.view-icon .file-item:hover .item-actions,
+.container.view-icon .file-item:focus-within .item-actions {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(6%, -8%) scale(1);
 }
 
 /* 详细列表视图 */
@@ -609,6 +630,8 @@ header h1 {
   }
   .container.view-icon .item-actions {
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
     transform: translate(6%, -8%) scale(1);
   }
   .container.view-detail .item-main {

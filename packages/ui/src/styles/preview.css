@@ -586,6 +586,11 @@
   width: 100%;
 }
 
+/* 旧站弹窗 body 带 rendered-markdown 类，独立图片预览沿用 .rendered-markdown img 的圆角。 */
+.modal-body img {
+  border-radius: 8px;
+}
+
 .direct-download-state {
   display: grid;
   justify-items: center;
