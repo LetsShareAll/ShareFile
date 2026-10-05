@@ -8,6 +8,7 @@
     "check": "pnpm run /^check:.*/",
     "check:ui": "pnpm --filter @share-file/ui run check",
     "check:python": "pnpm exec node scripts/run-python.mjs scripts/check-python-syntax.py packages/cli scripts tests/contract",
+    "size": "pnpm exec node scripts/check-bundle-size.mjs",
     "lint": "pnpm run /^lint:.*/",
     "lint:ui": "pnpm --filter @share-file/ui run lint",
     "lint:root": "pnpm exec eslint scripts/*.mjs",
