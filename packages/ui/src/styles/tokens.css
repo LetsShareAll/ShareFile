@@ -1,0 +1,178 @@
+/* ==========================================================================
+   设计 token：变量名与旧站 public/assets/styles/index.css 完全一致。
+   主题三态 auto/light/dark：html[data-theme] 由内联脚本与 stores/ui.ts 写入，
+   auto 走 prefers-color-scheme 分支，light/dark 覆盖媒体查询结果。
+   ========================================================================== */
+
+/* 自定义字体：等宽代码字体（Sarasa Mono SC Nerd） */
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-bold-nerd-font.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ===== 基础变量（浅色主题） ===== */
+:root {
+  --bg: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --card-hover-bg: rgba(255, 255, 255, 0.9);
+  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+
+  --toolbar-bg: rgba(255, 255, 255, 0.64);
+  --toolbar-border: rgba(0, 0, 0, 0.06);
+  --button-bg: rgba(120, 120, 128, 0.08);
+  --button-hover-bg: rgba(120, 120, 128, 0.15);
+  --button-active-bg: rgba(0, 113, 227, 0.12);
+  --button-active-color: #0071e3;
+
+  --primary: #0071e3;
+  --primary-hover: #0077ed;
+
+  --modal-overlay-bg: rgba(0, 0, 0, 0.3);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --glass-blur: saturate(180%) blur(20px);
+  --modal-blur: saturate(200%) blur(30px);
+
+  --color-folder: #fbc82f;
+  --color-image: #db2777;
+  --color-video: #7c3aed;
+  --color-audio: #059669;
+  --color-document: #2563eb;
+  --color-archive: #9333ea;
+  --color-code: #ea580c;
+  --color-font: #4f46e5;
+  --color-executable: #b91c1c;
+  --color-disk-image: #0891b2;
+  --color-unknown: #8e8e93;
+}
+
+/* 深色模式自动检测 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e;
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+    --card-bg: rgba(44, 44, 46, 0.7);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-hover-bg: rgba(58, 58, 60, 0.8);
+    --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+    --toolbar-bg: rgba(44, 44, 46, 0.6);
+    --toolbar-border: rgba(255, 255, 255, 0.08);
+    --button-bg: rgba(120, 120, 128, 0.15);
+    --button-hover-bg: rgba(120, 120, 128, 0.25);
+    --button-active-bg: rgba(10, 132, 255, 0.2);
+    --button-active-color: #0a84ff;
+    --primary: #0a84ff;
+    --primary-hover: #409cff;
+    --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  }
+}
+
+html[data-theme='dark'] {
+  --bg: #1c1c1e;
+  --text: #f5f5f7;
+  --text-secondary: #98989d;
+  --card-bg: rgba(44, 44, 46, 0.7);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-hover-bg: rgba(58, 58, 60, 0.8);
+  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  --toolbar-bg: rgba(44, 44, 46, 0.6);
+  --toolbar-border: rgba(255, 255, 255, 0.08);
+  --button-bg: rgba(120, 120, 128, 0.15);
+  --button-hover-bg: rgba(120, 120, 128, 0.25);
+  --button-active-bg: rgba(10, 132, 255, 0.2);
+  --button-active-color: #0a84ff;
+  --primary: #0a84ff;
+  --primary-hover: #409cff;
+  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme='light'] {
+  --bg: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --card-hover-bg: rgba(255, 255, 255, 0.9);
+  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --toolbar-bg: rgba(255, 255, 255, 0.64);
+  --toolbar-border: rgba(0, 0, 0, 0.06);
+  --button-bg: rgba(120, 120, 128, 0.08);
+  --button-hover-bg: rgba(120, 120, 128, 0.15);
+  --button-active-bg: rgba(0, 113, 227, 0.12);
+  --button-active-color: #0071e3;
+  --primary: #0071e3;
+  --primary-hover: #0077ed;
+  --modal-overlay-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* 全局重置与排版 */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+kbd {
+  font-family: 'Sarasa Mono SC Nerd', 'SF Mono', 'Fira Code', monospace;
+  background-color: var(--button-bg);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.9em;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin: 0 0.2rem;
+  display: inline-block;
+  line-height: 1;
+}

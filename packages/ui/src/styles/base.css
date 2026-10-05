@@ -1,0 +1,157 @@
+/* ==========================================================================
+   跨组件共享的基础件（对应旧 index.css 第 431-433、622-656、792-818、820-834、
+   1535-1545、1638-1693 行）。
+   ========================================================================== */
+
+.file-item.hidden-item {
+  opacity: 0.5;
+}
+
+.hash-value {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.22rem 0.46rem;
+  background: rgba(120, 120, 128, 0.1);
+  color: inherit;
+  font: inherit;
+  line-height: 1.4;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.hash-value span {
+  color: var(--text-secondary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.hash-value code {
+  font: inherit;
+}
+
+.hash-value:hover {
+  background: rgba(120, 120, 128, 0.15);
+}
+
+.hash-value:active {
+  background: rgba(120, 120, 128, 0.25);
+}
+
+.action-btn {
+  background: rgba(120, 120, 128, 0.12);
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text);
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.action-btn:hover {
+  background: rgba(120, 120, 128, 0.22);
+  transform: scale(1.05);
+}
+
+.action-btn i {
+  pointer-events: none;
+}
+
+/* 加载指示器 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+  color: var(--primary);
+  opacity: 0.8;
+}
+.loading-container p {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+/* 空状态与错误 */
+.empty,
+.error {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+.error {
+  color: #ff3b30;
+}
+
+/* ===== 外部节点样式 ===== */
+
+/* 外部节点列表项 */
+.external-item {
+  border-left: 3px solid var(--external-accent, #2196f3);
+}
+
+.external-item:hover {
+  background: var(--external-hover-bg, rgba(33, 150, 243, 0.05));
+}
+
+/* 外部节点来源标记 */
+.external-indicator {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid rgba(33, 150, 243, 0.22);
+  border-radius: 6px;
+  background: rgba(33, 150, 243, 0.1);
+  color: var(--external-accent, #2196f3);
+  font-size: 0.68rem;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(33, 150, 243, 0.08);
+}
+
+.container.view-icon .external-indicator {
+  margin-top: 0.05rem;
+}
+
+/* 外部节点面包屑 */
+.external-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--external-accent, #2196f3) !important;
+  position: relative;
+}
+
+.external-breadcrumb-icon {
+  font-size: 0.75em;
+  opacity: 0.7;
+}
+
+/* 暗色主题下的外部节点样式 */
+[data-theme='dark'] {
+  --external-accent: #64b5f6;
+  --external-hover-bg: rgba(100, 181, 246, 0.08);
+}
+
+[data-theme='dark'] .external-indicator {
+  border-color: rgba(100, 181, 246, 0.26);
+  background: rgba(100, 181, 246, 0.14);
+}

@@ -1,0 +1,121 @@
+/* ==========================================================================
+   第三方样式覆盖：hljs token 配色（旧 index.css 第 1074-1166 行）
+   与 video.js 预览覆盖（第 1432-1452 行）。video.js 自身样式改由
+   VideoPlayer.vue 引入 video.js/dist/video-js.css。
+   ========================================================================== */
+
+.hljs-keyword,
+.hljs-built_in,
+.hljs-type {
+  color: #c026d3;
+  font-weight: 700;
+}
+
+.hljs-string,
+.hljs-regexp {
+  color: #059669;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet {
+  color: #2563eb;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-selector-tag {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-property,
+.hljs-selector-class,
+.hljs-selector-id {
+  color: #d97706;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-function {
+  color: #0891b2;
+}
+
+.hljs-meta,
+.hljs-doctag {
+  color: #7c3aed;
+}
+
+html[data-theme='dark'] .hljs-keyword,
+html[data-theme='dark'] .hljs-built_in,
+html[data-theme='dark'] .hljs-type {
+  color: #f0abfc;
+}
+
+html[data-theme='dark'] .hljs-string,
+html[data-theme='dark'] .hljs-regexp {
+  color: #86efac;
+}
+
+html[data-theme='dark'] .hljs-number,
+html[data-theme='dark'] .hljs-literal,
+html[data-theme='dark'] .hljs-symbol,
+html[data-theme='dark'] .hljs-bullet {
+  color: #93c5fd;
+}
+
+html[data-theme='dark'] .hljs-tag,
+html[data-theme='dark'] .hljs-name,
+html[data-theme='dark'] .hljs-selector-tag {
+  color: #fca5a5;
+}
+
+html[data-theme='dark'] .hljs-attr,
+html[data-theme='dark'] .hljs-attribute,
+html[data-theme='dark'] .hljs-property,
+html[data-theme='dark'] .hljs-selector-class,
+html[data-theme='dark'] .hljs-selector-id {
+  color: #fcd34d;
+}
+
+html[data-theme='dark'] .hljs-title,
+html[data-theme='dark'] .hljs-section,
+html[data-theme='dark'] .hljs-function {
+  color: #67e8f9;
+}
+
+html[data-theme='dark'] .hljs-meta,
+html[data-theme='dark'] .hljs-doctag {
+  color: #c4b5fd;
+}
+
+/* Video.js 预览 */
+.videojs-preview {
+  width: min(100%, 900px);
+  margin: 0 auto;
+  outline: none;
+}
+
+.videojs-preview:focus-visible {
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.videojs-preview .video-js {
+  width: 100%;
+  background: #000;
+}
+
+.videojs-preview .vjs-control-bar {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}

@@ -1,0 +1,671 @@
+/* ==========================================================================
+   应用外壳与列表（对应旧 index.css 第 166-194、211-334、336-429、435-544、
+   546-620、658-790、1571-1618、1695-1727 行）。
+   ========================================================================== */
+
+.container {
+  max-width: 1024px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+/* 头部毛玻璃工具栏 */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--toolbar-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--toolbar-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.search-panel {
+  margin-bottom: 1.3rem;
+  padding: 0.75rem;
+  border: 1px solid var(--toolbar-border);
+  border-radius: var(--radius-md);
+  background: var(--toolbar-bg);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--toolbar-border);
+  border-radius: 8px;
+  background: var(--button-bg);
+  color: var(--text-secondary);
+}
+
+.search-box:focus-within {
+  border-color: rgba(0, 113, 227, 0.35);
+  background: var(--card-hover-bg);
+}
+
+.search-box input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+.search-box input::placeholder {
+  color: var(--text-secondary);
+}
+
+.view-switch,
+.theme-switch {
+  display: flex;
+  border-radius: var(--radius-sm);
+  background: var(--button-bg);
+  padding: 2px;
+  gap: 2px;
+}
+
+.view-switch button,
+.theme-switch button {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  line-height: 1;
+}
+
+.view-switch button:hover,
+.theme-switch button:hover {
+  background: var(--button-hover-bg);
+}
+
+.view-switch button.active,
+.theme-switch button.active {
+  background: var(--button-active-bg);
+  color: var(--button-active-color);
+  font-weight: 600;
+}
+
+/* 面包屑 */
+/* 面包屑：新组件用 class="breadcrumb"（旧站是 id="breadcrumb"），两种都覆盖。 */
+#breadcrumb,
+.breadcrumb {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.4rem 0;
+}
+
+#breadcrumb a,
+.breadcrumb a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#breadcrumb a:hover,
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+#breadcrumb .current,
+.breadcrumb .current {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.directory-description {
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* 搜索结果统计：新版模板同时带 .search-results-header 类。 */
+.search-summary,
+.search-results-header {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* 文件列表网格 */
+.file-list {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.container.view-icon .file-list {
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+}
+
+.container.view-detail .file-list {
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+
+/* 文件卡片 */
+.file-item {
+  background: var(--card-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  display: block;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.item-main {
+  display: grid;
+  min-width: 0;
+}
+
+.item-copy {
+  min-width: 0;
+}
+
+.item-name {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  color: var(--text);
+  font-weight: 650;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-name-text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-description {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-path {
+  display: block;
+  max-width: 100%;
+  margin-top: 0.15rem;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  line-height: 1.35;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-stats {
+  min-width: 0;
+  color: var(--text-secondary);
+}
+
+.file-item:hover {
+  background: var(--card-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* 大图标视图 */
+/* 旧实现用 JS 测量（alignIconViewRows）把 --icon-row/--name-row/--description-row/
+   --path-row/--meta-row/--actions-row 写到卡片上；现在改成纯 CSS：.file-list 是网格，
+   每张卡片跨 5 行（图标/名称/描述/路径/元信息）并用单层 subgrid 复用这 5 条行线，
+   同一视觉行的卡片自动按该行最高者对齐，无需任何测量；操作区仍是绝对定位的悬浮
+   按钮组，不占行。 */
+.container.view-icon .file-list {
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  grid-auto-rows: auto;
+  align-items: stretch;
+}
+
+.container.view-icon .file-item {
+  display: grid;
+  grid-row: span 5;
+  grid-template-rows: subgrid;
+  row-gap: 0.25rem;
+  min-height: 0;
+  padding: 1rem 0.9rem 0.85rem;
+  text-align: center;
+  overflow: visible;
+  justify-items: center;
+}
+
+/* 行容器不再生成盒子：名称/描述/路径直接落在卡片 subgrid 的行线上，
+   这样它们各自与同一视觉行的其它卡片按最高者对齐。 */
+.container.view-icon .item-main,
+.container.view-icon .item-copy {
+  display: contents;
+}
+
+/* 旧规则对 .item-main 整体做 translateY(-2px)，取消盒子后改为平移各区块。 */
+.container.view-icon
+  .file-item:is(:hover, :focus-within)
+  :is(.item-icon, .item-name, .item-description, .item-path, .item-stats) {
+  transform: translateY(-2px);
+}
+
+.container.view-icon
+  :is(.item-icon, .item-name, .item-description, .item-path, .item-stats) {
+  transition: transform 0.22s ease;
+}
+
+/* 五个区块各占一条共享行线：1 图标 2 名称 3 描述 4 路径（仅搜索态渲染）5 元信息。
+   显式指定行号，路径缺失时元信息仍留在第 5 行。 */
+.container.view-icon .item-name {
+  grid-row: 2;
+  margin-top: 0.3rem;
+  align-self: start;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.95rem;
+  max-width: 100%;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.container.view-icon .item-name-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.container.view-icon .version-badge {
+  display: inline-flex;
+}
+
+.container.view-icon .hash-row {
+  display: none;
+}
+
+.container.view-icon .item-description {
+  grid-row: 3;
+  display: -webkit-box;
+  align-self: start;
+  max-width: 100%;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.container.view-icon .item-path {
+  grid-row: 4;
+}
+
+.container.view-icon .item-stats {
+  grid-row: 5;
+  margin-top: 0.3rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  font-size: 0.76rem;
+  align-self: center;
+}
+
+.container.view-icon .meta-info {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 与旧实现一致：图标视图的操作区也在卡片内正常流布局（旧 CSS 第 786 行），
+   行对齐交给网格；不要改成悬浮覆盖层——不可见的覆盖层会吞掉卡片点击。 */
+.container.view-icon .item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+}
+
+/* 详细列表视图 */
+.container.view-detail .file-item {
+  padding: 0.72rem 0.85rem;
+}
+
+.container.view-detail .item-main {
+  grid-template-columns: auto minmax(0, 1fr) minmax(12rem, auto) auto;
+  align-items: center;
+  gap: 0.85rem;
+  transition: transform 0.22s ease;
+}
+
+.container.view-detail .file-item:hover .item-main,
+.container.view-detail .file-item:focus-within .item-main {
+  transform: translateY(-1px);
+}
+
+.container.view-detail .item-icon {
+  align-self: start;
+}
+
+.container.view-detail .item-name {
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.container.view-detail .item-name-text {
+  white-space: nowrap;
+}
+
+.container.view-detail .item-description {
+  max-width: 100%;
+  margin-top: 0.15rem;
+  white-space: nowrap;
+}
+
+.container.view-detail .item-stats {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.container.view-detail .item-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  transition: transform 0.18s ease;
+}
+
+.container.view-detail .file-item:hover .item-actions,
+.container.view-detail .file-item:focus-within .item-actions {
+  transform: scale(1.01);
+}
+
+.meta-info {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* 哈希行 */
+.hash-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.55rem 0 0 3.05rem;
+  font-size: 0.74rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.version-badge {
+  font-size: 0.7em;
+  background: var(--primary);
+  color: white;
+  padding: 0.15em 0.5em;
+  border-radius: 20px;
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+/* 图标颜色 */
+.item-icon {
+  line-height: 1;
+}
+/* 优化：使用彩色圆角背景与白色图标，提高可读性与层次感 */
+.item-icon {
+  line-height: 1;
+}
+.item-icon i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  color: #fff;
+  background: transparent;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.22s ease;
+}
+.item-icon {
+  position: relative; /* for badge positioning */
+}
+.container.view-detail .item-icon i {
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+}
+
+/* 徽章样式（仅悬停显示） */
+.icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #111;
+  font-weight: 700;
+  padding: 0.08rem 0.36rem;
+  border-radius: 10px;
+  font-size: 0.62rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transform: translateY(6px) scale(0.9);
+  transition:
+    opacity 0.18s ease,
+    transform 0.2s cubic-bezier(0.2, 0.9, 0.2, 1);
+  pointer-events: none;
+}
+
+/* 悬停触发动效：图标轻微上浮，徽章显现 */
+.container.view-icon .file-item:hover .item-icon i,
+.container.view-icon .file-item:focus-within .item-icon i,
+.container.view-detail .file-item:hover .item-icon i,
+.container.view-detail .file-item:focus-within .item-icon i {
+  transform: scale(1.04);
+}
+.file-item:hover .icon-badge {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.item-icon.folder i {
+  background: linear-gradient(135deg, var(--color-folder), rgba(0, 0, 0, 0.06));
+}
+.item-icon.image i {
+  background: linear-gradient(135deg, var(--color-image), rgba(0, 0, 0, 0.06));
+}
+.item-icon.video i {
+  background: linear-gradient(135deg, var(--color-video), rgba(0, 0, 0, 0.06));
+}
+.item-icon.audio i {
+  background: linear-gradient(135deg, var(--color-audio), rgba(0, 0, 0, 0.06));
+}
+.item-icon.document i {
+  background: linear-gradient(
+    135deg,
+    var(--color-document),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.archive i {
+  background: linear-gradient(
+    135deg,
+    var(--color-archive),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.code i {
+  background: linear-gradient(135deg, var(--color-code), rgba(0, 0, 0, 0.06));
+}
+.item-icon.font i {
+  background: linear-gradient(135deg, var(--color-font), rgba(0, 0, 0, 0.06));
+}
+.item-icon.executable i {
+  background: linear-gradient(
+    135deg,
+    var(--color-executable),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.disk-image i {
+  background: linear-gradient(
+    135deg,
+    var(--color-disk-image),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+.item-icon.unknown i {
+  background: linear-gradient(
+    135deg,
+    var(--color-unknown),
+    rgba(0, 0, 0, 0.06)
+  );
+}
+
+/* 操作按钮 */
+.item-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1rem;
+    margin: 1rem auto;
+  }
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+  .toolbar,
+  .search-box {
+    width: 100%;
+  }
+  .toolbar {
+    justify-content: flex-start;
+  }
+  .container.view-icon .file-list {
+    grid-template-columns: 1fr;
+  }
+  .container.view-icon .item-actions {
+    opacity: 1;
+    transform: translate(6%, -8%) scale(1);
+  }
+  .container.view-detail .item-main {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.65rem;
+  }
+  .container.view-detail .item-stats {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    text-align: left;
+    white-space: normal;
+  }
+  .container.view-detail .item-actions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .container.view-detail .item-name,
+  .container.view-detail .item-description {
+    width: 100%;
+  }
+  .hash-row {
+    margin-left: 0;
+  }
+}
+
+/* 刷新按钮样式 */
+.refresh-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: var(--card-hover-bg);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-btn i {
+  transition: transform 0.3s;
+}
+
+.refresh-btn:hover:not(:disabled) i {
+  transform: rotate(180deg);
+}

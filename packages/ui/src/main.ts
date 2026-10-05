@@ -1,3 +1,10 @@
+// 样式按层叠顺序引入：token → 基础件 → 应用外壳/列表 → 预览 → 第三方覆盖。
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/browse.css';
+import './styles/preview.css';
+import './styles/vendor.css';
+
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 

@@ -87,46 +87,8 @@ watch(
 </template>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 11000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgb(0 0 0 / 45%);
-}
-
-.modal-content {
-  width: min(560px, calc(100vw - 32px));
-  max-height: 80vh;
-  overflow: auto;
-  background: var(--card-bg, #fff);
-  border-radius: 18px;
-  box-shadow: 0 20px 60px rgb(0 0 0 / 25%);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgb(0 0 0 / 8%);
-  font-weight: 600;
-}
-
-.modal-close-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.modal-body {
-  padding: 20px;
-}
-
+/* 弹窗外壳（.modal-overlay/.modal-content/.modal-header/.modal-close-btn/.modal-body）
+   与旧站共用全局样式，见 src/styles/preview.css；这里只保留旧 CSS 没有的确认内容样式。 */
 .confirm-message {
   font-size: 1.05rem;
   line-height: 1.6;

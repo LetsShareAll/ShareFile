@@ -192,10 +192,3 @@ function navigate(path: string): void {
     </PreviewModal>
   </div>
 </template>
-
-<style scoped>
-.refresh-btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-</style>
