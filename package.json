@@ -25,9 +25,10 @@
     "test:ui": "pnpm --filter @share-file/ui run test",
     "test:contract": "pnpm exec node scripts/run-python.mjs -m unittest discover -s tests/contract",
     "verify": "pnpm run check && pnpm run lint && pnpm run format:check && pnpm run test:contract",
-    "generate": "pnpm run generate-info && pnpm run generate-share-file",
+    "generate": "pnpm run generate-info && pnpm run generate-share-file && pnpm run generate-manifest",
     "generate-info": "pnpm exec node scripts/run-python.mjs packages/cli/generate-info.py public",
-    "generate-share-file": "pnpm exec node scripts/run-python.mjs packages/cli/generate-share-file.py public public/assets/data/share-file.json"
+    "generate-share-file": "pnpm exec node scripts/run-python.mjs packages/cli/generate-share-file.py public public/assets/data/share-file.json",
+    "generate-manifest": "pnpm exec node scripts/run-python.mjs packages/cli/generate-files-manifest.py public/assets/data public/assets/data/files.jsonl"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
