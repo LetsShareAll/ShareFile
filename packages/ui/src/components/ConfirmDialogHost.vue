@@ -1,0 +1,145 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
+
+import {
+  resolveConfirmDialog,
+  useConfirmDialogState,
+} from '../composables/useConfirmDialog';
+import { sanitizeHtml } from '../platform/sanitize';
+
+const state = useConfirmDialogState();
+
+const sanitizedHtml = computed(() =>
+  state.options?.html ? sanitizeHtml(state.options.html) : '',
+);
+
+function close(confirmed: boolean): void {
+  resolveConfirmDialog(confirmed);
+}
+
+function onKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Escape' && state.open) close(false);
+}
+
+onMounted(() => window.addEventListener('keydown', onKeydown));
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
+
+watch(
+  () => state.open,
+  open => {
+    document.body.style.overflow = open ? 'hidden' : '';
+  },
+);
+</script>
+
+<template>
+  <div
+    v-if="state.open && state.options"
+    class="modal-overlay show"
+    @click.self="close(false)"
+  >
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <span>{{ state.options.title }}</span>
+        <button
+          type="button"
+          class="modal-close-btn"
+          aria-label="关闭"
+          @click="close(false)"
+        >
+          <i class="fas fa-times" aria-hidden="true" />
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <!-- eslint-disable-next-line vue/no-v-html -- 内容已由 sanitizeHtml 白名单消毒 -->
+        <div
+          v-if="sanitizedHtml"
+          class="confirm-message"
+          v-html="sanitizedHtml"
+        />
+        <p v-else-if="state.options.message" class="confirm-message">
+          {{ state.options.message }}
+        </p>
+
+        <div class="confirm-buttons">
+          <button type="button" class="action-btn" @click="close(false)">
+            {{ state.options.cancelText ?? '取消' }}
+          </button>
+          <button
+            type="button"
+            class="action-btn confirm-primary"
+            @click="close(true)"
+          >
+            {{ state.options.confirmText ?? '继续' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 45%);
+}
+
+.modal-content {
+  width: min(560px, calc(100vw - 32px));
+  max-height: 80vh;
+  overflow: auto;
+  background: var(--card-bg, #fff);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 25%);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgb(0 0 0 / 8%);
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.confirm-message {
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.confirm-primary {
+  background: var(--primary, #0071e3);
+  color: #fff;
+  font-weight: 600;
+}
+
+.confirm-primary:hover {
+  opacity: 0.8;
+}
+</style>

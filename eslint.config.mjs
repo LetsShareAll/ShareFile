@@ -98,7 +98,11 @@ export default defineConfig([
       '@typescript-eslint': typescriptEslint,
     },
 
-    rules: sharedRules,
+    rules: {
+      ...sharedRules,
+      // 所有 v-html 内容都经 src/platform/sanitize.ts 白名单消毒后再渲染。
+      'vue/no-v-html': 'off',
+    },
   },
 
   {
