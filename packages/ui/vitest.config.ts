@@ -10,6 +10,7 @@ export default defineConfig({
   },
   test: {
     environment: 'happy-dom',
-    include: ['tests/**/*.spec.ts'],
+    // 只跑单元测试；tests/e2e/** 归 Playwright
+    include: ['tests/*.spec.ts'],
   },
 });
