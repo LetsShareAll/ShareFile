@@ -103,6 +103,12 @@ src/
 - **元信息策略**：文件名解析出的标题与艺术家**立即**上屏；标签/封面/歌词用 `Range: bytes=0-524287` **只取文件头 512 KB** 解析（FLAC 的 STREAMINFO 与 Vorbis 注释在文件头），失败再回退整文件流。背景：目录里的音频是 38–56 MB 的 FLAC，自有 CDN 实测约 188 KB/s，整文件解析要几分钟。
 - **工程例外**：`stores/music.ts`（414 行）与 `playerRuntime.ts`（285 行）是全仓库唯一超过 220 行的前端文件——24 个冻结成员 + 仓库强制的空行风格无法在 220 行内表达，拆成 6–8 个文件会明显降低可读性，故按例外接受。
 
+## 受限内容与准入清单（前端侧）
+
+- **准入清单**：外挂索引合并时按 `mount_source.allow_paths` / `deny_paths` 过滤（`domain/external/pathRules.ts` 的纯函数，语义与构建期 `packages/cli/lib/mount_filter.py` 逐字一致：外挂索引自身坐标系的路径前缀、deny 优先、`/` 视为整源）。被拒节点连子树一起不进列表与搜索。
+- **受限标记**：`restricted: true` 的节点在卡片与详情列表显示「受限」标识（复用 `RestrictedIndicator.vue`），`NodeActions`（直链 / 页面链接 / curl）与预览页脚的三个复制动作**禁用**并带说明，当前目录受限时目录分享按钮同样禁用；**预览与播放不受限**（内容仍可看，只是不提供分享入口）。
+- **诚实前提**：静态站点无法阻止直接访问 URL，`restricted` 不是安全边界，只是"不主动提供分享入口 + 明确提示"。真正的访问控制要在托管层做。
+
 ## 安全约定
 
 - **所有 `v-html` 必须经 `platform/sanitize`**：确认弹窗走 `sanitizeConfirmHtml`（严格白名单），Markdown 走 `loadDomPurify()` + 更宽的标题/表格标签集。DOMPurify 统一在 `platform/sanitize` 里**动态加载**，避免进入首屏。

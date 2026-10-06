@@ -125,6 +125,37 @@ https://file.lssa.fun/?path=/location/to/file
 
 UI 会根据这些字段给面包屑、列表项和链接标识外部来源。
 
+### 准入清单与受限标记
+
+挂载点的 `._info.json` 里可以再加两个字段，用来决定**外挂源的哪些路径根本不进站点**：
+
+```json
+{
+  "mount_source": {
+    "provider": "github",
+    "repository": "owner/repo",
+    "branch": "main",
+    "sub_path": "/public",
+    "allow_paths": ["/public/softwares"],
+    "deny_paths": ["/public/softwares/internal"]
+  }
+}
+```
+
+匹配语义（**构建期与前端运行时共用同一套**，两侧都有纯函数与测试锁定）：
+
+- 匹配对象是**外挂索引自身坐标系里的路径**，含 `sub_path` 前缀——上面例子里要写 `/public/softwares/...` 而不是 `/softwares/...`；挂载点在本地树里的位置不参与匹配。
+- 命中判定是路径前缀：`path == rule` 或 `path.startswith(rule + "/")`，因此命中即覆盖整棵子树（`/a` 命中 `/a/b` 但不命中 `/ab`）。
+- `deny_paths` 优先于 `allow_paths`；声明了非空 `allow_paths` 时，未命中的路径一律拒绝；两个清单都为空表示不限制。
+- 元素会先规范化（补前导 `/`、去尾斜杠、忽略空串与非字符串、去重）；**`/` 视为整个源**（`deny_paths: ["/"]` = 该源什么都不放行）。
+- 生效位置：构建期 `files.jsonl` 直接不含被拒条目；前端合并外挂索引时同样过滤，因此**索引与清单一致**。
+
+节点上还可以加 `restricted: true`（放在目录或文件的 `._info.json` 里，会被 CLI 透传进 `share-file.json` / `share-file.cdn.json`）：
+
+- 前端对它加「受限」标识，并**禁用三个复制动作**（复制直链 / 页面链接 / curl），目录级分享按钮同样禁用。
+- **预览与播放不受限**——内容仍然可以看，只是站点不提供分享入口。
+- ⚠️ **这不是安全边界**：本站是静态站点，任何人拿到 URL 都能直接访问。`restricted` 只是"不主动提供分享入口 + 明确提示"，真正的访问控制必须由托管层（如私有仓库 / 鉴权代理）承担。
+
 ## 包边界
 
 | 包               | 边界                                         |
