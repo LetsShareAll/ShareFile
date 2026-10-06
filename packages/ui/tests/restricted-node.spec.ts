@@ -4,6 +4,8 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import { describe, expect, it } from 'vitest';
 
 import { RESTRICTED_NOTICE, isRestrictedNode } from '@/domain/share-file';
+import MusicPanel from '@/features/music/MusicPanel.vue';
+import { useMusicStore } from '@/stores/music';
 import type { ShareFile, ShareNode } from '@/domain/share-file';
 import FileListDetail from '@/features/browse/components/FileListDetail.vue';
 import FileListIcon from '@/features/browse/components/FileListIcon.vue';
@@ -232,5 +234,43 @@ describe('BrowseView 的目录分享入口', () => {
 
     expect(shareButton.attributes('disabled')).toBeUndefined();
     expect(shareButton.attributes('title')).toBe('分享当前目录');
+  });
+});
+
+describe('受限曲目在音乐播放器面板', () => {
+  it('三个分享动作禁用并带诚实提示，播放本身不受影响', () => {
+    const pinia = createPinia();
+
+    setActivePinia(pinia);
+
+    const music = useMusicStore();
+
+    music.queue = [
+      {
+        id: 'a.mp3',
+        name: 'a.mp3',
+        path: '/music/a.mp3',
+        url: 'https://cdn.example.com/a.mp3',
+        restricted: true,
+      },
+    ];
+    music.currentIndex = 0;
+    music.expanded = true;
+
+    const wrapper = mount(MusicPanel, {
+      global: { plugins: [pinia] },
+    });
+    const buttons = wrapper.findAll('.music-panel-share-btn');
+
+    expect(buttons).toHaveLength(3);
+    buttons.forEach(button => {
+      expect(button.attributes('disabled')).toBeDefined();
+      expect(button.attributes('title')).toContain('无法阻止直接访问');
+    });
+    // 播放/暂停仍然可用：受限只挡分享入口，不挡使用。
+    expect(
+      wrapper.find('.music-panel-btn[aria-label="暂停"]').exists() ||
+        wrapper.find('.music-panel-btn[aria-label="播放"]').exists(),
+    ).toBe(true);
   });
 });

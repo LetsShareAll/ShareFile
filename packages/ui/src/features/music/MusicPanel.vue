@@ -7,6 +7,7 @@ import {
   getNodePageUrl,
 } from '../../domain/links';
 import type { ShareNode } from '../../domain/share-file';
+import { RESTRICTED_NOTICE } from '../../domain/share-file/restricted';
 import { copyText } from '../../platform/clipboard';
 import { useMusicStore } from '../../stores/music';
 import type { MusicHistoryEntry, MusicTrack } from './track';
@@ -27,6 +28,11 @@ const title = computed(
 const artist = computed(() => music.metadata.artist || '未知艺术家');
 const artworkAlt = computed(() => `${title.value} 封面`);
 const toggleLabel = computed(() => (music.isPlaying ? '暂停' : '播放'));
+// 受限曲目不提供分享入口（仍可播放：静态站点拦不住直接访问，这不是安全边界）。
+const restricted = computed(() => music.currentTrack?.restricted === true);
+const shareTitle = computed(() =>
+  restricted.value ? RESTRICTED_NOTICE : undefined,
+);
 const statusText = computed(() => (music.isPlaying ? '正在播放' : '已暂停'));
 
 /** 分享目标与列表卡片 / 预览页脚同义：绝对页面深链、直链、curl 命令。 */
@@ -171,8 +177,9 @@ function move(from: number, to: number): void {
               class="music-panel-share-btn"
               :class="{ 'is-copied': copied === 'page' }"
               type="button"
+              :disabled="restricted"
+              :title="shareTitle ?? '复制页面链接'"
               aria-label="复制页面链接"
-              title="复制页面链接"
               @click="copyShare('page')"
             >
               <i class="fas fa-link" aria-hidden="true" />
@@ -182,8 +189,9 @@ function move(from: number, to: number): void {
               class="music-panel-share-btn"
               :class="{ 'is-copied': copied === 'direct' }"
               type="button"
+              :disabled="restricted"
+              :title="shareTitle ?? '复制直链'"
               aria-label="复制直链"
-              title="复制直链"
               @click="copyShare('direct')"
             >
               <i class="fas fa-copy" aria-hidden="true" />
@@ -193,8 +201,9 @@ function move(from: number, to: number): void {
               class="music-panel-share-btn"
               :class="{ 'is-copied': copied === 'curl' }"
               type="button"
+              :disabled="restricted"
+              :title="shareTitle ?? '复制 curl 命令'"
               aria-label="复制 curl 命令"
-              title="复制 curl 命令"
               @click="copyShare('curl')"
             >
               <i class="fas fa-terminal" aria-hidden="true" />

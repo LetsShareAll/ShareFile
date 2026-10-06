@@ -1,3 +1,10 @@
+import { createHistoryEntry, toMusicTrack } from '@/features/music/persistence';
+import {
+  buildQueueFromDirectory,
+  parseMusicState,
+  serializeMusicState,
+} from '@/features/music/track';
+import type { ShareNode } from '@/domain/share-file';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -340,5 +347,49 @@ describe('useTrackInfo 的限流与去重', () => {
 
     await expect(Promise.all(tasks)).resolves.toHaveLength(4);
     expect(aborted).toHaveLength(2);
+  });
+});
+
+describe('受限曲目（restricted）在队列与历史里的传递', () => {
+  it('buildQueueFromDirectory 保留 restricted，非受限曲目不落该字段', () => {
+    const nodes = [
+      { id: 'a.mp3', name: 'a.mp3', type: 'file', restricted: true },
+      { id: 'b.mp3', name: 'b.mp3', type: 'file' },
+    ] as unknown as ShareNode[];
+    const queue = buildQueueFromDirectory(
+      nodes,
+      id => `/${id}`,
+      node => node.url ?? '',
+    );
+
+    expect(queue[0]?.restricted).toBe(true);
+    expect(queue[1]).toHaveProperty('restricted', undefined);
+  });
+
+  it('历史条目与队列持久化都保留 restricted（回放/刷新后不再给出分享入口）', () => {
+    const track = {
+      id: 'a.mp3',
+      name: 'a.mp3',
+      path: '/a.mp3',
+      url: 'https://cdn.example.com/a.mp3',
+      restricted: true,
+    };
+
+    expect(createHistoryEntry(track, new Date(0)).restricted).toBe(true);
+    expect(
+      toMusicTrack(createHistoryEntry(track, new Date(0))).restricted,
+    ).toBe(true);
+
+    const restored = parseMusicState(
+      serializeMusicState({
+        queue: [track],
+        currentIndex: 0,
+        mode: 'sequence',
+        volume: 0.8,
+        currentTime: 0,
+      }),
+    );
+
+    expect(restored?.queue[0]?.restricted).toBe(true);
   });
 });

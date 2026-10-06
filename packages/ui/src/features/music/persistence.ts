@@ -36,6 +36,7 @@ export function createHistoryEntry(
     path: track.path,
     url: track.url,
     playedAt: playedAt.toISOString(),
+    restricted: track.restricted === true ? true : undefined,
   };
 }
 
@@ -46,6 +47,8 @@ export function toMusicTrack(entry: MusicHistoryEntry): MusicTrack {
     name: entry.name,
     path: entry.path,
     url: entry.url,
+    // 受限标记随历史回灌，避免从历史播放时重新出现分享入口。
+    restricted: entry.restricted === true ? true : undefined,
   };
 }
 

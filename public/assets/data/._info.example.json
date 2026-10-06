@@ -15,8 +15,9 @@
     },
     "src": {
       "type": "folder",
-      "description": "源代码目录",
-      "hidden": false
+      "description": "源代码目录（示例：受限内容不提供分享入口，但静态站点拦不住直接访问 URL）",
+      "hidden": false,
+      "restricted": true
     },
     "held-file.zip": {
       "description": "完全锁定：所有自动更新均被禁止",

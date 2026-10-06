@@ -10,6 +10,8 @@ export interface MusicTrack {
   url: string;
   size?: number;
   updated_at?: string;
+  /** 受限内容：不在播放器面板提供分享入口（`restricted` 不是安全边界，见 restricted.ts）。 */
+  restricted?: boolean;
 }
 
 export interface MusicHistoryEntry {
@@ -18,6 +20,8 @@ export interface MusicHistoryEntry {
   path: string;
   url: string;
   playedAt: string;
+  /** 受限内容标记随历史保留，回放时不至于重新给出分享入口。 */
+  restricted?: boolean;
 }
 
 /** 持久化的播放快照：队列、下标、模式、音量、进度。 */
@@ -56,6 +60,7 @@ export function buildQueueFromDirectory(
     url: getUrl(node),
     size: node.size,
     updated_at: node.updated_at,
+    restricted: node.restricted === true ? true : undefined,
   }));
 }
 
@@ -178,6 +183,7 @@ function toTrack(value: unknown): MusicTrack | null {
     ...(typeof record.updated_at === 'string' && {
       updated_at: record.updated_at,
     }),
+    ...(record.restricted === true && { restricted: true }),
   };
 }
 
