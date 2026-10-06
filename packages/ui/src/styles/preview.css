@@ -633,3 +633,235 @@
     width: 100%;
   }
 }
+
+/* ==========================================================================
+   预览内操作区 / 大文件护栏 / 页脚元信息
+   ========================================================================== */
+
+.modal-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal-header-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.preview-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  background: var(--button-bg);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+
+.preview-icon-btn:hover {
+  background: var(--button-hover-bg);
+}
+
+.preview-icon-btn i {
+  pointer-events: none;
+}
+
+.preview-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  background: var(--button-bg);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.preview-action-btn:hover {
+  background: var(--button-hover-bg);
+}
+
+.preview-action-btn i {
+  pointer-events: none;
+}
+
+/* 大文件截断提示：内容区顶部的一条窄提示 */
+.preview-truncation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  background: var(--button-active-bg);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.preview-truncation-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.preview-truncation-text i {
+  color: var(--primary);
+}
+
+.preview-truncation-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.text-preview > .preview-truncation,
+.markdown-preview > .preview-truncation {
+  margin-bottom: 1rem;
+}
+
+.code-preview .preview-truncation {
+  border: 0;
+  border-bottom: 1px solid var(--card-border);
+  border-radius: 0;
+}
+
+/* 页脚：元信息 + 复制操作 */
+.preview-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.9rem;
+  border-top: 1px solid var(--card-border);
+  padding: 0.6rem 1.5rem;
+  background: var(--button-bg);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.preview-footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.preview-meta-item,
+.preview-meta-sep {
+  white-space: nowrap;
+}
+
+.preview-meta-sep {
+  opacity: 0.6;
+}
+
+.preview-meta-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.preview-hash-toggle {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.15rem 0.3rem;
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.preview-hash-toggle:hover {
+  text-decoration: underline;
+}
+
+.preview-hash-list {
+  display: grid;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.preview-hash-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.preview-hash-label {
+  flex-shrink: 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.preview-hash-value {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-family: 'Sarasa Mono SC Nerd', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.preview-nav-hint {
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+.preview-footer-newtab {
+  display: none;
+}
+
+/* 窄屏：标题栏只留下载，新标签打开收进页脚；元信息只留大小与时间 */
+@media (max-width: 640px) {
+  .preview-newtab-btn,
+  .preview-nav-hint {
+    display: none;
+  }
+  .preview-footer-newtab {
+    display: inline-flex;
+  }
+  .preview-meta-source {
+    display: none;
+  }
+  .modal-header {
+    padding: 0.85rem 1rem;
+  }
+  .modal-body {
+    padding: 1rem;
+  }
+  .preview-footer {
+    padding: 0.6rem 1rem;
+  }
+}

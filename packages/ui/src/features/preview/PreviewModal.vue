@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { ref, watch, computed } from 'vue';
+
+import { useLibraryStore } from '../../stores/library';
+import { usePreviewStore } from '../../stores/preview';
 import {
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  onUpdated,
-  ref,
-  watch,
-} from 'vue';
-
+  getAbsolutePageUrl,
+  getPreviewFileUrl,
+  openPreviewInNewTab,
+  triggerPreviewDownload,
+} from './actions';
+import { isPlayerContext, trapFocus } from './modalKeyboard';
+import PreviewFooter from './PreviewFooter.vue';
 import PreviewLoading from './renderers/PreviewLoading.vue';
-
-const SHOW_DELAY_MS = 10;
-const HIDE_TRANSITION_MS = 300;
+import { useModalShell } from './useModalShell';
 
 const props = withDefaults(
   defineProps<{ visible: boolean; title: string; loading?: boolean }>(),
@@ -20,119 +21,77 @@ const props = withDefaults(
 
 const emit = defineEmits<{ close: [] }>();
 
-const rendered = ref(false);
-const shown = ref(false);
-const bodyEl = ref<HTMLElement | null>(null);
-const hasCodeContent = ref(false);
+const preview = usePreviewStore();
+const library = useLibraryStore();
 
-let showTimer: number | undefined;
-let hideTimer: number | undefined;
-let previousOverflow: string | null = null;
-let bodyObserver: MutationObserver | null = null;
+const contentEl = ref<HTMLElement | null>(null);
+const { rendered, shown, bodyEl, hasCodeContent } = useModalShell({
+  visible: () => props.visible,
+  onKeydown: handleKeydown,
+  getFocusTarget: () => contentEl.value,
+});
 
-function clearTimers(): void {
-  if (showTimer !== undefined) {
-    window.clearTimeout(showTimer);
-    showTimer = undefined;
-  }
+const fileUrl = computed(() =>
+  preview.node ? getPreviewFileUrl(preview.node) : '',
+);
 
-  if (hideTimer !== undefined) {
-    window.clearTimeout(hideTimer);
-    hideTimer = undefined;
-  }
-}
+const pageUrl = computed(() =>
+  preview.node
+    ? getAbsolutePageUrl(library.getNodePathById(preview.node.id))
+    : '',
+);
 
-function syncCodeContent(): void {
-  hasCodeContent.value =
-    bodyEl.value?.firstElementChild?.classList.contains('code-preview') ??
-    false;
-}
+let deepLinkHandled = false;
 
-/**
- * 插槽内容自身从加载态切换到 `.code-preview` 时弹窗不会重新渲染，
- * 因此监听 body 子节点变化来同步 `modal-body-code`（沿用旧弹窗行为）。
- */
-function observeBody(): void {
-  const body = bodyEl.value;
-
-  if (!body) return;
-
-  bodyObserver?.disconnect();
-  bodyObserver = new MutationObserver(syncCodeContent);
-  bodyObserver.observe(body, { childList: true, subtree: true });
-}
-
-function stopObservingBody(): void {
-  bodyObserver?.disconnect();
-  bodyObserver = null;
-}
-
-function lockScroll(): void {
-  previousOverflow = document.body.style.overflow;
-  document.body.style.overflow = 'hidden';
-}
-
-function unlockScroll(): void {
-  if (previousOverflow === null) return;
-
-  document.body.style.overflow = previousOverflow;
-  previousOverflow = null;
-}
-
-function onKeydown(event: KeyboardEvent): void {
-  if (event.key === 'Escape') emit('close');
-}
-
-async function open(): Promise<void> {
-  clearTimers();
-  rendered.value = true;
-  lockScroll();
-  window.addEventListener('keydown', onKeydown);
-  await nextTick();
-  observeBody();
-  showTimer = window.setTimeout(() => {
-    shown.value = true;
-    showTimer = undefined;
-    syncCodeContent();
-  }, SHOW_DELAY_MS);
-}
-
-function close(): void {
-  clearTimers();
-  stopObservingBody();
-  shown.value = false;
-  unlockScroll();
-  window.removeEventListener('keydown', onKeydown);
-  hideTimer = window.setTimeout(() => {
-    rendered.value = false;
-    hideTimer = undefined;
-  }, HIDE_TRANSITION_MS);
-}
-
-function handleVisibleChange(value: boolean): void {
-  if (value) {
-    void open();
+function handleKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Escape') {
+    emit('close');
 
     return;
   }
 
-  close();
+  if (event.key === 'Tab') {
+    trapFocus(contentEl.value, event);
+
+    return;
+  }
+
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+  // 播放器聚焦或全屏时 ←/→ 归播放器（videoControls 已处理），弹窗不翻页。
+  if (isPlayerContext(event.target)) return;
+
+  event.preventDefault();
+
+  if (event.key === 'ArrowLeft') preview.goPrev();
+  else preview.goNext();
 }
 
-watch(() => props.visible, handleVisibleChange);
+function download(): void {
+  triggerPreviewDownload(fileUrl.value, preview.node?.name ?? props.title);
+}
 
-onMounted(() => {
-  if (props.visible) void open();
-});
+/** 外挂节点的挂载点路径：mount_point 存的是挂载点节点 ID。 */
+const mountPath = computed(() =>
+  preview.node?.source === 'external'
+    ? library.getNodePathById(preview.node.mount_point ?? '')
+    : '',
+);
 
-onUpdated(syncCodeContent);
+/**
+ * 深链 `?preview=`：索引（含外挂源）合并完成后再解析目标，
+ * 目标不在索引里时由 store 置错误态，弹窗内可关闭。
+ */
+watch(
+  () => library.loading || library.externalLoading,
+  busy => {
+    if (busy || deepLinkHandled) return;
 
-onBeforeUnmount(() => {
-  clearTimers();
-  stopObservingBody();
-  unlockScroll();
-  window.removeEventListener('keydown', onKeydown);
-});
+    deepLinkHandled = true;
+    preview.openFromLocation();
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -142,14 +101,43 @@ onBeforeUnmount(() => {
     :class="{ show: shown }"
     role="dialog"
     aria-modal="true"
+    aria-labelledby="preview-modal-title"
     @click.self="emit('close')"
   >
-    <div class="modal-content">
+    <div ref="contentEl" class="modal-content" tabindex="-1">
       <div class="modal-header">
-        <span>{{ title }}</span>
-        <button class="modal-close-btn" type="button" @click="emit('close')">
-          <i class="fas fa-times" />
-        </button>
+        <span id="preview-modal-title" class="modal-title">{{ title }}</span>
+        <div class="modal-header-actions">
+          <button
+            v-if="fileUrl"
+            class="preview-icon-btn"
+            type="button"
+            title="下载文件"
+            aria-label="下载文件"
+            @click="download"
+          >
+            <i class="fas fa-download" />
+          </button>
+          <button
+            v-if="fileUrl"
+            class="preview-icon-btn preview-newtab-btn"
+            type="button"
+            title="新标签打开"
+            aria-label="新标签打开"
+            @click="openPreviewInNewTab(fileUrl)"
+          >
+            <i class="fas fa-up-right-from-square" />
+          </button>
+          <button
+            class="modal-close-btn"
+            type="button"
+            title="关闭预览"
+            aria-label="关闭预览"
+            @click="emit('close')"
+          >
+            <i class="fas fa-times" />
+          </button>
+        </div>
       </div>
       <div
         ref="bodyEl"
@@ -159,6 +147,14 @@ onBeforeUnmount(() => {
         <PreviewLoading v-if="loading" message="正在加载预览..." />
         <slot v-else />
       </div>
+      <PreviewFooter
+        v-if="!loading && preview.node"
+        :node="preview.node"
+        :file-url="fileUrl"
+        :page-url="pageUrl"
+        :mount-path="mountPath"
+        :can-navigate="preview.canGoPrev || preview.canGoNext"
+      />
     </div>
   </div>
 </template>
