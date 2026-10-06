@@ -1,7 +1,147 @@
 /* ==========================================================================
    跨组件共享的基础件（对应旧 index.css 第 431-433、622-656、792-818、820-834、
    1535-1545、1650-1693 行）。
+
+   液态玻璃（Liquid Glass）原语：配方只有一份——
+     surface 三档（--glass-surface[-subtle|-strong]）
+   + 模糊三档（--glass-blur[-subtle|-strong]）
+   + 内描边 --glass-stroke + 顶部高光 --glass-sheen
+   + 阴影三档（--shadow-card|floating|modal），圆角走 --radius-* 刻度。
+   分档（Apple 的用法：玻璃给悬浮层/控件层，内容卡只做轻表面）：
+     .glass          悬浮层：应用头、工具栏控件、搜索框
+     .glass--strong  弹窗/面板：预览弹窗、音乐面板
+     .glass--subtle  内容层：列表卡、预览区、代码容器（不加重度模糊）
+   三档互斥，勿叠加使用。
    ========================================================================== */
+
+/* ===== 悬浮层 / 控件层：真玻璃 ===== */
+.glass,
+header,
+.search-box,
+.view-switch,
+.theme-switch,
+.sort-control,
+.refresh-btn,
+.music-bar {
+  background-color: var(--glass-surface);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-stroke);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-floating);
+  /* 降级用不透明表面，按档位赋值，见文末 @supports / prefers-reduced-transparency */
+  --glass-solid: var(--glass-surface-solid);
+}
+
+/* ===== 弹窗 / 面板：强档（更实的底、更大模糊与阴影） ===== */
+.glass--strong,
+.modal-content,
+.music-panel-shell {
+  background-color: var(--glass-surface-strong);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  border: 1px solid var(--glass-stroke);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  --glass-solid: var(--glass-surface-strong-solid);
+}
+
+/* ===== 内容层：轻玻璃（subtle surface，不加重度模糊，省掉整屏卡片的 backdrop-filter） ===== */
+.glass--subtle,
+.search-panel,
+.file-item,
+.preview-section,
+.code-preview {
+  background-color: var(--glass-surface-subtle);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  --glass-solid: var(--glass-surface-subtle-solid);
+}
+
+/* ===== 卡片内小控件 / 通知条目（轻档模糊：单页可出现几十个，避免每屏几十次 20px 模糊） ===== */
+.action-btn,
+.notification {
+  background-color: var(--glass-surface);
+  background-image: var(--glass-sheen);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+  border: 1px solid var(--glass-stroke);
+  box-shadow: var(--shadow-card);
+  --glass-solid: var(--glass-surface-solid);
+}
+
+.action-btn {
+  border-radius: var(--radius-pill);
+}
+
+.notification {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-floating);
+}
+
+/* ===== 降级：不支持 backdrop-filter（Firefox 老版本、旧 WebView） =====
+   直接换不透明表面，玻璃的层次由描边 + 阴影保留。 */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .glass,
+  .glass--strong,
+  header,
+  .search-box,
+  .view-switch,
+  .theme-switch,
+  .sort-control,
+  .refresh-btn,
+  .music-bar,
+  .modal-content,
+  .music-panel-shell,
+  .action-btn,
+  .notification,
+  .glass--subtle,
+  .search-panel,
+  .file-item,
+  .preview-section,
+  .code-preview {
+    background-color: var(--glass-solid);
+  }
+}
+
+/* ===== 降级：系统开启「减少透明度」 ===== */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass--strong,
+  header,
+  .search-box,
+  .view-switch,
+  .theme-switch,
+  .sort-control,
+  .refresh-btn,
+  .music-bar,
+  .modal-content,
+  .music-panel-shell,
+  .action-btn,
+  .notification,
+  .glass--subtle,
+  .search-panel,
+  .file-item,
+  .preview-section,
+  .code-preview {
+    background-color: var(--glass-solid);
+    background-image: none;
+  }
+
+  /* 全屏遮罩与悬浮小件：直接关掉模糊（底纹本身已足够区分层级） */
+  .modal-overlay,
+  .music-panel,
+  .icon-badge,
+  .image-preview-toolbar {
+    backdrop-filter: var(--glass-blur-off);
+    -webkit-backdrop-filter: var(--glass-blur-off);
+  }
+}
 
 .file-item.hidden-item {
   opacity: 0.5;
@@ -13,15 +153,15 @@
   align-items: center;
   gap: 0.35rem;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   padding: 0.22rem 0.46rem;
-  background: rgba(120, 120, 128, 0.1);
+  background: var(--button-bg);
   color: inherit;
   font: inherit;
   line-height: 1.4;
   transition:
-    background 0.15s ease,
-    color 0.15s ease;
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
 }
 
 .hash-value span {
@@ -36,26 +176,21 @@
 }
 
 .hash-value:hover {
-  background: rgba(120, 120, 128, 0.15);
+  background: var(--button-hover-bg);
 }
 
 .hash-value:active {
-  background: rgba(120, 120, 128, 0.25);
+  background: var(--button-active-bg);
 }
 
 .action-btn {
-  background: rgba(120, 120, 128, 0.12);
-  border: none;
-  border-radius: 8px;
   padding: 0.4rem 0.6rem;
   font-size: 0.9rem;
   cursor: pointer;
   color: var(--text);
   transition:
-    background 0.2s ease,
-    transform 0.15s ease;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+    background-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +198,7 @@
 }
 
 .action-btn:hover {
-  background: rgba(120, 120, 128, 0.22);
+  background-color: var(--glass-surface-strong);
   transform: scale(1.05);
 }
 
@@ -96,7 +231,7 @@
   color: var(--text-secondary);
 }
 .error {
-  color: #ff3b30;
+  color: var(--status-error-accent);
 }
 
 /* ===== 外部节点样式 ===== */
@@ -109,13 +244,14 @@
   justify-content: center;
   width: 1.15rem;
   height: 1.15rem;
-  border: 1px solid rgba(33, 150, 243, 0.22);
-  border-radius: 6px;
-  background: rgba(33, 150, 243, 0.1);
-  color: var(--external-accent, #2196f3);
+  border: 1px solid color-mix(in srgb, var(--external-accent) 22%, transparent);
+  border-radius: var(--radius-xs);
+  background: color-mix(in srgb, var(--external-accent) 10%, transparent);
+  color: var(--external-accent);
   font-size: 0.68rem;
   line-height: 1;
-  box-shadow: 0 1px 4px rgba(33, 150, 243, 0.08);
+  box-shadow: 0 1px 4px
+    color-mix(in srgb, var(--external-accent) 12%, transparent);
 }
 
 .container.view-icon .external-indicator {
@@ -127,7 +263,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  color: var(--external-accent, #2196f3) !important;
+  color: var(--external-accent) !important;
   position: relative;
 }
 
@@ -136,13 +272,4 @@
   opacity: 0.7;
 }
 
-/* 暗色主题下的外部节点样式 */
-[data-theme='dark'] {
-  --external-accent: #64b5f6;
-  --external-hover-bg: rgba(100, 181, 246, 0.08);
-}
-
-[data-theme='dark'] .external-indicator {
-  border-color: rgba(100, 181, 246, 0.26);
-  background: rgba(100, 181, 246, 0.14);
-}
+/* 暗色主题下外部节点的描边与底纹由 --external-accent 自动跟随，无需单独覆盖。 */

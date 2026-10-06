@@ -14,11 +14,8 @@
   gap: 0.75rem;
   padding: 0.5rem 0.9rem;
   padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--card-border);
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  /* 玻璃配方见 base.css 的 .glass 组；全宽固定条不参与圆角刻度 */
+  border-radius: 0;
   color: var(--text);
 }
 .music-bar-artwork,
@@ -100,8 +97,8 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition:
-    background 0.2s ease,
-    color 0.2s ease;
+    background var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
 }
 .music-bar-btn:hover,
 .music-panel-btn:hover,
@@ -153,7 +150,7 @@
 .music-bar-seek::-webkit-slider-runnable-track,
 .music-bar-volume input::-webkit-slider-runnable-track {
   height: 0.25rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: linear-gradient(
     to right,
     var(--primary) var(--music-progress, 0%),
@@ -183,8 +180,8 @@
   display: flex;
   padding: 1rem;
   background: var(--modal-overlay-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
 }
 .music-panel-shell {
   display: flex;
@@ -193,12 +190,7 @@
   max-height: 100%;
   margin: auto;
   overflow: hidden;
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  /* 玻璃配方（strong 档）见 base.css 的 .glass--strong 组 */
   color: var(--text);
 }
 .music-panel-header {
@@ -265,10 +257,10 @@
 }
 .music-panel-lyric-row {
   padding: 0.15rem 0.35rem;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   color: var(--text-secondary);
   font-size: 0.82rem;
-  transition: color 0.2s ease;
+  transition: color var(--duration-normal) var(--ease-standard);
 }
 .music-panel-lyric-row.is-active {
   color: var(--primary);
@@ -304,7 +296,7 @@
 .music-panel-text-btn {
   padding: 0.15rem 0.5rem;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--button-bg);
   color: var(--text-secondary);
   font-size: 0.75rem;

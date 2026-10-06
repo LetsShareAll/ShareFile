@@ -38,12 +38,12 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: var(--card-bg);
-  border-radius: 10px;
+  background-color: var(--glass-surface);
+  border-radius: var(--radius-sm);
 }
 
 .preview-load-target {
-  transition: opacity 0.18s ease;
+  transition: opacity var(--duration-fast) var(--ease-standard);
 }
 
 .preview-load-frame.is-loading > .preview-load-target {
@@ -64,12 +64,6 @@
 .preview-section {
   margin-top: 2.5rem;
   padding: 2rem;
-  background: var(--card-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--card-shadow);
 }
 .preview-section h2 {
   margin-bottom: 1.5rem;
@@ -121,7 +115,7 @@
 .rendered-markdown pre {
   background: var(--button-bg);
   padding: 1.2em;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   overflow-x: auto;
   line-height: 1.5;
   margin: 1.2em 0;
@@ -129,7 +123,7 @@
 .rendered-markdown code {
   background: var(--button-bg);
   padding: 0.2em 0.4em;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
 }
 .rendered-markdown pre code {
   background: transparent;
@@ -137,16 +131,14 @@
 }
 .rendered-markdown img {
   max-width: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   margin: 1em 0;
 }
 
-/* 代码预览 */
+/* 代码预览：内容层轻玻璃（surface 见 base.css），这里只收窄圆角 */
 .code-preview {
   min-width: 0;
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  background: rgba(120, 120, 128, 0.08);
+  border-radius: var(--radius-sm);
 }
 
 .code-preview-toolbar {
@@ -156,7 +148,7 @@
   gap: 0.75rem;
   padding: 0.65rem 0.8rem;
   border-bottom: 1px solid var(--card-border);
-  background: rgba(120, 120, 128, 0.08);
+  background: var(--button-bg);
 }
 
 .code-preview-language {
@@ -175,7 +167,7 @@
   gap: 0.35rem;
   min-width: 4.8rem;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   padding: 0.38rem 0.62rem;
   background: var(--button-bg);
   color: var(--text);
@@ -184,9 +176,9 @@
   font-size: 0.82rem;
   line-height: 1;
   transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease;
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
 }
 
 .code-copy-button:hover {
@@ -220,7 +212,7 @@
 }
 
 .code-preview-line:hover {
-  background: rgba(120, 120, 128, 0.1);
+  background: var(--button-hover-bg);
 }
 
 .code-line-number {
@@ -249,8 +241,8 @@
   margin: 0 auto;
   padding: 1.2rem;
   border: 1px solid var(--card-border);
-  border-radius: 10px;
-  background: rgba(120, 120, 128, 0.08);
+  border-radius: var(--radius-sm);
+  background: var(--glass-surface-subtle);
 }
 
 .amplitude-preview-main {
@@ -269,9 +261,9 @@
   aspect-ratio: 1;
   overflow: hidden;
   border: 1px solid var(--card-border);
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--color-audio), rgba(0, 0, 0, 0.08));
-  color: #fff;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--color-audio), var(--tile-shade));
+  color: var(--text-on-accent);
   font-size: 2.2rem;
 }
 
@@ -372,12 +364,12 @@
   border: 0;
   border-radius: 50%;
   background: var(--primary);
-  color: #fff;
+  color: var(--text-on-accent);
   cursor: pointer;
   line-height: 1;
   transition:
-    background 0.15s ease,
-    transform 0.15s ease;
+    background var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
 }
 
 .amplitude-preview-play:hover {
@@ -443,7 +435,7 @@
   scroll-behavior: smooth;
   scroll-padding: 5.5rem 0;
   padding: 4.8rem 0;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   cursor: grab;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -476,9 +468,9 @@
   text-align: center;
   cursor: pointer;
   transition:
-    color 0.2s ease,
-    opacity 0.2s ease,
-    transform 0.2s ease;
+    color var(--duration-normal) var(--ease-standard),
+    opacity var(--duration-normal) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard);
 }
 
 .amplitude-preview-lyric-row.active {
@@ -513,8 +505,8 @@
   right: 0;
   bottom: 0;
   background: var(--modal-overlay-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -522,20 +514,14 @@
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease;
+    opacity var(--duration-normal) var(--ease-standard),
+    visibility var(--duration-normal) var(--ease-standard);
 }
 .modal-overlay.show {
   opacity: 1;
   visibility: visible;
 }
 .modal-content {
-  background: var(--card-bg);
-  backdrop-filter: var(--modal-blur);
-  -webkit-backdrop-filter: var(--modal-blur);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
   width: 90vw;
   max-width: 960px;
   max-height: 85vh;
@@ -543,7 +529,7 @@
   flex-direction: column;
   overflow: hidden;
   transform: scale(0.95);
-  transition: transform 0.3s ease;
+  transition: transform var(--duration-normal) var(--ease-standard);
 }
 .modal-overlay.show .modal-content {
   transform: scale(1);
@@ -565,11 +551,11 @@
   color: var(--text);
   padding: 0.3rem;
   border-radius: 50%;
-  transition: background 0.2s ease;
+  transition: background var(--duration-normal) var(--ease-standard);
   line-height: 1;
 }
 .modal-close-btn:hover {
-  background: rgba(120, 120, 128, 0.2);
+  background: var(--button-hover-bg);
 }
 .modal-body {
   flex: 1;
@@ -588,7 +574,7 @@
 
 /* 旧站弹窗 body 带 rendered-markdown 类，独立图片预览沿用 .rendered-markdown img 的圆角。 */
 .modal-body img {
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
 }
 
 .direct-download-state {
@@ -657,14 +643,14 @@
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   padding: 0.45rem 0.6rem;
   background: var(--button-bg);
   color: var(--text);
   cursor: pointer;
   font-size: 0.95rem;
   line-height: 1;
-  transition: background 0.2s ease;
+  transition: background var(--duration-normal) var(--ease-standard);
 }
 
 .preview-icon-btn:hover {
@@ -680,7 +666,7 @@
   align-items: center;
   gap: 0.35rem;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   padding: 0.4rem 0.7rem;
   background: var(--button-bg);
   color: var(--text);
@@ -689,7 +675,7 @@
   font-size: 0.82rem;
   line-height: 1;
   white-space: nowrap;
-  transition: background 0.15s ease;
+  transition: background var(--duration-fast) var(--ease-standard);
 }
 
 .preview-action-btn:hover {
@@ -708,7 +694,7 @@
   justify-content: space-between;
   gap: 0.5rem 0.75rem;
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 0.5rem 0.75rem;
   background: var(--button-active-bg);
   color: var(--text-secondary);
@@ -784,7 +770,7 @@
 
 .preview-hash-toggle {
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   padding: 0.15rem 0.3rem;
   background: transparent;
   color: var(--primary);

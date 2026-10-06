@@ -116,8 +116,8 @@ watch(() => props.fileUrl, resetView);
   overflow: hidden;
   touch-action: none;
   user-select: none;
-  background: rgba(120, 120, 128, 0.06);
-  border-radius: 10px;
+  background: var(--button-bg);
+  border-radius: var(--radius-sm);
 }
 .image-preview-target {
   max-width: none;
@@ -132,12 +132,32 @@ watch(() => props.fileUrl, resetView);
   align-items: center;
   gap: 0.35rem;
   padding: 0.3rem;
-  background: rgba(20, 20, 24, 0.55);
-  border-radius: 10px;
+  /* 悬浮在图片之上的控件条：strong 档玻璃 + pill 圆角 */
+  background-color: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+  border: 1px solid var(--glass-stroke);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-floating);
+}
+/* 控件条自带玻璃背景（不在 base.css 的配方组里），降级就地声明 */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .image-preview-toolbar {
+    background-color: var(--glass-surface-strong-solid);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .image-preview-toolbar {
+    background-color: var(--glass-surface-strong-solid);
+    backdrop-filter: var(--glass-blur-off);
+    -webkit-backdrop-filter: var(--glass-blur-off);
+  }
 }
 .image-preview-percent {
   min-width: 3.2rem;
-  color: #fff;
+  color: var(--text);
   font-size: 0.85rem;
   text-align: center;
 }

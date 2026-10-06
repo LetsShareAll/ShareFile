@@ -94,6 +94,12 @@ watch(
   line-height: 1.6;
 }
 
+/* 确认框沿用预览弹窗的 strong 玻璃外壳，但要收成对话框宽度；
+   scoped 选择器只作用在本组件的 .modal-content 上，不影响预览弹窗。 */
+.modal-content {
+  width: min(92vw, 30rem);
+}
+
 .confirm-buttons {
   display: flex;
   justify-content: flex-end;
@@ -102,8 +108,8 @@ watch(
 }
 
 .confirm-primary {
-  background: var(--primary, #0071e3);
-  color: #fff;
+  background: var(--primary);
+  color: var(--text-on-accent);
   font-weight: 600;
 }
 

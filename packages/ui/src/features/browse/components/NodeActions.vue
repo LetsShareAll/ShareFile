@@ -118,6 +118,6 @@ onUnmounted(() => window.clearTimeout(resetTimer));
 
 <style scoped>
 .hash-value.copied {
-  color: #10b981;
+  color: var(--color-success);
 }
 </style>

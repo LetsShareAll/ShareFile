@@ -9,7 +9,7 @@
   padding: 0 1.5rem;
 }
 
-/* 头部毛玻璃工具栏 */
+/* 头部毛玻璃工具栏：玻璃配方（surface/blur/stroke/sheen/阴影）见 base.css 的 .glass 组 */
 header {
   display: flex;
   justify-content: space-between;
@@ -18,12 +18,6 @@ header {
   flex-wrap: wrap;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  background: var(--toolbar-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--toolbar-border);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
 }
 
 header h1 {
@@ -41,15 +35,10 @@ header h1 {
   justify-content: flex-end;
 }
 
+/* 搜索面板：内容层轻玻璃（外层不再叠真玻璃，避免与 .search-box 双重模糊） */
 .search-panel {
   margin-bottom: 1.3rem;
   padding: 0.75rem;
-  border: 1px solid var(--toolbar-border);
-  border-radius: var(--radius-md);
-  background: var(--toolbar-bg);
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .search-box {
@@ -58,15 +47,13 @@ header h1 {
   gap: 0.45rem;
   width: 100%;
   padding: 0.45rem 0.7rem;
-  border: 1px solid var(--toolbar-border);
-  border-radius: 8px;
-  background: var(--button-bg);
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
 }
 
 .search-box:focus-within {
-  border-color: rgba(0, 113, 227, 0.35);
-  background: var(--card-hover-bg);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+  background-color: var(--glass-surface-strong);
 }
 
 .search-box input {
@@ -83,19 +70,21 @@ header h1 {
   color: var(--text-secondary);
 }
 
-/* 排序控件：选择键 + 升降序切换，与视图/主题按钮同族 */
+/* 排序控件：选择键 + 升降序切换，与视图/主题按钮同族（玻璃配方见 base.css） */
 .sort-control {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  border-radius: var(--radius-pill);
+  padding: 2px;
 }
 
 .sort-select {
   appearance: none;
-  background: var(--button-bg);
+  background: transparent;
   color: var(--text);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   padding: 0.4rem 1.7rem 0.4rem 0.65rem;
   font-family: inherit;
   font-size: 0.9rem;
@@ -109,12 +98,11 @@ header h1 {
     calc(100% - 0.6rem) 55%;
   background-size: 0.28rem 0.28rem;
   background-repeat: no-repeat;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--duration-normal) var(--ease-standard);
 }
 
-.sort-select:hover,
-.sort-direction:hover {
-  background-color: var(--button-bg-hover, rgba(120, 120, 128, 0.22));
+.sort-select:hover {
+  background-color: var(--button-hover-bg);
 }
 
 .sort-direction {
@@ -125,8 +113,7 @@ header h1 {
 .view-switch,
 .theme-switch {
   display: flex;
-  border-radius: var(--radius-sm);
-  background: var(--button-bg);
+  border-radius: var(--radius-pill);
   padding: 2px;
   gap: 2px;
 }
@@ -138,11 +125,11 @@ header h1 {
   background: transparent;
   color: var(--text);
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   font-size: 1rem;
   transition:
-    background 0.2s ease,
-    color 0.2s ease;
+    background var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
   line-height: 1;
 }
 
@@ -220,20 +207,14 @@ header h1 {
   gap: 0.55rem;
 }
 
-/* 文件卡片 */
+/* 文件卡片：内容层轻玻璃（surface 与阴影档位见 base.css 的 .glass--subtle 组） */
 .file-item {
-  background: var(--card-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-md);
   display: block;
   cursor: pointer;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
-  box-shadow: var(--card-shadow);
+    transform var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard),
+    background-color var(--duration-normal) var(--ease-standard);
   position: relative;
   overflow: hidden;
 }
@@ -294,19 +275,20 @@ header h1 {
 }
 
 .file-item:hover {
-  background: var(--card-hover-bg);
+  /* 悬浮态提升到控件层档位，暗色下才有可见的层次差 */
+  background-color: var(--glass-surface-strong);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-floating);
 }
 
 /* 外部节点列表项：旧 index.css 里这两条在 .file-item 之后（第 1641 行），
    必须保持同样的层叠顺序，否则会被 .file-item 的 border/background 简写覆盖。 */
 .external-item {
-  border-left: 3px solid var(--external-accent, #2196f3);
+  border-left: 3px solid var(--external-accent);
 }
 
 .external-item:hover {
-  background: var(--external-hover-bg, rgba(33, 150, 243, 0.05));
+  background-color: var(--external-hover-bg);
 }
 
 /* 大图标视图 */
@@ -355,7 +337,7 @@ header h1 {
 
 .container.view-icon
   :is(.item-icon, .item-name, .item-description, .item-path, .item-stats) {
-  transition: transform 0.22s ease;
+  transition: transform var(--duration-normal) var(--ease-standard);
 }
 
 /* 五个区块各占一条共享行线：1 图标 2 名称 3 描述 4 路径（仅搜索态渲染）5 元信息。
@@ -464,7 +446,7 @@ header h1 {
   grid-template-columns: auto minmax(0, 1fr) minmax(12rem, auto) auto;
   align-items: center;
   gap: 0.85rem;
-  transition: transform 0.22s ease;
+  transition: transform var(--duration-normal) var(--ease-standard);
 }
 
 .container.view-detail .file-item:hover .item-main,
@@ -505,7 +487,7 @@ header h1 {
   display: flex;
   justify-content: flex-end;
   gap: 0.35rem;
-  transition: transform 0.18s ease;
+  transition: transform var(--duration-fast) var(--ease-standard);
 }
 
 .container.view-detail .file-item:hover .item-actions,
@@ -534,9 +516,9 @@ header h1 {
 .version-badge {
   font-size: 0.7em;
   background: var(--primary);
-  color: white;
+  color: var(--text-on-accent);
   padding: 0.15em 0.5em;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   vertical-align: middle;
   font-weight: 500;
 }
@@ -555,12 +537,12 @@ header h1 {
   justify-content: center;
   width: 3.2rem;
   height: 3.2rem;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   font-size: 1.5rem;
-  color: #fff;
+  color: var(--text-on-accent);
   background: transparent;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  transition: transform 0.22s ease;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-normal) var(--ease-standard);
 }
 .item-icon {
   position: relative; /* for badge positioning */
@@ -569,27 +551,40 @@ header h1 {
   width: 2.2rem;
   height: 2.2rem;
   font-size: 1.1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
 }
 
-/* 徽章样式（仅悬停显示） */
+/* 徽章样式（仅悬停显示）：与卡片内小控件同档的轻玻璃 */
 .icon-badge {
   position: absolute;
   top: -6px;
   right: -6px;
-  background: rgba(255, 255, 255, 0.96);
-  color: #111;
+  background: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+  border: 1px solid var(--glass-stroke);
+  color: var(--text);
   font-weight: 700;
   padding: 0.08rem 0.36rem;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 0.62rem;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-card);
   opacity: 0;
   transform: translateY(6px) scale(0.9);
   transition:
-    opacity 0.18s ease,
-    transform 0.2s cubic-bezier(0.2, 0.9, 0.2, 1);
+    opacity var(--duration-fast) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard);
   pointer-events: none;
+  --glass-solid: var(--glass-surface-strong-solid);
+}
+
+/* 徽章自带玻璃背景（不在 base.css 的配方组里），降级就地声明 */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .icon-badge {
+    background-color: var(--glass-surface-strong-solid);
+  }
 }
 
 /* 悬停触发动效：图标轻微上浮，徽章显现 */
@@ -605,57 +600,45 @@ header h1 {
 }
 
 .item-icon.folder i {
-  background: linear-gradient(135deg, var(--color-folder), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(135deg, var(--color-folder), var(--tile-shade));
 }
 .item-icon.image i {
-  background: linear-gradient(135deg, var(--color-image), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(135deg, var(--color-image), var(--tile-shade));
 }
 .item-icon.video i {
-  background: linear-gradient(135deg, var(--color-video), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(135deg, var(--color-video), var(--tile-shade));
 }
 .item-icon.audio i {
-  background: linear-gradient(135deg, var(--color-audio), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(135deg, var(--color-audio), var(--tile-shade));
 }
 .item-icon.document i {
-  background: linear-gradient(
-    135deg,
-    var(--color-document),
-    rgba(0, 0, 0, 0.06)
-  );
+  background: linear-gradient(135deg, var(--color-document), var(--tile-shade));
 }
 .item-icon.archive i {
-  background: linear-gradient(
-    135deg,
-    var(--color-archive),
-    rgba(0, 0, 0, 0.06)
-  );
+  background: linear-gradient(135deg, var(--color-archive), var(--tile-shade));
 }
 .item-icon.code i {
-  background: linear-gradient(135deg, var(--color-code), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(135deg, var(--color-code), var(--tile-shade));
 }
 .item-icon.font i {
-  background: linear-gradient(135deg, var(--color-font), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(135deg, var(--color-font), var(--tile-shade));
 }
 .item-icon.executable i {
   background: linear-gradient(
     135deg,
     var(--color-executable),
-    rgba(0, 0, 0, 0.06)
+    var(--tile-shade)
   );
 }
 .item-icon.disk-image i {
   background: linear-gradient(
     135deg,
     var(--color-disk-image),
-    rgba(0, 0, 0, 0.06)
+    var(--tile-shade)
   );
 }
 .item-icon.unknown i {
-  background: linear-gradient(
-    135deg,
-    var(--color-unknown),
-    rgba(0, 0, 0, 0.06)
-  );
+  background: linear-gradient(135deg, var(--color-unknown), var(--tile-shade));
 }
 
 /* 操作按钮 */
@@ -711,14 +694,15 @@ header h1 {
   }
 }
 
-/* 刷新按钮样式 */
+/* 刷新按钮样式：控件层玻璃（配方见 base.css 的 .glass 组） */
 .refresh-btn {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
   padding: 8px 12px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: all 0.2s;
+  transition:
+    background-color var(--duration-normal) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard);
   color: var(--text);
   font-size: 16px;
   display: flex;
@@ -727,9 +711,9 @@ header h1 {
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: var(--card-hover-bg);
+  background-color: var(--glass-surface-strong);
   transform: translateY(-1px);
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--shadow-floating);
 }
 
 .refresh-btn:disabled {
@@ -738,7 +722,7 @@ header h1 {
 }
 
 .refresh-btn i {
-  transition: transform 0.3s;
+  transition: transform var(--duration-normal) var(--ease-standard);
 }
 
 .refresh-btn:hover:not(:disabled) i {

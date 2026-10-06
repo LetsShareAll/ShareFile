@@ -183,9 +183,10 @@ onBeforeUnmount(removeInjectedFont);
 .font-preview-input {
   padding: 0.35rem 0.6rem;
   color: var(--text);
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
+  /* 表单控件属于控件层 */
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-stroke);
+  border-radius: var(--radius-xs);
 }
 .font-preview-input {
   width: 100%;
@@ -201,9 +202,9 @@ onBeforeUnmount(removeInjectedFont);
   padding: 1rem;
   overflow-wrap: anywhere;
   line-height: 1.5;
-  background: var(--card-bg);
+  background: var(--glass-surface-subtle);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 .font-preview-specimen p {
   margin: 0 0 0.35rem;
