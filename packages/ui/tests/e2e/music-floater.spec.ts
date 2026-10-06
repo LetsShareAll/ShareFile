@@ -5,7 +5,12 @@ import { expect, test } from './base';
 /** 外挂索引里的 /music 目录：3 个 flac，足够验证队列与切歌。 */
 const MUSIC_DIR = '/music';
 const AUDIO_COUNT = 3;
+/** 解析后的标题（文件名是「序号 艺术家 - 标题.flac」）。 */
 const FIRST_TRACK = '在银河中孤独摇摆';
+/** 第一首的原始文件名：列表主标题不再显示它，但 title 属性与移除按钮的无障碍名要用它。 */
+const FIRST_FILE = '101. 知更鸟;HOYO-MiX;Chevy - 在银河中孤独摇摆.flac';
+/** 分号分隔的多艺术家在展示时合成 ` / ` 相连的串。 */
+const FIRST_ARTIST = '知更鸟 / HOYO-MiX / Chevy';
 
 /**
  * 真实 flac 单曲 36–53 MB，而外挂 CDN 对大文件限速 2–36 KB/s：
@@ -111,6 +116,40 @@ async function dragToRightEdge(page: Page): Promise<void> {
   await page.mouse.move(right, box.y + 40, { steps: 12 });
   await page.mouse.up();
   await page.mouse.move(640, 320, { steps: 6 });
+}
+
+/** 贴边把手居中 hover。 */
+async function hoverHandle(page: Page): Promise<void> {
+  const box = await boxOf(handle(page));
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
+    steps: 4,
+  });
+}
+
+/**
+ * 往根盒补发一次 pointerenter。
+ * 停靠瞬间浏览器只会更新 :hover 链，不一定补发进入事件；要确定性地验证
+ * 400ms 抑制窗口本身，只能自己补一发。
+ */
+async function enterMusicBar(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    document
+      .querySelector('.music-bar')
+      ?.dispatchEvent(new PointerEvent('pointerenter'));
+  });
+}
+
+/** 拖到右边缘停靠，指针留在把手上不挪走（用于验证停靠后的展开抑制）。 */
+async function dockAndStay(page: Page): Promise<void> {
+  const box = await boxOf(card(page));
+  const right = (await page.evaluate(() => window.innerWidth)) - 10;
+
+  await page.mouse.move(box.x + 24, box.y + 12);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 260, box.y + 56, { steps: 10 });
+  await page.mouse.move(right, box.y + 40, { steps: 12 });
+  await page.mouse.up();
 }
 
 test('打开音频后出现悬浮卡，不再是全宽底栏', async ({ page }) => {
@@ -311,4 +350,139 @@ test('拖到左边缘后贴左边收起把手', async ({ page }) => {
   await expect
     .poll(async () => Math.round((await boxOf(card(page))).x))
     .toBe(0);
+});
+
+test('触摸拖动只在抓手条与把手上生效，卡片正文恢复页面滚动', async ({
+  page,
+}) => {
+  await openFirstTrack(page);
+
+  // touch-action 是「触摸时浏览器还听不听页面滚动」的确定证据：
+  // 正文 auto（可滚动），抓手条与贴边把手 none（拖动不让页面抢走手势）。
+  expect(
+    await card(page).evaluate(el => getComputedStyle(el).touchAction),
+  ).toBe('auto');
+  expect(
+    await card(page)
+      .locator('.music-bar-grip')
+      .evaluate(el => getComputedStyle(el).touchAction),
+  ).toBe('none');
+  await expect(card(page).locator('.music-bar-grip')).toHaveAttribute(
+    'data-drag-handle',
+    '',
+  );
+
+  await dragToRightEdge(page);
+
+  expect(
+    await handle(page).evaluate(el => getComputedStyle(el).touchAction),
+  ).toBe('none');
+  await expect(handle(page)).toHaveAttribute('data-drag-handle', '');
+});
+
+test('鼠标设备下展开时贴边把手淡出', async ({ page }) => {
+  await openFirstTrack(page);
+  await dragToRightEdge(page);
+
+  await expect(handle(page)).toHaveCSS('opacity', '1');
+
+  await hoverHandle(page);
+
+  await expect(card(page)).toBeVisible();
+  await expect(handle(page)).toHaveAttribute('aria-expanded', 'true');
+  await expect(handle(page)).toHaveCSS('opacity', '0.3');
+});
+
+test('贴边停靠后 400ms 抑制展开，窗口过期或指针离开后恢复', async ({
+  page,
+}) => {
+  await openFirstTrack(page);
+
+  // 松手时指针还压在把手上：抑制窗口内不能立刻弹开。
+  await dockAndStay(page);
+
+  // 紧接着（同一个 evaluate 里，保证落在 400ms 窗口内）读一次 hover 状态，
+  // 再补发一次浏览器可能补发的 pointerenter：卡片必须纹丝不动。
+  const docked = await page.evaluate(async () => {
+    const handleEl = document.querySelector('.music-floater-handle');
+
+    document
+      .querySelector('.music-bar')
+      ?.dispatchEvent(new PointerEvent('pointerenter'));
+    // Vue 的更新在微任务里，等一帧再读属性最稳。
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    return {
+      hovered: Boolean(handleEl?.matches(':hover')),
+      expanded: handleEl?.getAttribute('aria-expanded'),
+    };
+  });
+
+  expect(docked.hovered).toBe(true);
+  expect(docked.expanded).toBe('false');
+
+  await expect(handle(page)).toBeVisible();
+  await expect(card(page)).toBeHidden();
+
+  // 窗口过期后，同样的一发就能展开。
+  await page.waitForTimeout(450);
+  await enterMusicBar(page);
+  await expect(card(page)).toBeVisible();
+  await expect(handle(page)).toHaveAttribute('aria-expanded', 'true');
+
+  // 移开指针收回；再 hover 仍能立即展开（离开即解除抑制）。
+  await page.mouse.move(400, 260, { steps: 6 });
+  await expect(card(page)).toBeHidden();
+
+  await hoverHandle(page);
+
+  await expect(card(page)).toBeVisible();
+  await expect(handle(page)).toHaveAttribute('aria-expanded', 'true');
+});
+
+test('面板队列与历史显示解析后的标题，原始文件名保留在 title 属性', async ({
+  page,
+}) => {
+  await openFirstTrack(page);
+
+  await bar(page).getByLabel('展开播放面板').click();
+
+  const queueItem = page
+    .locator('.music-panel-queue .music-panel-item')
+    .filter({ hasText: FIRST_TRACK })
+    .first();
+
+  await expect(queueItem.locator('.music-panel-item-name')).toHaveText(
+    FIRST_TRACK,
+  );
+  await expect(queueItem.locator('.music-panel-item-name')).not.toContainText(
+    '.flac',
+  );
+  await expect(queueItem.locator('.music-panel-item-btn')).toHaveAttribute(
+    'title',
+    FIRST_FILE,
+  );
+  await expect(queueItem.locator('.music-panel-item-sub')).toHaveText(
+    FIRST_ARTIST,
+  );
+  await expect(queueItem.locator('.music-panel-remove')).toHaveAttribute(
+    'aria-label',
+    `从队列移除 ${FIRST_FILE}`,
+  );
+
+  // 刚播过的那首排在历史最前，标题同样走解析后的结果。
+  const historyItem = page
+    .locator('.music-panel-history .music-panel-item')
+    .first();
+
+  await expect(historyItem.locator('.music-panel-item-name')).toHaveText(
+    FIRST_TRACK,
+  );
+  await expect(historyItem.locator('.music-panel-item-name')).not.toContainText(
+    '.flac',
+  );
+  await expect(historyItem.locator('.music-panel-item-btn')).toHaveAttribute(
+    'title',
+    FIRST_FILE,
+  );
 });

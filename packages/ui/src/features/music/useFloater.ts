@@ -16,11 +16,14 @@ import {
 
 import {
   FLOATER_FALLBACK_SIZE,
+  OPEN_SUPPRESS_MS,
   clampFloaterPosition,
   defaultFloaterState,
   detectDockSide,
   getDockedPosition,
+  isOpenSuppressed,
   readFloaterState,
+  shouldStartDrag,
   writeFloaterState,
   type DockSide,
   type FloaterSize,
@@ -30,9 +33,6 @@ import {
 
 /** 起拖阈值：位移小于它算点击，不进入拖动（触摸点按才不会误拖）。 */
 const DRAG_SLOP = 4;
-/** 落在这类控件上的按下不启动拖动——里面的滑块、按钮各有各的交互。 */
-const INTERACTIVE_SELECTOR =
-  'button, input, select, textarea, a, [data-drag-ignore]';
 
 interface DragSession {
   pointerId: number;
@@ -78,6 +78,8 @@ export function useFloater(): FloaterApi {
   let pointerType = 'mouse';
   /** 拖完把手会补发一次 click，吞掉它，免得顺手把卡片又收回去。 */
   let suppressClick = false;
+  /** 刚贴边停靠到此刻之前不响应 hover 展开（时间戳，0 表示不抑制）。 */
+  let suppressOpenUntil = 0;
 
   const rootStyle = computed<CSSProperties>(() => {
     const { x, y, docked: side } = state.value;
@@ -136,15 +138,13 @@ export function useFloater(): FloaterApi {
 
   function beginDrag(event: PointerEvent, fromHandle: boolean): void {
     const root = rootEl.value;
-    const target = event.target;
 
     if (!root) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
 
+    // 起拖门禁：抓手条与贴边把手带 [data-drag-handle]，卡片正文只认鼠标。
     if (
-      !fromHandle &&
-      target instanceof Element &&
-      target.closest(INTERACTIVE_SELECTOR)
+      !shouldStartDrag({ pointerType: event.pointerType, target: event.target })
     ) {
       return;
     }
@@ -209,6 +209,8 @@ export function useFloater(): FloaterApi {
     state.value = side
       ? getDockedPosition(side, state.value.y, size.value, viewport())
       : clampFloaterPosition(state.value, size.value, viewport());
+    // 刚贴边时指针往往还压在把手上：先抑制 400ms，免得松手就弹开。
+    suppressOpenUntil = side ? Date.now() + OPEN_SUPPRESS_MS : 0;
     open.value = false;
     writeFloaterState(state.value);
   }
@@ -233,10 +235,16 @@ export function useFloater(): FloaterApi {
   }
 
   function onEnter(): void {
-    if (state.value.docked) open.value = true;
+    if (!state.value.docked) return;
+    // 停靠抑制窗口内不展开：窗口过期或指针离开后重进都会恢复。
+    if (isOpenSuppressed(Date.now(), suppressOpenUntil)) return;
+
+    open.value = true;
   }
 
   function onLeave(): void {
+    // 离开即解除抑制，指针再进来就能立刻展开。
+    suppressOpenUntil = 0;
     open.value = false;
   }
 

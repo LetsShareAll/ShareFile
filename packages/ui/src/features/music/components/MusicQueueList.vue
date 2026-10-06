@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getTrackDisplay } from '../trackDisplay';
 import type { MusicTrack } from '../track';
 
 defineProps<{ tracks: MusicTrack[]; currentId?: string }>();
@@ -35,8 +36,12 @@ const emit = defineEmits<{
           :title="track.name"
           @click="emit('select', track)"
         >
-          <span class="music-panel-item-name">{{ track.name }}</span>
-          <span class="music-panel-item-sub">{{ track.path }}</span>
+          <span class="music-panel-item-name">
+            {{ getTrackDisplay(track).title }}
+          </span>
+          <span class="music-panel-item-sub">
+            {{ getTrackDisplay(track).artist || track.path }}
+          </span>
         </button>
         <button
           class="music-panel-remove"

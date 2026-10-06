@@ -1,7 +1,7 @@
 /**
- * 悬浮播放器的纯几何 / 存档逻辑：拖动落点、贴边判定、位置回落。
- * 只吃数字与字符串、只吐状态对象，不碰 DOM，边界值（视口极小 / 坐标越界 / 存档损坏）
- * 才能在单测里穷举。
+ * 悬浮播放器的纯几何 / 存档 / 指针判定逻辑：拖动落点、贴边判定、位置回落、
+ * 起拖门禁、展开抑制；只吃数字与字符串、只吐状态对象，不碰 DOM 副作用，
+ * 边界值（视口极小 / 坐标越界 / 存档损坏 / 指针类型）才能在单测里穷举。
  */
 
 import type { KeyValueStorage } from '../../domain/external';
@@ -34,6 +34,13 @@ export const FLOATER_MARGIN = 12;
 export const DOCK_THRESHOLD = 32;
 /** 首帧还没测量到真实尺寸时的兜底（卡片挂载后立刻纠正）。 */
 export const FLOATER_FALLBACK_SIZE: FloaterSize = { width: 340, height: 140 };
+/** 贴边停靠后的展开抑制窗口：松手瞬间指针还压在把手上，别立刻弹开。 */
+export const OPEN_SUPPRESS_MS = 400;
+/** 落在这些元素上的按下不启动拖动——里面的控件各有各的交互。 */
+const DRAG_IGNORE_SELECTOR =
+  'button, input, textarea, select, a, [contenteditable], [data-drag-ignore]';
+/** 抓手条与贴边把手：触摸 / 触控笔唯一能起拖的地方。 */
+const DRAG_HANDLE_SELECTOR = '[data-drag-handle]';
 
 // createLocalStorage 只在读写时访问 window，模块加载阶段不会抛错。
 const storage: KeyValueStorage = createLocalStorage();
@@ -184,4 +191,30 @@ export function readFloaterState(
 
 export function writeFloaterState(state: FloaterState): void {
   storage.setItem(FLOATER_STORAGE_KEY, serializeFloaterState(state));
+}
+
+export interface DragStartInput {
+  pointerType: string;
+  target: EventTarget | null;
+}
+
+/**
+ * 起拖门禁：鼠标设备按住卡片任意位置都能拖（控件除外）；
+ * 触摸 / 触控笔只在抓手条与贴边把手（`[data-drag-handle]`）上生效，
+ * 卡片正文留给页面滚动。
+ */
+export function shouldStartDrag({
+  pointerType,
+  target,
+}: DragStartInput): boolean {
+  if (!(target instanceof Element)) return false;
+  if (target.closest(DRAG_HANDLE_SELECTOR)) return true;
+  if (pointerType !== 'mouse') return false;
+
+  return !target.closest(DRAG_IGNORE_SELECTOR);
+}
+
+/** 抑制窗口内 `pointerenter` 不展开；指针离开或窗口过期即恢复。 */
+export function isOpenSuppressed(now: number, until: number): boolean {
+  return now < until;
 }

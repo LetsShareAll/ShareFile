@@ -39,8 +39,8 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-floating);
   cursor: grab;
-  /* 触摸拖动时不跟着页面滚 */
-  touch-action: none;
+  /* 触摸在正文上滑动要能滚动页面：拖动只从抓手条 / 贴边把手开始 */
+  touch-action: auto;
 }
 .music-bar.is-dragging .music-bar-card {
   cursor: grabbing;
@@ -63,6 +63,8 @@
   border-radius: var(--radius-pill);
   background: var(--button-hover-bg);
   transform: translateX(-50%);
+  /* 触摸 / 触控笔从这里起拖，拖动时页面不跟着滚 */
+  touch-action: none;
 }
 /* ===== 贴边把手 ===== */
 .music-bar.is-docked {
@@ -125,7 +127,9 @@
   color: var(--text-secondary);
   cursor: pointer;
   touch-action: none;
-  transition: background-color var(--duration-normal) var(--ease-standard);
+  transition:
+    background-color var(--duration-normal) var(--ease-standard),
+    opacity var(--duration-normal) var(--ease-standard);
 }
 .music-bar[data-docked='right'] .music-floater-handle {
   right: 0;
@@ -137,6 +141,12 @@
 }
 .music-floater-handle:hover {
   background-color: var(--glass-surface-strong);
+}
+/* 鼠标设备才有 hover：展开时把手淡出（仍可点击），触摸设备保持实心可点。 */
+@media (hover: hover) {
+  .music-bar.is-docked.is-open .music-floater-handle {
+    opacity: 0.3;
+  }
 }
 .music-floater-badge {
   position: absolute;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getTrackDisplay } from '../trackDisplay';
 import type { MusicHistoryEntry } from '../track';
 
 defineProps<{ entries: MusicHistoryEntry[] }>();
@@ -24,9 +25,12 @@ function formatPlayedAt(value: string): string {
         :key="`${entry.id}-${entry.playedAt}`"
         class="music-panel-item"
       >
-        <div class="music-panel-item-btn">
-          <span class="music-panel-item-name">{{ entry.name }}</span>
+        <div class="music-panel-item-btn" :title="entry.name">
+          <span class="music-panel-item-name">
+            {{ getTrackDisplay(entry).title }}
+          </span>
           <span class="music-panel-item-sub">
+            {{ getTrackDisplay(entry).artist || entry.path }} ·
             {{ formatPlayedAt(entry.playedAt) }}
           </span>
         </div>

@@ -5,13 +5,16 @@ import {
   FLOATER_EDGE_OFFSET,
   FLOATER_MARGIN,
   FLOATER_STORAGE_KEY,
+  OPEN_SUPPRESS_MS,
   clampFloaterPosition,
   defaultFloaterState,
   detectDockSide,
   getDockedPosition,
+  isOpenSuppressed,
   parseFloaterState,
   readFloaterState,
   serializeFloaterState,
+  shouldStartDrag,
   writeFloaterState,
   type FloaterSize,
   type Viewport,
@@ -329,5 +332,120 @@ describe('悬浮卡存档读写', () => {
     expect(window.localStorage.getItem(FLOATER_STORAGE_KEY)).toBe(
       '{"x":1,"y":2,"docked":null}',
     );
+  });
+});
+
+/** 从 HTML 造一个真实元素：判定依赖 closest()，字符串比对代替不了。 */
+function element(html: string): Element {
+  const host = document.createElement('div');
+
+  host.innerHTML = html;
+
+  const child = host.firstElementChild;
+
+  if (!child) throw new Error(`造不出元素：${html}`);
+
+  return child;
+}
+
+describe('shouldStartDrag', () => {
+  const CARD_BODY = '<div class="music-bar-card"><span>标题</span></div>';
+
+  it('鼠标设备：卡片正文（含内层元素）都能起拖', () => {
+    expect(
+      shouldStartDrag({
+        pointerType: 'mouse',
+        target: element(CARD_BODY).firstElementChild,
+      }),
+    ).toBe(true);
+  });
+
+  it('鼠标设备：控件上的按下不拖', () => {
+    const controls = [
+      '<button>播放</button>',
+      '<input value="0.8" />',
+      '<textarea>备注</textarea>',
+      '<select><option>顺序</option></select>',
+      '<a href="#">歌词</a>',
+      '<div contenteditable="true">编辑</div>',
+      '<div data-drag-ignore>忽略区</div>',
+    ];
+
+    for (const html of controls) {
+      expect(
+        shouldStartDrag({ pointerType: 'mouse', target: element(html) }),
+        html,
+      ).toBe(false);
+    }
+
+    // 控件内层（图标、文本）同样不拖。
+    expect(
+      shouldStartDrag({
+        pointerType: 'mouse',
+        target: element('<div><button>内层</button></div>').firstElementChild,
+      }),
+    ).toBe(false);
+  });
+
+  it('触摸 / 触控笔：卡片正文与控件都不拖', () => {
+    for (const pointerType of ['touch', 'pen']) {
+      expect(
+        shouldStartDrag({
+          pointerType,
+          target: element(CARD_BODY).firstElementChild,
+        }),
+      ).toBe(false);
+      expect(
+        shouldStartDrag({
+          pointerType,
+          target: element('<button>下一首</button>'),
+        }),
+      ).toBe(false);
+    }
+  });
+
+  it('触摸 / 触控笔：抓手条与贴边把手（含其子元素）能起拖', () => {
+    const grip = '<span class="music-bar-grip" data-drag-handle></span>';
+    const handle =
+      '<button class="music-floater-handle" data-drag-handle><span><i class="fa"></i></span></button>';
+
+    for (const pointerType of ['touch', 'pen', 'mouse']) {
+      expect(shouldStartDrag({ pointerType, target: element(grip) })).toBe(
+        true,
+      );
+      expect(shouldStartDrag({ pointerType, target: element(handle) })).toBe(
+        true,
+      );
+      // 展开的把手是 button，但命中把手优先，内部的封面 / 角标照样能拖。
+      expect(
+        shouldStartDrag({
+          pointerType,
+          target: element(handle).firstElementChild?.firstElementChild ?? null,
+        }),
+      ).toBe(true);
+    }
+  });
+
+  it('拿不到元素时不拖', () => {
+    expect(shouldStartDrag({ pointerType: 'mouse', target: null })).toBe(false);
+    expect(shouldStartDrag({ pointerType: 'mouse', target: document })).toBe(
+      false,
+    );
+  });
+});
+
+describe('isOpenSuppressed', () => {
+  it('窗口内抑制展开', () => {
+    expect(isOpenSuppressed(1000, 1000 + OPEN_SUPPRESS_MS)).toBe(true);
+    expect(isOpenSuppressed(1399, 1400)).toBe(true);
+  });
+
+  it('到期那一刻即恢复（左闭右开）', () => {
+    expect(isOpenSuppressed(1400, 1400)).toBe(false);
+    expect(isOpenSuppressed(1401, 1400)).toBe(false);
+  });
+
+  it('没有抑制窗口时不抑制', () => {
+    expect(isOpenSuppressed(1000, 0)).toBe(false);
   });
 });

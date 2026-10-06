@@ -5,6 +5,7 @@ import { useMusicStore } from '../../stores/music';
 import MusicArtwork from './components/MusicArtwork.vue';
 import MusicModeButton from './components/MusicModeButton.vue';
 import MusicProgress from './components/MusicProgress.vue';
+import { getTrackDisplay } from './trackDisplay';
 import { useFloater } from './useFloater';
 
 const music = useMusicStore();
@@ -22,9 +23,12 @@ const {
   onHandleClick,
 } = useFloater();
 
-const title = computed(
-  () => music.metadata.title || music.currentTrack?.name || '',
-);
+/** 内嵌元信息优先；没有就按文件名解析出的标题显示。 */
+const title = computed(() => {
+  const track = music.currentTrack;
+
+  return music.metadata.title || (track ? getTrackDisplay(track).title : '');
+});
 const artist = computed(() => music.metadata.artist || '未知艺术家');
 const artworkAlt = computed(() => `${title.value} 封面`);
 const toggleLabel = computed(() => (music.isPlaying ? '暂停' : '播放'));
@@ -175,12 +179,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
           />
         </button>
       </div>
-      <span class="music-bar-grip" aria-hidden="true" />
+      <span class="music-bar-grip" data-drag-handle aria-hidden="true" />
     </div>
     <button
       v-if="docked"
       class="music-floater-handle"
       type="button"
+      data-drag-handle
       :aria-label="handleLabel"
       :title="handleLabel"
       :aria-expanded="open"
