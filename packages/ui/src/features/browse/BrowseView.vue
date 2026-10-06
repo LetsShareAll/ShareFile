@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import AppBreadcrumb from '../../components/AppBreadcrumb.vue';
-import { getNodeFileUrl } from '../../domain/links';
+import { getNodeFileUrl, getNodeFilePath } from '../../domain/links';
 import { getBreadcrumbSegments } from '../../domain/paths';
 import { useLibraryStore } from '../../stores/library';
 import { findDirectoryReadme } from '../../domain/readme';
@@ -21,6 +21,8 @@ import SortControl from '../settings/SortControl.vue';
 import ViewSwitch from '../settings/ViewSwitch.vue';
 import FileListDetail from './components/FileListDetail.vue';
 import FileListIcon from './components/FileListIcon.vue';
+import { copyText } from '../../platform/clipboard';
+import { buildDirectoryShare } from './share';
 import {
   BROWSE_EMPTY_STATES,
   createNodeRow,
@@ -94,6 +96,124 @@ const breadcrumbExternalPaths = computed(() =>
     .map(segment => segment.path),
 );
 
+const SHARE_FEEDBACK_MS = 1500;
+
+type ShareAction = 'page' | 'manifest' | 'download';
+
+interface ShareActionItem {
+  key: ShareAction;
+  label: string;
+  iconClass: string;
+  text: string;
+}
+
+const shareOpen = ref(false);
+const copiedAction = ref<ShareAction | null>(null);
+const shareRoot = ref<HTMLElement | null>(null);
+let copiedTimer: number | undefined;
+
+// 路径不存在（错误态）或索引未就绪时不提供分享入口。
+const shareVisible = computed(
+  () => !library.error && Boolean(currentNode.value),
+);
+
+// 只有「当前路径恰好是文件深链」时才有下载示例——目录没有字节。
+const shareDownloadPath = computed(() =>
+  currentNode.value?.type === 'file'
+    ? getNodeFilePath(currentNode.value)
+    : null,
+);
+
+const share = computed(() =>
+  buildDirectoryShare(
+    currentPath.value,
+    window.location.origin,
+    shareDownloadPath.value,
+  ),
+);
+
+const shareActions = computed<ShareActionItem[]>(() => [
+  {
+    key: 'page',
+    label: '复制页面链接',
+    iconClass: 'fas fa-link',
+    text: share.value.pageUrl,
+  },
+  {
+    key: 'manifest',
+    label: '复制直链清单命令',
+    iconClass: 'fas fa-terminal',
+    text: share.value.manifestCommand,
+  },
+  ...(share.value.downloadCommand
+    ? [
+        {
+          key: 'download' as const,
+          label: '复制 curl 下载示例',
+          iconClass: 'fas fa-download',
+          text: share.value.downloadCommand,
+        },
+      ]
+    : []),
+]);
+
+function closeShare(): void {
+  shareOpen.value = false;
+}
+
+function toggleShare(): void {
+  shareOpen.value = !shareOpen.value;
+}
+
+function onSharePointerDown(event: PointerEvent): void {
+  const root = shareRoot.value;
+
+  if (root && event.target instanceof Node && !root.contains(event.target)) {
+    closeShare();
+  }
+}
+
+function onShareKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Escape') closeShare();
+}
+
+function copyShare(action: ShareActionItem): void {
+  void copyText(action.text).then(succeeded => {
+    if (!succeeded) {
+      console.error('复制失败');
+
+      return;
+    }
+
+    copiedAction.value = action.key;
+    window.clearTimeout(copiedTimer);
+    copiedTimer = window.setTimeout(() => {
+      copiedAction.value = null;
+    }, SHARE_FEEDBACK_MS);
+  });
+}
+
+watch(shareOpen, open => {
+  if (open) {
+    document.addEventListener('pointerdown', onSharePointerDown, true);
+    window.addEventListener('keydown', onShareKeydown);
+
+    return;
+  }
+
+  document.removeEventListener('pointerdown', onSharePointerDown, true);
+  window.removeEventListener('keydown', onShareKeydown);
+});
+
+// 换目录后旧命令即失效，直接收起浮层。
+watch(currentPath, closeShare);
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onSharePointerDown, true);
+  window.removeEventListener('keydown', onShareKeydown);
+  window.clearTimeout(copiedTimer);
+});
+
 // 深链到文件：与旧实现一致，渲染下载态后由 rAF 触发一次下载。
 watch(
   directFileNode,
@@ -124,6 +244,42 @@ function navigate(path: string): void {
           @toggle="ui.toggleSortDirection"
         />
         <ViewSwitch :view="ui.view" @select="ui.setView" />
+        <div v-if="shareVisible" ref="shareRoot" class="share-menu">
+          <button
+            type="button"
+            class="glass share-btn"
+            :class="{ active: shareOpen }"
+            title="分享当前目录"
+            aria-label="分享当前目录"
+            aria-haspopup="menu"
+            :aria-expanded="shareOpen"
+            @click="toggleShare"
+          >
+            <i class="fas fa-share-nodes" />
+          </button>
+          <div
+            v-if="shareOpen"
+            class="glass--strong share-popover"
+            role="menu"
+            aria-label="分享当前目录"
+          >
+            <button
+              v-for="action in shareActions"
+              :key="action.key"
+              type="button"
+              class="share-action"
+              :class="{ copied: copiedAction === action.key }"
+              role="menuitem"
+              :title="action.label"
+              @click="copyShare(action)"
+            >
+              <i :class="action.iconClass" />
+              <span>{{
+                copiedAction === action.key ? '已复制' : action.label
+              }}</span>
+            </button>
+          </div>
+        </div>
         <button
           v-if="library.hasExternalMounts"
           class="refresh-btn"
@@ -220,3 +376,80 @@ function navigate(path: string): void {
     </PreviewModal>
   </div>
 </template>
+
+<style scoped>
+/* 玻璃配方来自 base.css 的 .glass / .glass--strong，这里只补布局与复制反馈。 */
+/* 头部自成一个层叠上下文（毛玻璃），不抬高层级时下拉浮层会被搜索框盖住。 */
+header {
+  position: relative;
+  z-index: 10;
+}
+
+.share-menu {
+  position: relative;
+  display: flex;
+}
+
+.share-btn {
+  padding: 8px 12px;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background-color var(--duration-normal) var(--ease-standard);
+}
+
+.share-btn:hover {
+  background-color: var(--glass-surface-strong);
+}
+
+.share-btn.active {
+  background-color: var(--button-active-bg);
+  color: var(--button-active-color);
+}
+
+.share-popover {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 15rem;
+  padding: 0.4rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-floating);
+}
+
+.share-action {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.share-action i {
+  width: 1.1em;
+  color: var(--text-secondary);
+}
+
+.share-action:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.share-action.copied,
+.share-action.copied i {
+  color: var(--color-success);
+}
+</style>
