@@ -42,8 +42,8 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
-/** 打开第一首并展开面板：队列里三首，当前是第一首。 */
-async function openPanel(page: Page): Promise<void> {
+/** 打开第一首：队列里三首，当前是第一首。 */
+async function playFirst(page: Page): Promise<void> {
   await page.goto(MUSIC_DIR);
 
   const items = page.locator('.file-item');
@@ -56,10 +56,13 @@ async function openPanel(page: Page): Promise<void> {
     .locator('.item-name')
     .click();
 
-  const bar = page.locator('.music-bar');
+  await expect(page.locator('.music-bar')).toBeVisible();
+}
 
-  await expect(bar).toBeVisible();
-  await bar.getByLabel('展开播放面板').click();
+/** 展开面板：队列列表这时才挂载。 */
+async function openPanel(page: Page): Promise<void> {
+  await playFirst(page);
+  await page.locator('.music-bar').getByLabel('展开播放面板').click();
   await expect(page.locator('.music-panel')).toBeVisible();
 }
 
@@ -75,6 +78,19 @@ function currentName(page: Page) {
   return page.locator(
     '.music-panel-queue .music-panel-item.is-current .music-panel-item-name',
   );
+}
+
+function thumbnails(page: Page) {
+  return page.locator('.music-panel-queue [data-track-thumb]');
+}
+
+/** 夹具是 120 秒的静音 WAV：三项都该显示 2:00。 */
+function durations(page: Page) {
+  return page.locator('.music-panel-queue [data-track-duration]');
+}
+
+function readInfoCache(page: Page): Promise<string | null> {
+  return page.evaluate(() => window.localStorage.getItem('music-info'));
 }
 
 test('拖第三项到队首：顺序变化，当前曲目仍是同一首，刷新后保持', async ({
@@ -129,6 +145,46 @@ test('拖第三项到队首：顺序变化，当前曲目仍是同一首，刷�
   await page.locator('.music-bar').getByLabel('展开播放面板').click();
 
   await expect(names(page)).toHaveText(after);
+});
+
+test('队列项带封面缩略图与时长：时长来自懒解析的音频标签', async ({ page }) => {
+  await openPanel(page);
+
+  await expect(queueItems(page)).toHaveCount(AUDIO_COUNT);
+  // 无内嵌封面时是 fa-music 占位，但缩略图容器每项都要有。
+  await expect(thumbnails(page)).toHaveCount(AUDIO_COUNT);
+  await expect(durations(page)).toHaveText(['2:00', '2:00', '2:00']);
+});
+
+test('切歌后当前项立即有值：时长与缩略图跟着当前曲目走', async ({ page }) => {
+  await openPanel(page);
+  await expect(durations(page)).toHaveText(['2:00', '2:00', '2:00']);
+
+  await queueItems(page).nth(1).locator('.music-panel-item-btn').click();
+
+  const current = page.locator(
+    '.music-panel-queue .music-panel-item.is-current',
+  );
+
+  await expect(current).toHaveCount(1);
+  await expect(current.locator('[data-track-duration]')).toHaveText('2:00');
+  await expect(current.locator('[data-track-thumb]')).toHaveCount(1);
+});
+
+test('面板没打开就不解析：打开后结果落 music-info 缓存且不含封面 blob', async ({
+  page,
+}) => {
+  await playFirst(page);
+  // 队列列表还没挂载：一次懒解析都不该发生。
+  expect(await readInfoCache(page)).toBeNull();
+
+  await page.locator('.music-bar').getByLabel('展开播放面板').click();
+  await expect(page.locator('.music-panel')).toBeVisible();
+  await expect(thumbnails(page)).toHaveCount(AUDIO_COUNT);
+
+  // 解析完成后落盘元信息缓存（封面只留在内存，不进 localStorage）。
+  await expect.poll(() => readInfoCache(page)).toContain('"duration"');
+  expect(await readInfoCache(page)).not.toContain('blob');
 });
 
 test('点按拖拽手柄不换位：没有位移就不触发移动', async ({ page }) => {

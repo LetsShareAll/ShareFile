@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
-import { resolveMoveTarget } from '../queueOrder';
+import { useQueueDrag } from '../useQueueDrag';
+import { useTrackInfo } from '../useTrackInfo';
 import { getTrackDisplay } from '../trackDisplay';
-import type { MusicTrack } from '../track';
+import { formatDuration, type MusicTrack } from '../track';
 
 const props = defineProps<{ tracks: MusicTrack[]; currentId?: string }>();
 const emit = defineEmits<{
@@ -13,99 +14,41 @@ const emit = defineEmits<{
   move: [from: number, to: number];
 }>();
 
-/** 起拖阈值：位移小于它算点按，触摸才不会一碰就换位。 */
-const DRAG_SLOP = 6;
-
 const listEl = ref<HTMLUListElement | null>(null);
-const dragFrom = ref(-1);
-const dropIndex = ref(-1);
-const dragging = ref(false);
 
-let pointerId = -1;
-let startY = 0;
-let moved = false;
-
-function midpoints(): number[] {
-  const items = listEl.value?.children;
-
-  if (!items) return [];
-
-  return Array.from(items, item => {
-    const rect = item.getBoundingClientRect();
-
-    return rect.top + rect.height / 2;
+const { dragging, dragFrom, dropIndex, onPointerDown, onKeydown } =
+  useQueueDrag({
+    list: listEl,
+    count: () => props.tracks.length,
+    onMove: (from, to) => emit('move', from, to),
   });
+
+const { getTrackInfo, requestTrackInfo } = useTrackInfo();
+
+/** 面板打开（组件挂载）时才发起解析；队列或当前曲目变了再补一轮。 */
+function requestVisible(): void {
+  for (const track of props.tracks) void requestTrackInfo(track);
 }
 
-function finish(): void {
-  window.removeEventListener('pointermove', onPointerMove);
-  window.removeEventListener('pointerup', onPointerUp);
-  window.removeEventListener('pointercancel', onPointerUp);
-  pointerId = -1;
-  moved = false;
-  dragging.value = false;
-  dragFrom.value = -1;
-  dropIndex.value = -1;
-}
+onMounted(requestVisible);
+watch(() => props.tracks, requestVisible);
+watch(() => props.currentId, requestVisible);
 
-function onPointerMove(event: PointerEvent): void {
-  if (event.pointerId !== pointerId) return;
-  if (!moved && Math.abs(event.clientY - startY) < DRAG_SLOP) return;
+/** 行视图：文件名解析出的显示名 + 懒解析出来的时长与封面。 */
+const rows = computed(() =>
+  props.tracks.map(track => {
+    const info = getTrackInfo(track);
+    const display = getTrackDisplay(track);
 
-  moved = true;
-  dragging.value = true;
-  dropIndex.value = resolveMoveTarget(
-    midpoints(),
-    event.clientY,
-    dragFrom.value,
-  );
-}
-
-function onPointerUp(event: PointerEvent): void {
-  if (event.pointerId !== pointerId) return;
-
-  const from = dragFrom.value;
-  const to = dropIndex.value;
-  // finish() 会把 moved 清掉，先留一份再收尾。
-  const dropped = moved;
-
-  finish();
-
-  if (dropped && to >= 0 && to !== from) emit('move', from, to);
-}
-
-/** 拖动只在手柄上启动：列表本身照常滚动（手柄的 touch-action 见样式）。 */
-function onHandlePointerDown(event: PointerEvent, index: number): void {
-  if (event.pointerType === 'mouse' && event.button !== 0) return;
-
-  pointerId = event.pointerId;
-  startY = event.clientY;
-  moved = false;
-  dragFrom.value = index;
-  dropIndex.value = index;
-
-  window.addEventListener('pointermove', onPointerMove);
-  window.addEventListener('pointerup', onPointerUp);
-  window.addEventListener('pointercancel', onPointerUp);
-}
-
-function onHandleKeydown(event: KeyboardEvent, index: number): void {
-  if (!event.altKey) return;
-
-  const to =
-    event.key === 'ArrowUp'
-      ? index - 1
-      : event.key === 'ArrowDown'
-        ? index + 1
-        : -1;
-
-  if (to < 0 || to >= props.tracks.length) return;
-
-  event.preventDefault();
-  emit('move', index, to);
-}
-
-onUnmounted(finish);
+    return {
+      track,
+      title: display.title,
+      sub: display.artist || track.path,
+      duration: formatDuration(info.duration ?? Number.NaN),
+      coverUrl: info.coverUrl,
+    };
+  }),
+);
 </script>
 
 <template>
@@ -123,11 +66,11 @@ onUnmounted(finish);
     </div>
     <ul v-if="tracks.length" ref="listEl" class="music-panel-list">
       <li
-        v-for="(track, index) in tracks"
-        :key="track.id"
+        v-for="(row, index) in rows"
+        :key="row.track.id"
         class="music-panel-item"
         :class="{
-          'is-current': track.id === currentId,
+          'is-current': row.track.id === currentId,
           'is-dragging': dragging && index === dragFrom,
           'is-drop-target': dragging && index === dropIndex,
         }"
@@ -136,32 +79,35 @@ onUnmounted(finish);
           class="music-queue-handle"
           type="button"
           data-drag-handle
-          :aria-label="`拖动排序 ${track.name}`"
+          :aria-label="`拖动排序 ${row.track.name}`"
           title="拖动排序（Alt + ↑/↓ 也可移动）"
-          @pointerdown="onHandlePointerDown($event, index)"
-          @keydown="onHandleKeydown($event, index)"
+          @pointerdown="onPointerDown($event, index)"
+          @keydown="onKeydown($event, index)"
         >
           <i class="fas fa-grip-vertical" aria-hidden="true" />
         </button>
+        <span class="music-queue-thumb" data-track-thumb>
+          <img v-if="row.coverUrl" :src="row.coverUrl" alt="" />
+          <i v-else class="fas fa-music" aria-hidden="true" />
+        </span>
         <button
           class="music-panel-item-btn"
           type="button"
-          :title="track.name"
-          @click="emit('select', track)"
+          :title="row.track.name"
+          @click="emit('select', row.track)"
         >
-          <span class="music-panel-item-name">
-            {{ getTrackDisplay(track).title }}
-          </span>
-          <span class="music-panel-item-sub">
-            {{ getTrackDisplay(track).artist || track.path }}
-          </span>
+          <span class="music-panel-item-name">{{ row.title }}</span>
+          <span class="music-panel-item-sub">{{ row.sub }}</span>
         </button>
+        <span class="music-queue-duration" data-track-duration>
+          {{ row.duration }}
+        </span>
         <button
           class="music-panel-remove"
           type="button"
-          :aria-label="`从队列移除 ${track.name}`"
+          :aria-label="`从队列移除 ${row.track.name}`"
           title="从队列移除"
-          @click="emit('remove', track.id)"
+          @click="emit('remove', row.track.id)"
         >
           <i class="fas fa-xmark" aria-hidden="true" />
         </button>
@@ -208,6 +154,35 @@ onUnmounted(finish);
 /* 落点提示：最终下标那一项的上沿亮一条。 */
 .music-panel-item.is-drop-target {
   box-shadow: inset 0 2px 0 var(--primary);
+}
+/* 缩略图沿用面板封面的配方，只是缩到列表这一档（32×32）。 */
+.music-queue-thumb {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background: var(--button-bg);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+.music-queue-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.music-queue-duration {
+  flex: none;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72rem;
+}
+.music-panel-item.is-current .music-queue-duration {
+  color: inherit;
+  opacity: 0.75;
 }
 .music-panel-remove {
   flex: none;
