@@ -135,6 +135,51 @@ class GenerateInfoContractTest(unittest.TestCase):
                 "2024-01-01T19:04:05.000Z",
             )
 
+    def test_keeps_restricted_and_mount_path_lists(self):
+        with tempfile.TemporaryDirectory(prefix="share-file-info-contract-") as work_dir:
+            fixture_root = Path(work_dir) / "fixture"
+            (fixture_root / "gated").mkdir(parents=True)
+            (fixture_root / "open.txt").write_text("open\n", encoding="utf-8")
+            (fixture_root / "gated/data.txt").write_text("data\n", encoding="utf-8")
+
+            mount_source = {
+                "provider": "github",
+                "repository": "LetsShareAll/ShareFile",
+                "branch": "file",
+                "sub_path": "/",
+                "allow_paths": ["/downloads"],
+                "deny_paths": ["/downloads/private"],
+            }
+
+            write_json(
+                fixture_root / "._info.json",
+                {
+                    "self": {},
+                    "children": {
+                        "open.txt": {"type": "file", "restricted": True},
+                        "gated": {"type": "folder", "mount_source": mount_source},
+                    },
+                },
+            )
+            write_json(
+                fixture_root / "gated/._info.json",
+                {
+                    "self": {"restricted": True, "mount_source": mount_source},
+                    "children": {"data.txt": {"type": "file", "restricted": False}},
+                },
+            )
+
+            run_generator(fixture_root, "--no-git", "--no-hash")
+
+            root_info = read_json(fixture_root / "._info.json")
+            gated_info = read_json(fixture_root / "gated/._info.json")
+
+            self.assertIs(root_info["children"]["open.txt"]["restricted"], True)
+            self.assertEqual(root_info["children"]["gated"]["mount_source"], mount_source)
+            self.assertIs(gated_info["self"]["restricted"], True)
+            self.assertEqual(gated_info["self"]["mount_source"], mount_source)
+            self.assertIs(gated_info["children"]["data.txt"]["restricted"], False)
+
     @staticmethod
     def create_fixture(root_dir: Path) -> None:
         (root_dir / "subdir").mkdir(parents=True)

@@ -180,6 +180,72 @@ def create_fixture(data_dir: Path) -> None:
     write_json(data_dir / "share-file.cdn.json", cdn_index())
 
 
+def create_fixture_with_mount_source(data_dir: Path, **overrides) -> None:
+    """本地索引 fixture：给挂载点的 mount_source 追加 allow_paths / deny_paths。"""
+    index = local_index()
+    index["nodes"]["mounted"]["mount_source"].update(overrides)
+
+    write_json(data_dir / "share-file.json", index)
+    write_json(data_dir / "share-file.cdn.json", cdn_index())
+
+
+def external_index_with_nested_declaration() -> dict:
+    """外部源子目录自带 ._info.json 元数据（再次声明 mount_source）的索引 fixture。"""
+    data = external_index()
+    nodes = data["nodes"]
+
+    nodes["public/softwares"]["children"].append("public/softwares/restricted")
+    nodes["public/softwares/restricted"] = {
+        **folder(
+            "public/softwares/restricted",
+            "restricted",
+            "public/softwares",
+            ["public/softwares/restricted/secret.bin"],
+        ),
+        "mount_source": {
+            "provider": "github",
+            "repository": "LetsShareAll/ShareFile",
+            "branch": "file",
+            "sub_path": "/",
+            "allow_paths": ["/"],
+        },
+    }
+    nodes["public/softwares/restricted/secret.bin"] = file_node(
+        "public/softwares/restricted/secret.bin",
+        "secret.bin",
+        "public/softwares/restricted",
+        16,
+        url="https://cdn.jsdelivr.net/gh/LetsShareAll/ShareFile@file/public/softwares/restricted/secret.bin",
+    )
+
+    return data
+
+
+def write_external_fixture(data_dir: Path, data: dict) -> Path:
+    """把外部索引写到磁盘，返回 patched fetch 读取的路径。"""
+    fixture_path = data_dir / "external-fixture.json"
+    write_json(fixture_path, data)
+
+    return fixture_path
+
+
+def run_with_external_fixture(
+    data_dir: Path, output_path: Path, fixture_path: Path, *extra_args: str
+):
+    fetch_body = (
+        f"with open({str(fixture_path)!r}, encoding='utf-8') as handle:\n"
+        "    return json.load(handle)"
+    )
+
+    return run_patched_generator(data_dir, output_path, fetch_body, *extra_args)
+
+
+def failing_run(data_dir: Path, output_path: Path, *extra_args: str):
+    return run_patched_generator(
+        data_dir, output_path, "raise RuntimeError('模拟外部源抓取失败')", *extra_args
+    )
+
+
 def run_generator(data_dir: Path, output_path: Path, *extra_args: str):
     return subprocess.run(
         [sys.executable, str(SCRIPT_PATH), str(data_dir), str(output_path), *extra_args],
@@ -604,6 +670,144 @@ class GenerateFilesManifestContractTest(unittest.TestCase):
             MANIFEST.build_external_index_url(custom, False),
             "https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/main/share-file.json",
         )
+
+    def test_allow_deny_paths_filter_external_rows(self):
+        with tempfile.TemporaryDirectory(prefix="files-manifest-contract-") as work_dir:
+            data_dir = Path(work_dir) / "data"
+            output_path = Path(work_dir) / "out/files.jsonl"
+            create_fixture_with_mount_source(
+                data_dir,
+                allow_paths=["/public/softwares"],
+                deny_paths=["/public/softwares/evil.bin"],
+            )
+            fixture_path = write_external_fixture(data_dir, external_index())
+
+            result = run_with_external_fixture(data_dir, output_path, fixture_path)
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("准入清单拒绝 1 个文件节点", result.stdout)
+
+            rows = read_rows(output_path)
+
+            self.assertEqual(
+                [row["id"] for row in rows if row["source"] == "external"],
+                ["mounted/softwares/tool.bin"],
+            )
+            # 准入清单只作用于外挂源，本地节点照旧
+            self.assertEqual(
+                [row["id"] for row in rows if row["source"] == "local"],
+                ["docs/Alpha.txt", "docs/guide.txt", "docs/空 白.txt", "mounted/local.txt"],
+            )
+
+    def test_denied_subtree_disappears_with_nested_info_declaration(self):
+        with tempfile.TemporaryDirectory(prefix="files-manifest-contract-") as work_dir:
+            fixture_path = write_external_fixture(
+                Path(work_dir) / "data", external_index_with_nested_declaration()
+            )
+
+            baseline_dir = Path(work_dir) / "baseline"
+            baseline_output = Path(work_dir) / "out/baseline.jsonl"
+            create_fixture(baseline_dir)
+
+            baseline = run_with_external_fixture(baseline_dir, baseline_output, fixture_path)
+
+            self.assertEqual(baseline.returncode, 0, baseline.stdout + baseline.stderr)
+            self.assertEqual(
+                [row["id"] for row in read_rows(baseline_output) if row["source"] == "external"],
+                [
+                    "mounted/softwares/evil.bin",
+                    "mounted/softwares/restricted/secret.bin",
+                    "mounted/softwares/tool.bin",
+                ],
+            )
+
+            data_dir = Path(work_dir) / "data"
+            output_path = Path(work_dir) / "out/files.jsonl"
+            create_fixture_with_mount_source(data_dir, deny_paths=["/public/softwares"])
+
+            denied = run_with_external_fixture(data_dir, output_path, fixture_path)
+
+            self.assertEqual(denied.returncode, 0, denied.stdout + denied.stderr)
+
+            rows = read_rows(output_path)
+
+            # 子目录自带 ._info.json（含再次声明的 mount_source）也不能把被拒绝的子树带回来
+            self.assertEqual([row for row in rows if row["source"] == "external"], [])
+            self.assertNotIn(
+                "mounted/softwares/restricted/secret.bin", [row["id"] for row in rows]
+            )
+            self.assertNotIn("mounted/softwares/tool.bin", [row["id"] for row in rows])
+
+    def test_prefix_boundary_and_allow_miss_drop_external_rows(self):
+        with tempfile.TemporaryDirectory(prefix="files-manifest-contract-") as work_dir:
+            data_dir = Path(work_dir) / "data"
+            output_path = Path(work_dir) / "out/files.jsonl"
+            fixture_path = write_external_fixture(data_dir, external_index())
+            both_files = ["mounted/softwares/evil.bin", "mounted/softwares/tool.bin"]
+
+            create_fixture_with_mount_source(data_dir, deny_paths=["/public/software"])
+            boundary = run_with_external_fixture(data_dir, output_path, fixture_path)
+
+            self.assertEqual(boundary.returncode, 0, boundary.stdout + boundary.stderr)
+            self.assertEqual(
+                [row["id"] for row in read_rows(output_path) if row["source"] == "external"],
+                both_files,
+            )
+
+            # x = "/" 视为整个源：deny 根前缀必须丢掉全部外挂行
+            # （与前端 pathRules 的特例一致）
+            create_fixture_with_mount_source(data_dir, deny_paths=["/"])
+            root_prefix = run_with_external_fixture(data_dir, output_path, fixture_path)
+
+            self.assertEqual(root_prefix.returncode, 0, root_prefix.stdout + root_prefix.stderr)
+            self.assertEqual(
+                [row for row in read_rows(output_path) if row["source"] == "external"], []
+            )
+
+            create_fixture_with_mount_source(data_dir, allow_paths=["/public/downloads"])
+            allow_miss = run_with_external_fixture(data_dir, output_path, fixture_path)
+
+            self.assertEqual(allow_miss.returncode, 0, allow_miss.stdout + allow_miss.stderr)
+            self.assertEqual(
+                [row for row in read_rows(output_path) if row["source"] == "external"], []
+            )
+
+            # 比较的是外挂索引自身的节点路径（含 sub_path 前缀），不是挂载点相对路径
+            create_fixture_with_mount_source(data_dir, deny_paths=["/softwares"])
+            relative_form = run_with_external_fixture(data_dir, output_path, fixture_path)
+
+            self.assertEqual(
+                relative_form.returncode, 0, relative_form.stdout + relative_form.stderr
+            )
+            self.assertEqual(
+                [row["id"] for row in read_rows(output_path) if row["source"] == "external"],
+                both_files,
+            )
+
+    def test_retained_rows_are_filtered_when_fetch_fails(self):
+        with tempfile.TemporaryDirectory(prefix="files-manifest-contract-") as work_dir:
+            data_dir = Path(work_dir) / "data"
+            output_path = Path(work_dir) / "out/files.jsonl"
+            fixture_path = write_external_fixture(data_dir, external_index())
+
+            create_fixture(data_dir)
+            healthy = run_with_external_fixture(data_dir, output_path, fixture_path)
+
+            self.assertEqual(healthy.returncode, 0, healthy.stdout + healthy.stderr)
+            self.assertEqual(
+                [row["id"] for row in read_rows(output_path) if row["source"] == "external"],
+                ["mounted/softwares/evil.bin", "mounted/softwares/tool.bin"],
+            )
+
+            create_fixture_with_mount_source(data_dir, deny_paths=["/public/softwares/tool.bin"])
+            failed = failing_run(data_dir, output_path)
+
+            self.assertEqual(failed.returncode, 0, failed.stdout + failed.stderr)
+            self.assertIn("保留既有清单中的 1 行", failed.stdout)
+            self.assertEqual(
+                [row["id"] for row in read_rows(output_path) if row["source"] == "external"],
+                ["mounted/softwares/evil.bin"],
+            )
 
 
 if __name__ == "__main__":

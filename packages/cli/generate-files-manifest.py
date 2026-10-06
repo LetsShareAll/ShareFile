@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "lib"))
 
 from lib.file_scanner import get_mount_source
 from lib.logger import Logger
+from lib.mount_filter import is_external_path_allowed
 
 GITHUB_RAW_HOST = "raw.githubusercontent.com"
 GITHUB_RAW_BASE_URL = f"https://{GITHUB_RAW_HOST}"
@@ -442,25 +443,39 @@ def resolve_local_url(
     return f"{cdn_base_url}/{encoded_path}"
 
 
-def build_external_rows(
-    mount_point_id: str,
-    mount_source: Dict[str, Any],
-) -> List[Dict[str, Any]]:
-    """抓取并重写单个外部挂载源的文件行。"""
-    use_cdn_index = bool(mount_source.get("use_cdn_index"))
+def get_mount_sub_path(mount_source: Dict[str, Any]) -> str:
+    """读取挂载源的 sub_path，缺省为 /。"""
     sub_path = mount_source.get("sub_path")
 
     if not isinstance(sub_path, str) or not sub_path:
-        sub_path = "/"
+        return "/"
+
+    return sub_path if sub_path.startswith("/") else f"/{sub_path}"
+
+
+def build_external_rows(
+    mount_point_id: str,
+    mount_source: Dict[str, Any],
+    logger: Optional[Logger] = None,
+) -> List[Dict[str, Any]]:
+    """抓取并重写单个外部挂载源的文件行（被准入清单拒绝的节点直接丢弃）。"""
+    use_cdn_index = bool(mount_source.get("use_cdn_index"))
+    sub_path = get_mount_sub_path(mount_source)
 
     external_data = fetch_external_index(mount_source, use_cdn_index)
     nodes, selected_ids, external_root_id = select_external_nodes(external_data, sub_path)
     rows: List[Dict[str, Any]] = []
+    denied = 0
 
     for old_id in selected_ids:
         node = nodes.get(old_id)
 
         if not is_manifest_file_node(node):
+            continue
+
+        # 准入清单比较的是外挂索引自身的节点路径（含 sub_path 前缀），与前端一致
+        if not is_external_path_allowed(get_node_path_from_id(old_id), mount_source):
+            denied += 1
             continue
 
         new_id = join_mounted_node_id(
@@ -483,7 +498,38 @@ def build_external_rows(
             )
         )
 
+    if denied and logger:
+        logger.info(f"外挂挂载源 {mount_point_id}: 准入清单拒绝 {denied} 个文件节点")
+
     return rows
+
+
+def filter_retained_rows(
+    rows: List[Dict[str, Any]],
+    mount_point_id: str,
+    mount_source: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    """
+    抓取失败时保留的既有行同样要过准入清单。
+
+    既有行只存挂载后的 ID，这里按挂载规则反推回外挂索引坐标系再比较，
+    与 build_external_rows 用同一条规则。
+    """
+    sub_path = get_mount_sub_path(mount_source)
+
+    return [
+        row
+        for row in rows
+        if is_external_path_allowed(
+            get_node_path_from_id(
+                join_mounted_node_id(
+                    sub_path,
+                    get_relative_external_node_id(row["id"], mount_point_id),
+                )
+            ),
+            mount_source,
+        )
+    ]
 
 
 def build_manifest_rows(
@@ -551,11 +597,15 @@ def build_manifest_rows(
     if not offline:
         for mount_point_id, mount_source in iter_mount_points(local_nodes):
             try:
-                external_rows = build_external_rows(mount_point_id, mount_source)
+                external_rows = build_external_rows(mount_point_id, mount_source, logger)
             except Exception as error:  # 单个挂载源失败不影响整体产出
-                retained_rows = collect_retainable_rows(
-                    existing_by_mount_point.get(mount_point_id, []),
-                    emitted_ids,
+                retained_rows = filter_retained_rows(
+                    collect_retainable_rows(
+                        existing_by_mount_point.get(mount_point_id, []),
+                        emitted_ids,
+                    ),
+                    mount_point_id,
+                    mount_source,
                 )
 
                 if retained_rows:

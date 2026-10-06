@@ -32,6 +32,8 @@ MOUNT_SOURCE_FIELDS = [
     "sub_path",
     "access_cdn",
     "use_cdn_index",
+    "allow_paths",
+    "deny_paths",
 ]
 
 

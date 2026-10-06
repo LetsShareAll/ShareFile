@@ -176,7 +176,43 @@ Python CLI 支持：
 - 保留虚拟节点
 - 识别 `hold` 字段锁定
 - 保留 `redirect`
-- 保留目录级 `mount_source`
+- 保留目录级 `mount_source`（含 `allow_paths` / `deny_paths` 准入清单）
+- 透传节点 `restricted` 标记
+
+## 节点与挂载源字段
+
+`._info.json` 里以下三个字段会被 CLI 透传进索引（`share-file.json` 与 `share-file.cdn.json`）：
+
+| 字段          | 位置                                | 说明                                 |
+| ------------- | ----------------------------------- | ------------------------------------ |
+| `restricted`  | 节点（`self` 或 `children.<name>`） | 布尔标记，缺失按 `false` 处理        |
+| `allow_paths` | `mount_source`                      | 准入清单，只有命中的外挂路径才进索引 |
+| `deny_paths`  | `mount_source`                      | 拒绝清单，优先级高于 `allow_paths`   |
+
+清单元素是「以 `/` 开头的路径前缀」，匹配对象是**外挂索引里节点 ID 对应的路径**（外挂源自身坐标系，
+含 `sub_path` 前缀，但**不含本地挂载点前缀**）。命中判定为 `path == prefix` 或 `path.startsWith(prefix + "/")`：
+
+```json
+{
+  "self": {
+    "mount_source": {
+      "provider": "github",
+      "repository": "owner/repo",
+      "branch": "main",
+      "sub_path": "/public",
+      "allow_paths": ["/public/downloads"],
+      "deny_paths": ["/public/downloads/private"]
+    }
+  },
+  "children": {
+    "manual.pdf": { "type": "file", "restricted": true }
+  }
+}
+```
+
+- 命中 `deny_paths`（或存在非空 `allow_paths` 但未命中）的节点连同子树一起不进索引与 `files.jsonl`。
+- 两个清单都为空或不写时不限制；前缀按目录边界匹配，`/a` 命中 `/a` 与 `/a/b`，不命中 `/ab`。
+- 清单写法与前端运行时过滤一致：`sub_path: "/public"` 时规则要带 `/public` 前缀。
 
 根项目的数据结构说明见：
 

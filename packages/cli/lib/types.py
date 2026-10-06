@@ -45,6 +45,8 @@ class MountSourceInfo(TypedDict, total=False):
     sub_path: Optional[str]
     access_cdn: Optional[str]
     use_cdn_index: Optional[bool]
+    allow_paths: Optional[List[str]]
+    deny_paths: Optional[List[str]]
 
 
 class BaseInfo(TypedDict, total=False):
@@ -52,6 +54,7 @@ class BaseInfo(TypedDict, total=False):
 
     description: Optional[str]
     hidden: Optional[bool]
+    restricted: Optional[bool]
     redirect: Optional[RedirectInfo]
     hold: Optional[Union[bool, HoldInfo]]
     created_at: Optional[str]
@@ -95,6 +98,7 @@ class ShareNode(TypedDict, total=False):
     children: List[str]
     description: Optional[str]
     hidden: Optional[bool]
+    restricted: Optional[bool]
     size: Optional[int]
     version: Optional[str]
     created_at: Optional[str]
@@ -285,6 +289,7 @@ BASE_FIELD_ORDER = [
     "type",
     "description",
     "hidden",
+    "restricted",
     "redirect",
     "mount_source",
     "hold",
