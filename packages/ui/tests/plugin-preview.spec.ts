@@ -20,7 +20,7 @@ const EXPECTED_IDS = [
   'video',
 ];
 
-/** 带预览的 7 个插件，其余走 window.open 兜底。 */
+/** 带预览的 8 个插件，其余走 window.open 兜底。 */
 const PREVIEW_IDS = [
   'markdown',
   'code',
@@ -29,6 +29,7 @@ const PREVIEW_IDS = [
   'text',
   'video',
   'audio',
+  'font',
 ];
 
 const SAMPLE_NAMES: Record<string, string> = {
@@ -39,6 +40,7 @@ const SAMPLE_NAMES: Record<string, string> = {
   text: 'notes.txt',
   video: 'clip.mp4',
   audio: 'song.mp3',
+  font: 'SmileySans-Oblique.ttf',
 };
 
 describe('内置插件清单', () => {

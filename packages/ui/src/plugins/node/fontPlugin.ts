@@ -12,4 +12,6 @@ export const fontPlugin = createNodePlugin({
     woff: { mime: 'font/woff' },
     woff2: { mime: 'font/woff2' },
   },
+  preview: async () =>
+    (await import('../../features/preview/renderers/FontPreview.vue')).default,
 });
