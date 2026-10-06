@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 /**
  * 外挂索引在导航后才异步合并，列表会重渲染一次；
  * 直接点击可能落在重渲染的瞬间，导致点击丢失。
@@ -8,8 +8,8 @@ async function openDirectory(
   path: string,
 ): Promise<void> {
   await page.goto(path);
-  await page.waitForLoadState('networkidle');
-  await expect(page.locator('.file-item').first()).toBeVisible();
+  // 不要用 waitForLoadState('networkidle')：CDN 偶发不断流时会拖到超时。
+  // 调用方按元素断言等待（计数或可见性）后再点击。
 }
 
 test('点击代码文件打开预览并高亮', async ({ page }) => {
@@ -63,12 +63,11 @@ test('点击图片文件渲染为 img 并可用 Esc 关闭', async ({ page }) =>
 test('点击文本文件渲染为纯文本预览', async ({ page }) => {
   await openDirectory(page, '/pictures/wallpapers/pixiv/武装直升机-122604995');
 
-  await page
-    // 同一前缀下有 .jpg 同名文件，用唯一后缀锁定文本文件
-    .locator('.file-item', { hasText: '简介.txt' })
-    .first()
-    .locator('.item-name')
-    .click();
+  // 同一前缀下有 .jpg 同名文件，用唯一后缀锁定文本文件
+  const textItem = page.locator('.file-item', { hasText: '简介.txt' });
+
+  await expect(textItem.first()).toBeVisible();
+  await textItem.first().locator('.item-name').click();
 
   await expect(page.locator('.modal-body .rendered-markdown')).toContainText(
     '哥伦比亚',

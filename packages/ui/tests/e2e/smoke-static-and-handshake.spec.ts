@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('404.html 写入的待恢复路由在启动时被还原并清理', async ({ page }) => {
   await page.goto('/');

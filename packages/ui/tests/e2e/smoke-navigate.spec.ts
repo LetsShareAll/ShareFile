@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('进入子目录并可经面包屑返回', async ({ page }) => {
   await page.goto('/');

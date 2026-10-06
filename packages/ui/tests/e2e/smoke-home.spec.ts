@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('首页渲染目录列表与外壳', async ({ page }) => {
   const consoleErrors: string[] = [];

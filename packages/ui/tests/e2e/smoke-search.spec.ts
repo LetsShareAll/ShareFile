@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('搜索命中并可用 Esc 清空', async ({ page }) => {
   await page.goto('/');

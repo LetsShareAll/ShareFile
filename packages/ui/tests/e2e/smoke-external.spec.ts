@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('外挂挂载合并出标记，刷新后条目保持一致', async ({ page }) => {
   await page.goto('/');

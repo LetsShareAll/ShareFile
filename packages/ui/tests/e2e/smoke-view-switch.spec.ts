@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('图标/详情视图切换并在刷新后保持', async ({ page }) => {
   await page.goto('/');

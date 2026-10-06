@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('主题切换写入 data-theme 并在刷新后保持', async ({ page }) => {
   await page.goto('/');

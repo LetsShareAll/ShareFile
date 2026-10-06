@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 

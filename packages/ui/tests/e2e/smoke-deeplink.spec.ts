@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './base';
 
 test('深链直达目录并标记外部节点', async ({ page }) => {
   await page.goto('/softwares/applications/tools');
