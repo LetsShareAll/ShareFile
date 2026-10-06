@@ -5,6 +5,10 @@ import {
   getNodeMetaText,
   type NodeRow,
 } from '../nodeDisplay';
+import {
+  cancelHoverPrefetch,
+  scheduleHoverPrefetch,
+} from '../../preview/prefetch';
 import NodeActions from './NodeActions.vue';
 
 defineProps<{ rows: readonly NodeRow[]; showPath?: boolean }>();
@@ -40,6 +44,8 @@ function activate(row: NodeRow): void {
         },
       ]"
       tabindex="0"
+      @mouseenter="scheduleHoverPrefetch(row.node)"
+      @mouseleave="cancelHoverPrefetch()"
       @click="activate(row)"
       @keydown.enter.prevent="activate(row)"
     >
