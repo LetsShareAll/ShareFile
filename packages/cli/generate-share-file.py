@@ -48,6 +48,8 @@ def apply_common_info(
         node["description"] = info_node["description"]
     if info_node.get("hidden") is not None:
         node["hidden"] = info_node["hidden"]
+    if info_node.get("restricted") is not None:
+        node["restricted"] = info_node["restricted"]
     if info_node.get("created_at"):
         node["created_at"] = remove_milliseconds_from_iso(info_node["created_at"])
     if info_node.get("updated_at"):

@@ -3,23 +3,38 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "check": "tsc --noEmit",
+    "dev": "vite",
+    "build": "node scripts/clean-build-output.mjs && vite build",
+    "build:local": "node scripts/clean-build-output.mjs && vite build --mode local",
+    "preview": "vite preview",
+    "check": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "dev": "node scripts/dev.mjs",
-    "build": "node scripts/build.mjs"
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "esbuild": "^0.28.0",
-    "typescript": "^6.0.3"
+    "@playwright/test": "^1.63.0",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "@vue/test-utils": "^2.5.1",
+    "happy-dom": "^20.14.5",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3",
+    "vue-tsc": "^3.3.12"
   },
   "dependencies": {
     "amplitudejs": "^5.3.2",
+    "dompurify": "^3.4.16",
     "highlight.js": "^11.11.1",
-    "marked": "^15.0.0",
+    "marked": "^15.0.12",
     "music-metadata": "^11.12.3",
-    "video.js": "^8.23.7"
+    "pinia": "^4.0.3",
+    "video.js": "^8.23.7",
+    "vue": "^3.5.43",
+    "vue-router": "^5.3.1"
   }
 }

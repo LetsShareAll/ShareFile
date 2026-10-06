@@ -1,0 +1,730 @@
+/* ==========================================================================
+   应用外壳与列表（对应旧 index.css 第 166-194、211-334、336-429、435-544、
+   546-620、658-790、1571-1618、1695-1727 行）。
+   ========================================================================== */
+
+.container {
+  max-width: 1024px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+/* 头部毛玻璃工具栏：玻璃配方（surface/blur/stroke/sheen/阴影）见 base.css 的 .glass 组 */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* 搜索面板：内容层轻玻璃（外层不再叠真玻璃，避免与 .search-box 双重模糊） */
+.search-panel {
+  margin-bottom: 1.3rem;
+  padding: 0.75rem;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.search-box:focus-within {
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+  background-color: var(--glass-surface-strong);
+}
+
+.search-box input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+.search-box input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* 排序控件：选择键 + 升降序切换，与视图/主题按钮同族（玻璃配方见 base.css） */
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: var(--radius-pill);
+  padding: 2px;
+}
+
+.sort-select {
+  appearance: none;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 1.7rem 0.4rem 0.65rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentcolor 50%),
+    linear-gradient(135deg, currentcolor 50%, transparent 50%);
+  background-position:
+    calc(100% - 0.85rem) 55%,
+    calc(100% - 0.6rem) 55%;
+  background-size: 0.28rem 0.28rem;
+  background-repeat: no-repeat;
+  transition: background-color var(--duration-normal) var(--ease-standard);
+}
+
+.sort-select:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.sort-direction {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.view-switch,
+.theme-switch {
+  display: flex;
+  border-radius: var(--radius-pill);
+  padding: 2px;
+  gap: 2px;
+}
+
+.view-switch button,
+.theme-switch button {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+  transition:
+    background var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
+  line-height: 1;
+}
+
+.view-switch button:hover,
+.theme-switch button:hover {
+  background: var(--button-hover-bg);
+}
+
+.view-switch button.active,
+.theme-switch button.active {
+  background: var(--button-active-bg);
+  color: var(--button-active-color);
+  font-weight: 600;
+}
+
+/* 面包屑 */
+/* 面包屑：新组件用 class="breadcrumb"（旧站是 id="breadcrumb"），两种都覆盖。 */
+#breadcrumb,
+.breadcrumb {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.4rem 0;
+}
+
+#breadcrumb a,
+.breadcrumb a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#breadcrumb a:hover,
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+#breadcrumb .current,
+.breadcrumb .current {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.directory-description {
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* 搜索结果统计：新版模板同时带 .search-results-header 类。 */
+.search-summary,
+.search-results-header {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* 文件列表网格 */
+.file-list {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.container.view-icon .file-list {
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+}
+
+.container.view-detail .file-list {
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+
+/* 文件卡片：内容层轻玻璃（surface 与阴影档位见 base.css 的 .glass--subtle 组） */
+.file-item {
+  display: block;
+  cursor: pointer;
+  transition:
+    transform var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard),
+    background-color var(--duration-normal) var(--ease-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.item-main {
+  display: grid;
+  min-width: 0;
+}
+
+.item-copy {
+  min-width: 0;
+}
+
+.item-name {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  color: var(--text);
+  font-weight: 650;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-name-text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-description {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-path {
+  display: block;
+  max-width: 100%;
+  margin-top: 0.15rem;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  line-height: 1.35;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-stats {
+  min-width: 0;
+  color: var(--text-secondary);
+}
+
+.file-item:hover {
+  /* 悬浮态提升到控件层档位，暗色下才有可见的层次差 */
+  background-color: var(--glass-surface-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-floating);
+}
+
+/* 外部节点列表项：旧 index.css 里这两条在 .file-item 之后（第 1641 行），
+   必须保持同样的层叠顺序，否则会被 .file-item 的 border/background 简写覆盖。 */
+.external-item {
+  border-left: 3px solid var(--external-accent);
+}
+
+.external-item:hover {
+  background-color: var(--external-hover-bg);
+}
+
+/* 大图标视图 */
+/* 旧实现用 JS 测量（alignIconViewRows）把 --icon-row/--name-row/--description-row/
+   --path-row/--meta-row/--actions-row 写到卡片上；现在改成纯 CSS：.file-list 是网格，
+   每张卡片跨 5 行（图标/名称/描述/路径/元信息）并用单层 subgrid 复用这 5 条行线，
+   同一视觉行的卡片自动按该行最高者对齐，无需任何测量；操作区仍是绝对定位的悬浮
+   按钮组，不占行。 */
+.container.view-icon .file-list {
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  grid-auto-rows: auto;
+  align-items: stretch;
+}
+
+.container.view-icon .file-item {
+  display: grid;
+  grid-row: span 6;
+  grid-template-rows: subgrid;
+  row-gap: 0.25rem;
+  min-height: 0;
+  padding: 1rem 0.9rem 0.85rem;
+  text-align: center;
+  overflow: visible;
+  justify-items: center;
+}
+
+/* 非搜索态不渲染 .item-path，卡片就只跨 4 行，否则会多出一条空行线把卡片撑高；
+   旧实现里空路径行占的那一格 gap 由下面 .item-stats 的 margin 补回。 */
+.container.view-icon .file-item:not(:has(.item-path)) {
+  grid-row: span 5;
+}
+
+/* 行容器不再生成盒子：名称/描述/路径直接落在卡片 subgrid 的行线上，
+   这样它们各自与同一视觉行的其它卡片按最高者对齐。 */
+.container.view-icon .item-main,
+.container.view-icon .item-copy {
+  display: contents;
+}
+
+/* 旧规则对 .item-main 整体做 translateY(-2px)，取消盒子后改为平移各区块。 */
+.container.view-icon
+  .file-item:is(:hover, :focus-within)
+  :is(.item-icon, .item-name, .item-description, .item-path, .item-stats) {
+  transform: translateY(-2px);
+}
+
+.container.view-icon
+  :is(.item-icon, .item-name, .item-description, .item-path, .item-stats) {
+  transition: transform var(--duration-normal) var(--ease-standard);
+}
+
+/* 五个区块各占一条共享行线：1 图标 2 名称 3 描述 4 路径（仅搜索态渲染）5 元信息。
+   显式指定行号，路径缺失时元信息仍留在第 5 行。 */
+.container.view-icon .item-name {
+  grid-row: 2;
+  margin-top: 0.3rem;
+  align-self: start;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.95rem;
+  max-width: 100%;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.container.view-icon .item-name-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.container.view-icon .version-badge {
+  display: inline-flex;
+}
+
+.container.view-icon .hash-row {
+  display: none;
+}
+
+.container.view-icon .item-description {
+  grid-row: 3;
+  display: -webkit-box;
+  align-self: start;
+  max-width: 100%;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.container.view-icon .item-path {
+  grid-row: 4;
+}
+
+.container.view-icon .item-stats {
+  grid-row: 5;
+  margin-top: 0.3rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  font-size: 0.76rem;
+  align-self: center;
+}
+
+/* 少了路径行时元信息上移到第 4 行，并补回旧实现空路径行前后的间距。 */
+.container.view-icon .file-item:not(:has(.item-path)) .item-stats {
+  grid-row: 4;
+  margin-top: 0.55rem;
+}
+
+.container.view-icon .file-item:not(:has(.item-path)) .item-actions {
+  grid-row: 5;
+}
+
+.container.view-icon .meta-info {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 操作区改为卡片内正常流（第 6 行）：旧 CSS 的右上角悬浮层只承载 1 个按钮，
+   现在有 4 个（页面链接 / 直链 / curl / 下载），悬浮会把标题和描述盖住。 */
+.container.view-icon .item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 100%;
+  grid-row: 6;
+}
+
+/* 旧语义：图标视图不展示哈希按钮（旧 CSS 里 .hash-row 在此视图 display:none），
+   哈希只出现在详情视图与按钮的 title 提示里。 */
+.container.view-icon .item-actions .hash-value {
+  display: none;
+}
+
+/* 图标视图按钮更紧凑，4 个操作正好排成一行，卡片不必为按钮再长高。 */
+.container.view-icon .item-actions .action-btn {
+  padding: 0.3rem 0.45rem;
+  font-size: 0.8rem;
+}
+
+/* 详细列表视图 */
+.container.view-detail .file-item {
+  padding: 0.72rem 0.85rem;
+}
+
+.container.view-detail .item-main {
+  grid-template-columns: auto minmax(0, 1fr) minmax(12rem, auto) auto;
+  align-items: center;
+  gap: 0.85rem;
+  transition: transform var(--duration-normal) var(--ease-standard);
+}
+
+.container.view-detail .file-item:hover .item-main,
+.container.view-detail .file-item:focus-within .item-main {
+  transform: translateY(-1px);
+}
+
+.container.view-detail .item-icon {
+  align-self: start;
+}
+
+.container.view-detail .item-name {
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.container.view-detail .item-name-text {
+  white-space: nowrap;
+}
+
+.container.view-detail .item-description {
+  max-width: 100%;
+  margin-top: 0.15rem;
+  white-space: nowrap;
+}
+
+.container.view-detail .item-stats {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.container.view-detail .item-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.container.view-detail .file-item:hover .item-actions,
+.container.view-detail .file-item:focus-within .item-actions {
+  transform: scale(1.01);
+}
+
+.meta-info {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* 哈希行 */
+.hash-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.55rem 0 0 3.05rem;
+  font-size: 0.74rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.version-badge {
+  font-size: 0.7em;
+  background: var(--primary);
+  color: var(--text-on-accent);
+  padding: 0.15em 0.5em;
+  border-radius: var(--radius-pill);
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+/* 图标颜色 */
+.item-icon {
+  line-height: 1;
+}
+/* 优化：使用彩色圆角背景与白色图标，提高可读性与层次感 */
+.item-icon {
+  line-height: 1;
+}
+.item-icon i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: var(--radius-sm);
+  font-size: 1.5rem;
+  color: var(--text-on-accent);
+  background: transparent;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-normal) var(--ease-standard);
+}
+.item-icon {
+  position: relative; /* for badge positioning */
+}
+.container.view-detail .item-icon i {
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius-xs);
+}
+
+/* 徽章样式（仅悬停显示）：与卡片内小控件同档的轻玻璃 */
+.icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--glass-surface-strong);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+  border: 1px solid var(--glass-stroke);
+  color: var(--text);
+  font-weight: 700;
+  padding: 0.08rem 0.36rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.62rem;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  transform: translateY(6px) scale(0.9);
+  transition:
+    opacity var(--duration-fast) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard);
+  pointer-events: none;
+  --glass-solid: var(--glass-surface-strong-solid);
+}
+
+/* 徽章自带玻璃背景（不在 base.css 的配方组里），降级就地声明 */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .icon-badge {
+    background-color: var(--glass-surface-strong-solid);
+  }
+}
+
+/* 悬停触发动效：图标轻微上浮，徽章显现 */
+.container.view-icon .file-item:hover .item-icon i,
+.container.view-icon .file-item:focus-within .item-icon i,
+.container.view-detail .file-item:hover .item-icon i,
+.container.view-detail .file-item:focus-within .item-icon i {
+  transform: scale(1.04);
+}
+.file-item:hover .icon-badge {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.item-icon.folder i {
+  background: linear-gradient(135deg, var(--color-folder), var(--tile-shade));
+}
+.item-icon.image i {
+  background: linear-gradient(135deg, var(--color-image), var(--tile-shade));
+}
+.item-icon.video i {
+  background: linear-gradient(135deg, var(--color-video), var(--tile-shade));
+}
+.item-icon.audio i {
+  background: linear-gradient(135deg, var(--color-audio), var(--tile-shade));
+}
+.item-icon.document i {
+  background: linear-gradient(135deg, var(--color-document), var(--tile-shade));
+}
+.item-icon.archive i {
+  background: linear-gradient(135deg, var(--color-archive), var(--tile-shade));
+}
+.item-icon.code i {
+  background: linear-gradient(135deg, var(--color-code), var(--tile-shade));
+}
+.item-icon.font i {
+  background: linear-gradient(135deg, var(--color-font), var(--tile-shade));
+}
+.item-icon.executable i {
+  background: linear-gradient(
+    135deg,
+    var(--color-executable),
+    var(--tile-shade)
+  );
+}
+.item-icon.disk-image i {
+  background: linear-gradient(
+    135deg,
+    var(--color-disk-image),
+    var(--tile-shade)
+  );
+}
+.item-icon.unknown i {
+  background: linear-gradient(135deg, var(--color-unknown), var(--tile-shade));
+}
+
+/* 操作按钮 */
+.item-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1rem;
+    margin: 1rem auto;
+  }
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+  .toolbar,
+  .search-box {
+    width: 100%;
+  }
+  .toolbar {
+    justify-content: flex-start;
+  }
+  .container.view-icon .file-list {
+    grid-template-columns: 1fr;
+  }
+  .container.view-detail .item-main {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.65rem;
+  }
+  .container.view-detail .item-stats {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    text-align: left;
+    white-space: normal;
+  }
+  .container.view-detail .item-actions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .container.view-detail .item-name,
+  .container.view-detail .item-description {
+    width: 100%;
+  }
+  .hash-row {
+    margin-left: 0;
+  }
+}
+
+/* 刷新按钮样式：控件层玻璃（配方见 base.css 的 .glass 组） */
+.refresh-btn {
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-normal) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard);
+  color: var(--text);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background-color: var(--glass-surface-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-floating);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-btn i {
+  transition: transform var(--duration-normal) var(--ease-standard);
+}
+
+.refresh-btn:hover:not(:disabled) i {
+  transform: rotate(180deg);
+}

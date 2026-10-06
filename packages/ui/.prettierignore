@@ -1,0 +1,5 @@
+node_modules
+phase5-probe
+test-results
+playwright-report
+.tmp

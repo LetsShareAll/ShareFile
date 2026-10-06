@@ -126,6 +126,8 @@ def process_file_node(
     if old_node:
         if old_node.get("hidden") is not None:
             new_node["hidden"] = old_node["hidden"]
+        if old_node.get("restricted") is not None:
+            new_node["restricted"] = old_node["restricted"]
         if old_node.get("redirect"):
             new_node["redirect"] = old_node["redirect"]
         if old_node.get("hold"):
@@ -231,6 +233,8 @@ def process_directory(
                 )
                 if old_node.get("hidden") is not None:
                     new_node["hidden"] = old_node["hidden"]
+                if old_node.get("restricted") is not None:
+                    new_node["restricted"] = old_node["restricted"]
                 if old_node.get("redirect"):
                     new_node["redirect"] = old_node["redirect"]
                 mount_source = get_mount_source(old_node)

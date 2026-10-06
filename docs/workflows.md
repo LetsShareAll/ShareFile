@@ -50,16 +50,20 @@ permissions:
 
 ```bash
 pnpm install --frozen-lockfile
+pnpm --filter @share-file/ui exec playwright install --with-deps chromium
 pnpm run verify
+pnpm --filter @share-file/ui run test:e2e
 ```
 
 `verify` 包含：
 
 ```text
-check -> lint -> format:check -> test:contract
+check -> lint -> format:check -> test:ui -> test:contract -> build -> size
 ```
 
-这个 workflow 只做代码查验，不生成索引、不提交文件、不构建页面、不部署页面。
+其中 `build` 会把 UI 产物写进 `public/`（产物不入库，故不产生提交），`size` 对首屏 gzip 做 250 KB 门禁；`test:e2e` 由 Playwright 以 `build + vite preview` 起生产产物，跑 13 条冒烟（首页、进目录、深链、`?path=` 收敛、404 握手、主题、搜索、外挂刷新、代码/Markdown/图片预览等）。浏览器目录会被 `actions/cache` 复用。
+
+这个 workflow 只做代码查验（含构建与冒烟），不生成索引、不提交文件、不部署页面。
 
 ## 准备 public 文件
 
@@ -167,6 +171,7 @@ deploy-page
 
 ```bash
 pnpm run verify
+pnpm --filter @share-file/ui run test:e2e
 ```
 
 准备索引：

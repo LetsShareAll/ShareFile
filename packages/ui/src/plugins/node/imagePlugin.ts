@@ -1,5 +1,4 @@
-import { createNodePlugin } from '../../utils/nodePluginFactory';
-import { renderImagePreview } from '../../utils/previewRenderers';
+import { createNodePlugin } from '../../domain/plugins';
 
 export const imagePlugin = createNodePlugin({
   id: 'image',
@@ -17,5 +16,6 @@ export const imagePlugin = createNodePlugin({
     bmp: { mime: 'image/bmp' },
     ico: { mime: 'image/x-icon' },
   },
-  preview: input => renderImagePreview(input.fileUrl),
+  preview: async () =>
+    (await import('../../features/preview/renderers/ImagePreview.vue')).default,
 });

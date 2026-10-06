@@ -80,6 +80,42 @@ class GenerateShareFileContractTest(unittest.TestCase):
                 "https://cdn.example.test/files/%E7%A9%BA%20%E7%99%BD/name%20with%20space.txt",
             )
 
+    def test_restricted_and_mount_path_lists_are_passed_through(self):
+        with tempfile.TemporaryDirectory(prefix="share-file-contract-") as work_dir:
+            fixture_root = Path(work_dir) / "fixture"
+            output_path = Path(work_dir) / "generated/share-file.json"
+            output_path.parent.mkdir(parents=True)
+
+            self.create_metadata_fixture(fixture_root)
+            run_generator(fixture_root, output_path)
+
+            share_file = read_json(output_path)
+            cdn_share_file = read_json(output_path.with_name("share-file.cdn.json"))
+            nodes = share_file["nodes"]
+            cdn_nodes = cdn_share_file["nodes"]
+
+            # restricted 三态：true / false 透传，缺失不落字段
+            self.assertIs(nodes["open.txt"]["restricted"], True)
+            self.assertIs(nodes["closed.txt"]["restricted"], False)
+            self.assertNotIn("restricted", nodes["plain.txt"])
+            self.assertIs(nodes["restricted-dir"]["restricted"], True)
+            self.assertIs(cdn_nodes["open.txt"]["restricted"], True)
+            self.assertIs(cdn_nodes["closed.txt"]["restricted"], False)
+            self.assertNotIn("restricted", cdn_nodes["plain.txt"])
+
+            # 挂载源的准入清单必须进索引（含 CDN 版本），前端运行时才有依据过滤
+            mount_source = {
+                "provider": "github",
+                "repository": "LetsShareAll/ShareFile",
+                "branch": "file",
+                "sub_path": "/",
+                "allow_paths": ["/downloads"],
+                "deny_paths": ["/downloads/private"],
+            }
+
+            self.assertEqual(nodes["gated"]["mount_source"], mount_source)
+            self.assertEqual(cdn_nodes["gated"]["mount_source"], mount_source)
+
     @staticmethod
     def create_fixture(root_dir: Path) -> None:
         (root_dir / "docs").mkdir(parents=True)
@@ -190,6 +226,52 @@ class GenerateShareFileContractTest(unittest.TestCase):
                         "size": 6,
                     },
                 },
+            },
+        )
+
+    @staticmethod
+    def create_metadata_fixture(root_dir: Path) -> None:
+        """restricted 三态 + 挂载源准入清单（覆盖 child 元数据与目录 self 两条合并路径）。"""
+        (root_dir / "restricted-dir").mkdir(parents=True)
+        (root_dir / "gated").mkdir()
+        (root_dir / "open.txt").write_text("open\n", encoding="utf-8")
+        (root_dir / "closed.txt").write_text("closed\n", encoding="utf-8")
+        (root_dir / "plain.txt").write_text("plain\n", encoding="utf-8")
+
+        write_json(
+            root_dir / "._info.json",
+            {
+                "self": {"description": "根目录"},
+                "children": {
+                    "open.txt": {"type": "file", "restricted": True, "size": 5},
+                    "closed.txt": {"type": "file", "restricted": False, "size": 7},
+                    "plain.txt": {"type": "file", "size": 6},
+                    "restricted-dir": {"type": "folder"},
+                    "gated": {"type": "folder"},
+                },
+            },
+        )
+
+        write_json(
+            root_dir / "restricted-dir/._info.json",
+            {"self": {"restricted": True}, "children": {}},
+        )
+
+        write_json(
+            root_dir / "gated/._info.json",
+            {
+                "self": {
+                    "description": "准入清单挂载点",
+                    "mount_source": {
+                        "provider": "github",
+                        "repository": "LetsShareAll/ShareFile",
+                        "branch": "file",
+                        "sub_path": "/",
+                        "allow_paths": ["/downloads"],
+                        "deny_paths": ["/downloads/private"],
+                    },
+                },
+                "children": {},
             },
         )
 

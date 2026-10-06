@@ -3,3 +3,8 @@ pnpm-lock.yaml
 *.py
 *.pyc
 public
+test-results
+playwright-report
+.tmp
+phase5-probe
+.phase5

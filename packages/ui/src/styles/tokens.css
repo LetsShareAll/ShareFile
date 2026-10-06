@@ -1,0 +1,357 @@
+/* ==========================================================================
+   设计 token：变量名与旧站 public/assets/styles/index.css 完全一致。
+   主题三态 auto/light/dark：html[data-theme] 由内联脚本与 stores/ui.ts 写入，
+   auto 走 prefers-color-scheme 分支，light/dark 覆盖媒体查询结果。
+
+   液态玻璃（Liquid Glass）分档：
+     表面    --glass-surface-subtle  内容卡（列表卡、预览区、代码容器）
+             --glass-surface         控件层（头部、工具栏控件、搜索框、播放条）
+             --glass-surface-strong  弹窗/面板（预览弹窗、音乐面板、通知）
+     模糊    --glass-blur-subtle(12px) / --glass-blur(20px) / --glass-blur-strong(36px)
+     描边    --glass-stroke 内亮边 + --glass-stroke-outer 外圈
+     阴影    --shadow-card / --shadow-floating / --shadow-modal
+   旧 token（--card-* / --toolbar-* / --modal-blur）保留为别名，全部收敛到玻璃体系。
+   三套主题块（prefers-color-scheme: dark / data-theme=dark / data-theme=light）
+   必须同步覆盖上面每一档。
+   ========================================================================== */
+
+/* 自定义字体：等宽代码字体（Sarasa Mono SC Nerd） */
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-regular-nerd-font.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-bold-nerd-font.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-italic-nerd-font.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Sarasa Mono SC Nerd';
+  src: url('https://cdn-file.lssa.fun/raw.githubusercontent.com/LetsShareAll/ShareFile/file/others/fonts/webtype/sarasa/sarasa-mono-sc-bolditalic-nerd-font.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ===== 基础变量（浅色主题） ===== */
+:root {
+  --bg: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+
+  /* 玻璃表面三档：内容卡 / 控件层 / 弹窗面板 */
+  --glass-surface-subtle: rgba(255, 255, 255, 0.5);
+  --glass-surface: rgba(255, 255, 255, 0.68);
+  --glass-surface-strong: rgba(255, 255, 255, 0.82);
+  /* 降级表面：不支持 backdrop-filter 或系统要求减少透明时使用 */
+  --glass-surface-subtle-solid: #fbfbfd;
+  --glass-surface-solid: #ffffff;
+  --glass-surface-strong-solid: #ffffff;
+
+  /* 描边与高光：内亮边 + 外圈 + 顶部 sheen */
+  --glass-stroke: rgba(255, 255, 255, 0.55);
+  --glass-stroke-outer: rgba(0, 0, 0, 0.06);
+  --glass-sheen: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0) 42%
+  );
+
+  /* 阴影三档：卡片 / 悬浮层 / 弹窗 */
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --shadow-floating: 0 8px 28px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.24);
+
+  /* 圆角刻度 */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* 模糊三档：饱和度提升用于抵消毛玻璃发灰；off 供「减少透明度」降级使用 */
+  --glass-blur-subtle: saturate(160%) blur(12px);
+  --glass-blur: saturate(180%) blur(20px);
+  --glass-blur-strong: saturate(200%) blur(36px);
+  --glass-blur-off: none;
+
+  /* 动效 */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --duration-fast: 0.16s;
+  --duration-normal: 0.24s;
+
+  /* 卡片与分隔线 hairline：浅色压暗、深色提亮（见各主题块） */
+  --card-border: rgba(0, 0, 0, 0.06);
+
+  /* ===== 兼容别名：旧 token 名保留，全部指向玻璃体系 ===== */
+  --card-bg: var(--glass-surface-subtle);
+  --card-hover-bg: var(--glass-surface);
+  --card-shadow: var(--shadow-card);
+  --toolbar-bg: var(--glass-surface);
+  --toolbar-border: var(--card-border);
+  --modal-blur: var(--glass-blur-strong);
+
+  --button-bg: rgba(120, 120, 128, 0.08);
+  --button-hover-bg: rgba(120, 120, 128, 0.15);
+  --button-active-bg: rgba(0, 113, 227, 0.12);
+  --button-active-color: #0071e3;
+
+  --primary: #0071e3;
+  --primary-hover: #0077ed;
+
+  --modal-overlay-bg: rgba(0, 0, 0, 0.3);
+
+  /* 语义状态色：底纹 tint / 强调色 accent / 文字色 text */
+  --status-info-tint: rgba(0, 113, 227, 0.16);
+  --status-info-accent: #0071e3;
+  --status-info-text: #0b4f9e;
+  --status-success-tint: rgba(52, 199, 89, 0.18);
+  --status-success-accent: #34c759;
+  --status-success-text: #1b7a37;
+  --status-warning-tint: rgba(255, 149, 0, 0.2);
+  --status-warning-accent: #ff9500;
+  --status-warning-text: #96590a;
+  --status-error-tint: rgba(255, 59, 48, 0.18);
+  --status-error-accent: #ff3b30;
+  --status-error-text: #a3231c;
+
+  /* 外部节点（网络存储）强调色：浅色需压深、深色需提亮 */
+  --external-accent: #2196f3;
+  /* 外部节点悬停底：玻璃表面 + 强调色 tint，随主题自动派生 */
+  --external-hover-bg: color-mix(
+    in srgb,
+    var(--glass-surface-strong) 92%,
+    var(--external-accent)
+  );
+
+  /* 文件类型色板与彩色填充上的文字 */
+  --color-success: #10b981;
+  --text-on-accent: #ffffff;
+  /* 类型色瓷砖渐变末端的收角阴影（深浅通用） */
+  --tile-shade: rgba(0, 0, 0, 0.06);
+  --color-folder: #fbc82f;
+  --color-image: #db2777;
+  --color-video: #7c3aed;
+  --color-audio: #059669;
+  --color-document: #2563eb;
+  --color-archive: #9333ea;
+  --color-code: #ea580c;
+  --color-font: #4f46e5;
+  --color-executable: #b91c1c;
+  --color-disk-image: #0891b2;
+  --color-unknown: #8e8e93;
+}
+
+/* 深色模式自动检测 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e;
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+
+    /* 深色玻璃：底色压暗、内亮边更强，避免整块糊成灰 */
+    --glass-surface-subtle: rgba(44, 44, 46, 0.5);
+    --glass-surface: rgba(44, 44, 46, 0.62);
+    --glass-surface-strong: rgba(44, 44, 46, 0.78);
+    --glass-surface-subtle-solid: #232325;
+    --glass-surface-solid: #2c2c2e;
+    --glass-surface-strong-solid: #2c2c2e;
+
+    --glass-stroke: rgba(255, 255, 255, 0.12);
+    --glass-stroke-outer: rgba(0, 0, 0, 0.35);
+    --glass-sheen: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0) 42%
+    );
+
+    --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.2);
+    --shadow-floating: 0 8px 28px rgba(0, 0, 0, 0.36);
+    --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.55);
+
+    --card-border: rgba(255, 255, 255, 0.1);
+
+    --button-bg: rgba(120, 120, 128, 0.15);
+    --button-hover-bg: rgba(120, 120, 128, 0.25);
+    --button-active-bg: rgba(10, 132, 255, 0.2);
+    --button-active-color: #0a84ff;
+    --primary: #0a84ff;
+    --primary-hover: #409cff;
+    --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+
+    --status-info-tint: rgba(10, 132, 255, 0.24);
+    --status-info-accent: #0a84ff;
+    --status-info-text: #b3d7ff;
+    --status-success-tint: rgba(48, 209, 88, 0.22);
+    --status-success-accent: #30d158;
+    --status-success-text: #b6f0c4;
+    --status-warning-tint: rgba(255, 159, 10, 0.24);
+    --status-warning-accent: #ff9f0a;
+    --status-warning-text: #ffd9a0;
+    --status-error-tint: rgba(255, 69, 58, 0.24);
+    --status-error-accent: #ff453a;
+    --status-error-text: #ffb4ae;
+
+    --external-accent: #64b5f6;
+  }
+}
+
+html[data-theme='dark'] {
+  --bg: #1c1c1e;
+  --text: #f5f5f7;
+  --text-secondary: #98989d;
+
+  --glass-surface-subtle: rgba(44, 44, 46, 0.5);
+  --glass-surface: rgba(44, 44, 46, 0.62);
+  --glass-surface-strong: rgba(44, 44, 46, 0.78);
+  --glass-surface-subtle-solid: #232325;
+  --glass-surface-solid: #2c2c2e;
+  --glass-surface-strong-solid: #2c2c2e;
+
+  --glass-stroke: rgba(255, 255, 255, 0.12);
+  --glass-stroke-outer: rgba(0, 0, 0, 0.35);
+  --glass-sheen: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0) 42%
+  );
+
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.2);
+  --shadow-floating: 0 8px 28px rgba(0, 0, 0, 0.36);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.55);
+
+  --card-border: rgba(255, 255, 255, 0.1);
+
+  --button-bg: rgba(120, 120, 128, 0.15);
+  --button-hover-bg: rgba(120, 120, 128, 0.25);
+  --button-active-bg: rgba(10, 132, 255, 0.2);
+  --button-active-color: #0a84ff;
+  --primary: #0a84ff;
+  --primary-hover: #409cff;
+  --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+
+  --status-info-tint: rgba(10, 132, 255, 0.24);
+  --status-info-accent: #0a84ff;
+  --status-info-text: #b3d7ff;
+  --status-success-tint: rgba(48, 209, 88, 0.22);
+  --status-success-accent: #30d158;
+  --status-success-text: #b6f0c4;
+  --status-warning-tint: rgba(255, 159, 10, 0.24);
+  --status-warning-accent: #ff9f0a;
+  --status-warning-text: #ffd9a0;
+  --status-error-tint: rgba(255, 69, 58, 0.24);
+  --status-error-accent: #ff453a;
+  --status-error-text: #ffb4ae;
+
+  --external-accent: #64b5f6;
+}
+
+html[data-theme='light'] {
+  --bg: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+
+  --glass-surface-subtle: rgba(255, 255, 255, 0.5);
+  --glass-surface: rgba(255, 255, 255, 0.68);
+  --glass-surface-strong: rgba(255, 255, 255, 0.82);
+  --glass-surface-subtle-solid: #fbfbfd;
+  --glass-surface-solid: #ffffff;
+  --glass-surface-strong-solid: #ffffff;
+
+  --glass-stroke: rgba(255, 255, 255, 0.55);
+  --glass-stroke-outer: rgba(0, 0, 0, 0.06);
+  --glass-sheen: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0) 42%
+  );
+
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --shadow-floating: 0 8px 28px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.24);
+
+  --card-border: rgba(0, 0, 0, 0.06);
+
+  --button-bg: rgba(120, 120, 128, 0.08);
+  --button-hover-bg: rgba(120, 120, 128, 0.15);
+  --button-active-bg: rgba(0, 113, 227, 0.12);
+  --button-active-color: #0071e3;
+  --primary: #0071e3;
+  --primary-hover: #0077ed;
+  --modal-overlay-bg: rgba(0, 0, 0, 0.3);
+
+  --status-info-tint: rgba(0, 113, 227, 0.16);
+  --status-info-accent: #0071e3;
+  --status-info-text: #0b4f9e;
+  --status-success-tint: rgba(52, 199, 89, 0.18);
+  --status-success-accent: #34c759;
+  --status-success-text: #1b7a37;
+  --status-warning-tint: rgba(255, 149, 0, 0.2);
+  --status-warning-accent: #ff9500;
+  --status-warning-text: #96590a;
+  --status-error-tint: rgba(255, 59, 48, 0.18);
+  --status-error-accent: #ff3b30;
+  --status-error-text: #a3231c;
+
+  --external-accent: #2196f3;
+  /* 外部节点悬停底：玻璃表面 + 强调色 tint，随主题自动派生 */
+  --external-hover-bg: color-mix(
+    in srgb,
+    var(--glass-surface-strong) 92%,
+    var(--external-accent)
+  );
+}
+
+/* 全局重置与排版 */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  /* 主题交叉淡入：比交互动效慢，属独立时序，故不套 --duration-* */
+  transition:
+    background 0.4s var(--ease-standard),
+    color 0.4s var(--ease-standard);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+kbd {
+  font-family: 'Sarasa Mono SC Nerd', 'SF Mono', 'Fira Code', monospace;
+  background-color: var(--button-bg);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xs);
+  padding: 0.15rem 0.4rem;
+  font-size: 0.9em;
+  font-weight: 600;
+  margin: 0 0.2rem;
+  display: inline-block;
+  line-height: 1;
+}

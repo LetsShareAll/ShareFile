@@ -1,0 +1,82 @@
+/*
+ * 展开面板里的列表语汇：队列 / 历史 / 歌词都以 <style scoped src> 引入，
+ * 各自的专属规则留在各自组件的 <style scoped> 里。
+ */
+.music-panel-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.music-panel-text-btn {
+  padding: 0.15rem 0.5rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--button-bg);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.music-panel-text-btn:hover {
+  background: var(--button-hover-bg);
+  color: var(--text);
+}
+.music-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 15rem;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+.music-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+.music-panel-item:hover {
+  background: var(--button-hover-bg);
+}
+.music-panel-item.is-current {
+  background: var(--button-active-bg);
+  color: var(--button-active-color);
+}
+.music-panel-item-btn {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.music-panel-item-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.84rem;
+}
+.music-panel-item-sub {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+.music-panel-item.is-current .music-panel-item-sub {
+  color: inherit;
+  opacity: 0.75;
+}
+.music-panel-placeholder {
+  padding: 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  text-align: center;
+}
