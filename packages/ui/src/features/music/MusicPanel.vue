@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 
+import {
+  getCurlCommand,
+  getNodeFileUrl,
+  getNodePageUrl,
+} from '../../domain/links';
+import type { ShareNode } from '../../domain/share-file';
+import { copyText } from '../../platform/clipboard';
 import { useMusicStore } from '../../stores/music';
 import type { MusicHistoryEntry, MusicTrack } from './track';
 import MusicArtwork from './components/MusicArtwork.vue';
@@ -8,6 +15,8 @@ import MusicHistoryList from './components/MusicHistoryList.vue';
 import MusicLyrics from './components/MusicLyrics.vue';
 import MusicModeButton from './components/MusicModeButton.vue';
 import MusicQueueList from './components/MusicQueueList.vue';
+
+type ShareKind = 'page' | 'direct' | 'curl';
 
 const music = useMusicStore();
 
@@ -19,6 +28,48 @@ const artist = computed(() => music.metadata.artist || '未知艺术家');
 const artworkAlt = computed(() => `${title.value} 封面`);
 const toggleLabel = computed(() => (music.isPlaying ? '暂停' : '播放'));
 const statusText = computed(() => (music.isPlaying ? '正在播放' : '已暂停'));
+
+/** 分享目标与列表卡片 / 预览页脚同义：绝对页面深链、直链、curl 命令。 */
+const shareLinks = computed<Record<ShareKind, string> | null>(() => {
+  const track = music.currentTrack;
+
+  if (!track) return null;
+
+  // getNodeFileUrl 只认节点的 id / url：直链优先索引里的真实地址，缺了退回站内路径。
+  const node: ShareNode = {
+    id: track.path || track.id,
+    name: track.name,
+    type: 'file',
+    parent: null,
+    children: [],
+    url: track.url,
+    size: track.size,
+  };
+  const fileUrl = getNodeFileUrl(node);
+
+  return {
+    page: new URL(getNodePageUrl(track.path), window.location.origin).href,
+    direct: fileUrl,
+    curl: getCurlCommand(fileUrl),
+  };
+});
+
+const copied = ref<ShareKind | null>(null);
+let copiedTimer: number | undefined;
+
+async function copyShare(kind: ShareKind): Promise<void> {
+  const links = shareLinks.value;
+
+  if (!links || !(await copyText(links[kind]))) return;
+
+  copied.value = kind;
+  window.clearTimeout(copiedTimer);
+  copiedTimer = window.setTimeout(() => {
+    copied.value = null;
+  }, 1500);
+}
+
+onUnmounted(() => window.clearTimeout(copiedTimer));
 
 function toggle(): void {
   void music.toggle();
@@ -110,6 +161,46 @@ function move(from: number, to: number): void {
             </button>
           </div>
           <p class="music-panel-track-sub">{{ statusText }}</p>
+          <div
+            v-if="shareLinks"
+            class="music-panel-share"
+            role="group"
+            aria-label="分享当前曲目"
+          >
+            <button
+              class="music-panel-share-btn"
+              :class="{ 'is-copied': copied === 'page' }"
+              type="button"
+              aria-label="复制页面链接"
+              title="复制页面链接"
+              @click="copyShare('page')"
+            >
+              <i class="fas fa-link" aria-hidden="true" />
+              {{ copied === 'page' ? '已复制' : '页面链接' }}
+            </button>
+            <button
+              class="music-panel-share-btn"
+              :class="{ 'is-copied': copied === 'direct' }"
+              type="button"
+              aria-label="复制直链"
+              title="复制直链"
+              @click="copyShare('direct')"
+            >
+              <i class="fas fa-copy" aria-hidden="true" />
+              {{ copied === 'direct' ? '已复制' : '直链' }}
+            </button>
+            <button
+              class="music-panel-share-btn"
+              :class="{ 'is-copied': copied === 'curl' }"
+              type="button"
+              aria-label="复制 curl 命令"
+              title="复制 curl 命令"
+              @click="copyShare('curl')"
+            >
+              <i class="fas fa-terminal" aria-hidden="true" />
+              {{ copied === 'curl' ? '已复制' : 'curl' }}
+            </button>
+          </div>
           <p v-if="music.error" class="music-panel-error">{{ music.error }}</p>
           <MusicLyrics :lines="lyrics" :current-time="music.currentTime" />
         </section>
@@ -190,6 +281,38 @@ function move(from: number, to: number): void {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+}
+/* 分享：与列表卡片 / 预览页脚同一套动作，只是收成面板宽度里的一行小胶囊。 */
+.music-panel-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+.music-panel-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 1.8rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--button-bg);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition:
+    background var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
+}
+.music-panel-share-btn:hover {
+  background: var(--button-hover-bg);
+  color: var(--text);
+}
+.music-panel-share-btn.is-copied {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 .music-panel-error {
   color: var(--color-audio);

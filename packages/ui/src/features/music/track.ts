@@ -140,6 +140,21 @@ export function formatDuration(seconds: number): string {
     : `${minutes}:${pad(rest)}`;
 }
 
+/** `formatDuration` 的逆运算：把 `3:07` / `1:02:03` 还原成秒；认不出返回 undefined。 */
+export function parseDurationSeconds(text?: string): number | undefined {
+  const parts = text?.split(':') ?? [];
+
+  if (parts.length < 2 || parts.length > 3) return undefined;
+
+  const values = parts.map(part => Number(part));
+
+  if (values.some(value => !Number.isInteger(value) || value < 0)) {
+    return undefined;
+  }
+
+  return values.reduce((total, value) => total * 60 + value, 0);
+}
+
 function toTrack(value: unknown): MusicTrack | null {
   if (!value || typeof value !== 'object') return null;
 

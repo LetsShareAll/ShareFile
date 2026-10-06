@@ -53,6 +53,13 @@ export const useMusicStore = defineStore('music', () => {
   const currentTrack = computed<MusicTrack | null>(
     () => queue.value[currentIndex.value] ?? null,
   );
+  /**
+   * 展示用总时长：优先标签解析值（悬浮卡与面板打开即有值，不会先显示 --:--），
+   * 回退引擎 loadedmetadata 报出的时长。
+   */
+  const displayDuration = computed(
+    () => metadata.value.duration ?? duration.value,
+  );
   const historyLog = createMusicHistoryLog();
   const persist = createMusicPersister(
     (): MusicState => ({
@@ -432,6 +439,7 @@ export const useMusicStore = defineStore('music', () => {
     isPlaying,
     currentTime,
     duration,
+    displayDuration,
     volume,
     mode,
     expanded,

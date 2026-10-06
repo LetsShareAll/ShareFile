@@ -3,13 +3,11 @@ import { getCurrentInstance, onUnmounted, ref } from 'vue';
 import { useMusicStore } from '../../stores/music';
 import { parseAudioTitle } from '../preview/players/audio/format';
 import { readAudioMetadata } from '../preview/players/audio/metadata';
-import type { MusicTrack } from './track';
+import { parseDurationSeconds, type MusicTrack } from './track';
 import {
   getCachedTrackInfo,
-  parseDurationSeconds,
   putTrackInfo,
   readTrackInfoCover,
-  releaseTrackInfoCovers,
   trackInfoKey,
 } from './trackInfo';
 
@@ -18,9 +16,12 @@ export interface TrackInfoView {
   duration?: number;
   title?: string;
   artist?: string;
-  /** 当前曲目会复用播放器的封面 ObjectURL，队列自己解析的那份也在内存里。 */
+  /** 现读模块级封面缓存得到；可能已被 LRU 淘汰。 */
   coverUrl?: string;
 }
+
+/** 视图状态不持有 ObjectURL：封面的生命周期只属于模块级缓存。 */
+type TrackInfoEntry = Omit<TrackInfoView, 'coverUrl'>;
 
 /** 38–56 MB 的音频整文件解析要几分钟；时长在文件头，512 KB 足够。 */
 const MAX_BYTES = 512 * 1024;
@@ -33,7 +34,7 @@ interface WaitingTask {
   resolve: () => void;
 }
 
-const IDLE: TrackInfoView = { status: 'idle' };
+const IDLE: TrackInfoEntry = { status: 'idle' };
 
 /**
  * 队列项的懒解析：只在用得上时才发请求，同 id 去重、最多两个在飞，
@@ -41,14 +42,14 @@ const IDLE: TrackInfoView = { status: 'idle' };
  */
 export function useTrackInfo() {
   const music = useMusicStore();
-  const views = ref<Record<string, TrackInfoView>>({});
+  const views = ref<Record<string, TrackInfoEntry>>({});
   const controllers = new Map<string, AbortController>();
   const handled = new Set<string>();
   const pending = new Map<string, Promise<void>>();
   const waiting: WaitingTask[] = [];
   let disposed = false;
 
-  function setView(id: string, view: TrackInfoView): void {
+  function setView(id: string, view: TrackInfoEntry): void {
     views.value = { ...views.value, [id]: view };
   }
 
@@ -61,19 +62,24 @@ export function useTrackInfo() {
     );
   }
 
+  /** 当前曲目的时长：标签解析值优先（面板一打开就有），引擎的 loadedmetadata 兜底。 */
+  function currentDuration(): number | undefined {
+    return (
+      music.metadata.duration ??
+      (music.duration > 0 ? music.duration : undefined)
+    );
+  }
+
   function getTrackInfo(track: MusicTrack): TrackInfoView {
     const view = views.value[track.id] ?? IDLE;
+    const current = music.currentTrack?.id === track.id;
+    // 封面现读缓存（顺带刷新 LRU）：淘汰过的图不会以已 revoke 的 src 留在视图里。
+    const coverUrl =
+      readTrackInfoCover(track.id, track.size) ??
+      (current ? music.metadata.coverUrl : undefined);
+    const duration = view.duration ?? (current ? currentDuration() : undefined);
 
-    if (music.currentTrack?.id !== track.id) return view;
-
-    // 当前曲目：时长还能从播放引擎拿，封面直接用播放器那份 ObjectURL。
-    const coverUrl = view.coverUrl ?? music.metadata.coverUrl;
-    const duration =
-      view.duration ?? (music.duration > 0 ? music.duration : undefined);
-
-    return coverUrl === view.coverUrl && duration === view.duration
-      ? view
-      : { ...view, coverUrl, duration };
+    return { ...view, duration, coverUrl };
   }
 
   function pump(): void {
@@ -97,7 +103,6 @@ export function useTrackInfo() {
       duration: cached?.duration,
       title: cached?.title,
       artist: cached?.artist,
-      coverUrl: readTrackInfoCover(track.id),
     });
 
     try {
@@ -130,7 +135,6 @@ export function useTrackInfo() {
         duration: stored.duration,
         title: stored.title,
         artist: stored.artist,
-        coverUrl: readTrackInfoCover(track.id),
       });
     } catch {
       // 失败静默：这一项停在占位文案上，不影响别的曲目与播放。
@@ -140,7 +144,6 @@ export function useTrackInfo() {
           duration: cached?.duration,
           title: cached?.title,
           artist: cached?.artist,
-          coverUrl: readTrackInfoCover(track.id),
         });
       }
     } finally {
@@ -175,7 +178,7 @@ export function useTrackInfo() {
     if (handled.has(key)) return Promise.resolve();
 
     const cached = getCachedTrackInfo(track.id, track.size);
-    const coverUrl = readTrackInfoCover(track.id);
+    const coverUrl = readTrackInfoCover(track.id, track.size);
 
     if (cached) {
       handled.add(key);
@@ -184,7 +187,6 @@ export function useTrackInfo() {
         duration: cached.duration,
         title: cached.title,
         artist: cached.artist,
-        coverUrl,
       });
 
       // 封面还在内存里就到此为止；不在的话还得解析一次把它取回来。
@@ -196,7 +198,7 @@ export function useTrackInfo() {
     return enqueue(track, key);
   }
 
-  /** 卸载：取消在途请求、放掉排队的与封面 ObjectURL。 */
+  /** 卸载：取消在途请求；封面缓存是模块级的，跨挂载存活，不在这里回收。 */
   function dispose(): void {
     disposed = true;
 
@@ -208,11 +210,9 @@ export function useTrackInfo() {
       pending.delete(task.key);
       task.resolve();
     }
-
-    releaseTrackInfoCovers();
   }
 
-  // 组件里用时自己收尾：卸载即取消在途请求、放掉封面 ObjectURL。
+  // 组件里用时自己收尾：卸载即取消在途请求（封面的生命周期归模块级缓存管）。
   if (getCurrentInstance()) onUnmounted(dispose);
 
   return { getTrackInfo, requestTrackInfo, dispose };

@@ -6,11 +6,10 @@ import type { MusicTrack } from '@/features/music/track';
 import {
   clearTrackInfoCache,
   getCachedTrackInfo,
-  parseDurationSeconds,
+  MAX_COVERS,
   parseTrackInfoStore,
   putTrackInfo,
   readTrackInfoCover,
-  releaseTrackInfoCovers,
   serializeTrackInfoStore,
   type TrackInfo,
 } from '@/features/music/trackInfo';
@@ -90,26 +89,154 @@ describe('trackInfo 的内容缓存', () => {
     expect(parseTrackInfoStore(raw)).toEqual(new Map([['a', stored]]));
   });
 
-  it('封面只进内存：落盘的只剩元信息，回收时 revoke', () => {
+  it('封面只进内存：落盘的只剩元信息，整体回收时 revoke', () => {
     const revoke = vi.spyOn(URL, 'revokeObjectURL');
 
     putTrackInfo({ id: 'a', size: 1, coverUrl: 'blob:http://localhost/one' });
     putTrackInfo({ id: 'b', size: 1, coverUrl: 'blob:http://localhost/two' });
 
-    expect(readTrackInfoCover('a')).toBe('blob:http://localhost/one');
+    expect(readTrackInfoCover('a', 1)).toBe('blob:http://localhost/one');
     expect(window.localStorage.getItem('music-info')).not.toContain('blob');
 
-    releaseTrackInfoCovers(['a']);
-    expect(readTrackInfoCover('a')).toBeUndefined();
+    clearTrackInfoCache();
+
+    expect(readTrackInfoCover('a', 1)).toBeUndefined();
     expect(revoke).toHaveBeenCalledWith('blob:http://localhost/one');
-    expect(readTrackInfoCover('b')).toBe('blob:http://localhost/two');
+    expect(revoke).toHaveBeenCalledWith('blob:http://localhost/two');
+  });
+});
+
+describe('封面缓存的生命周期（跨挂载 / LRU / size）', () => {
+  it('跨挂载存活：卸载后封面仍在，重开面板直接命中、不再解析', async () => {
+    const revoke = vi.spyOn(URL, 'revokeObjectURL');
+    const cover = 'blob:http://localhost/cover-a';
+
+    readAudioMetadata.mockResolvedValue({ ...parsed, coverUrl: cover });
+
+    const first = useTrackInfo();
+
+    await first.requestTrackInfo(track('a'));
+
+    expect(readTrackInfoCover('a', 100)).toBe(cover);
+
+    // 面板卸载 = 收尾 dispose：取消在途请求，但封面归模块级缓存，不跟着一起回收。
+    first.dispose();
+
+    expect(revoke).not.toHaveBeenCalled();
+    expect(readTrackInfoCover('a', 100)).toBe(cover);
+
+    // 重开面板：命中缓存与封面，一次网络都不再发。
+    const second = useTrackInfo();
+
+    await second.requestTrackInfo(track('a'));
+
+    expect(readAudioMetadata).toHaveBeenCalledTimes(1);
+    expect(second.getTrackInfo(track('a')).coverUrl).toBe(cover);
   });
 
-  it('展示时长文本还原成秒', () => {
-    expect(parseDurationSeconds('3:07')).toBe(187);
-    expect(parseDurationSeconds('1:02:03')).toBe(3723);
-    expect(parseDurationSeconds('--:--')).toBeUndefined();
-    expect(parseDurationSeconds(undefined)).toBeUndefined();
+  it('LRU 淘汰：超过上限时 revoke 最久未用的那张', () => {
+    const revoke = vi.spyOn(URL, 'revokeObjectURL');
+    const cover = (index: number): string => `blob:http://localhost/${index}`;
+
+    for (let index = 0; index < MAX_COVERS; index += 1) {
+      putTrackInfo({ id: `t${index}`, size: 1, coverUrl: cover(index) });
+    }
+
+    // 读命中即刷新 LRU 位置：t0 不再是待淘汰的那张。
+    expect(readTrackInfoCover('t0', 1)).toBe(cover(0));
+
+    putTrackInfo({ id: 'extra', size: 1, coverUrl: cover(100) });
+
+    expect(revoke).toHaveBeenCalledTimes(1);
+    expect(revoke).toHaveBeenCalledWith(cover(1));
+    expect(readTrackInfoCover('t1', 1)).toBeUndefined();
+    expect(readTrackInfoCover('t0', 1)).toBe(cover(0));
+    expect(readTrackInfoCover('extra', 1)).toBe(cover(100));
+  });
+
+  it('同一 id 的 size 变化：旧封面 revoke，新 size 之外查不到', () => {
+    const revoke = vi.spyOn(URL, 'revokeObjectURL');
+    const oldCover = 'blob:http://localhost/old';
+    const newCover = 'blob:http://localhost/new';
+
+    putTrackInfo({ id: 'a', size: 100, coverUrl: oldCover });
+
+    // 文件被换过：这一轮解析没有封面，旧图也必须作废。
+    putTrackInfo({ id: 'a', size: 200, duration: 187 });
+
+    expect(revoke).toHaveBeenCalledWith(oldCover);
+    expect(readTrackInfoCover('a', 200)).toBeUndefined();
+    expect(readTrackInfoCover('a')).toBeUndefined();
+
+    // 新文件解析出封面：按新 size 命中，旧 size 查不到。
+    putTrackInfo({ id: 'a', size: 200, coverUrl: newCover });
+
+    expect(readTrackInfoCover('a', 200)).toBe(newCover);
+    expect(readTrackInfoCover('a', 100)).toBeUndefined();
+  });
+});
+
+describe('当前曲目的时长（metadata.duration 与回退）', () => {
+  it('标签解析出的时长写进 metadata，队列当前项直接用它', () => {
+    const music = useMusicStore();
+
+    music.queue = [track('now', 555)];
+    music.currentIndex = 0;
+    // 引擎还没 loadedmetadata：music.duration 仍是 0，过去这里会显示 --:--。
+    music.duration = 0;
+    music.metadata = { status: 'ready', duration: 187, title: '标签标题' };
+
+    const { getTrackInfo } = useTrackInfo();
+
+    expect(getTrackInfo(track('now', 555)).duration).toBe(187);
+  });
+
+  it('metadata 没有时长时回退引擎的 music.duration', () => {
+    const music = useMusicStore();
+
+    music.queue = [track('now', 555)];
+    music.currentIndex = 0;
+    music.duration = 120;
+    music.metadata = { status: 'ready', title: '标签标题' };
+
+    const { getTrackInfo } = useTrackInfo();
+
+    expect(getTrackInfo(track('now', 555)).duration).toBe(120);
+  });
+
+  it('队列自己解析出的时长优先于 metadata 与引擎', async () => {
+    const music = useMusicStore();
+
+    music.queue = [track('a', 555), track('b', 555)];
+    music.currentIndex = 0;
+    music.duration = 0;
+    music.metadata = { status: 'idle' };
+
+    readAudioMetadata.mockResolvedValue(parsed);
+
+    const { getTrackInfo, requestTrackInfo } = useTrackInfo();
+
+    // 队列先解析 b（此时 b 还不是当前曲目）。
+    await requestTrackInfo(track('b', 555));
+
+    // b 成为当前曲目，播放器的 metadata 报了另一个时长：队列自己那份仍然优先。
+    music.currentIndex = 1;
+    music.metadata = { status: 'ready', duration: 60 };
+
+    expect(getTrackInfo(track('b', 555)).duration).toBe(187);
+  });
+
+  it('非当前曲目不看 metadata：只认它自己那份解析结果', () => {
+    const music = useMusicStore();
+
+    music.queue = [track('other', 555)];
+    music.currentIndex = 0;
+    music.duration = 120;
+    music.metadata = { status: 'ready', duration: 187 };
+
+    const { getTrackInfo } = useTrackInfo();
+
+    expect(getTrackInfo(track('elsewhere', 555)).duration).toBeUndefined();
   });
 });
 

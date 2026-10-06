@@ -143,7 +143,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown));
         </div>
         <MusicProgress
           :current-time="music.currentTime"
-          :duration="music.duration"
+          :duration="music.displayDuration"
           @seek="music.seek($event)"
         />
       </div>

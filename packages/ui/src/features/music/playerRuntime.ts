@@ -1,6 +1,6 @@
 import { parseAudioTitle } from '../preview/players/audio/format';
 import { readAudioMetadata } from '../preview/players/audio/metadata';
-import type { MusicTrack } from './track';
+import { parseDurationSeconds, type MusicTrack } from './track';
 
 export interface EngineSong {
   name: string;
@@ -25,6 +25,8 @@ export interface MusicEngine {
 /** 懒加载的内嵌元信息状态机。 */
 export interface MusicMetadataState {
   status: 'idle' | 'loading' | 'ready' | 'error';
+  /** 标签里的总时长（秒）：比引擎的 loadedmetadata 先到，面板 / 悬浮卡先用它。 */
+  duration?: number;
   title?: string;
   artist?: string;
   album?: string;
@@ -93,6 +95,7 @@ async function readTrackMetadata(
 
     return {
       status: 'ready',
+      duration: parseDurationSeconds(info.duration),
       title: info.title,
       artist: info.artist,
       album: info.album,

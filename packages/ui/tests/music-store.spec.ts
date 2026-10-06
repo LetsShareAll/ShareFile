@@ -128,6 +128,7 @@ vi.mock('@/features/preview/players/audio/metadata', () => ({
     title: '解析标题',
     artist: '解析艺术家',
     album: '解析专辑',
+    duration: '3:07',
     lyrics: [{ time: 1, lyric: '第一行' }],
     coverUrl: undefined,
   }),
@@ -534,6 +535,18 @@ describe('持久化与历史', () => {
     expect(music.metadata.title).toBe('解析标题');
     expect(music.metadata.album).toBe('解析专辑');
     expect(music.metadata.lyrics).toEqual([{ time: 1, text: '第一行' }]);
+  });
+
+  it('标签时长随元信息一起写入，展示总时长优先用它', async () => {
+    const music = useMusicStore();
+
+    await music.playTracks([track('a')]);
+    await settle();
+
+    // '3:07' → 187 秒：引擎的 loadedmetadata 还没来（fake 没触发）也已经有值。
+    expect(music.metadata.duration).toBe(187);
+    expect(music.duration).toBe(0);
+    expect(music.displayDuration).toBe(187);
   });
 });
 

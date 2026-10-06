@@ -6,6 +6,7 @@ import {
   getNextIndex,
   getPrevIndex,
   isAudioNode,
+  parseDurationSeconds,
   parseMusicState,
   serializeMusicState,
   type MusicState,
@@ -143,6 +144,13 @@ describe('formatDuration', () => {
     expect(formatDuration(-1)).toBe('--:--');
     expect(formatDuration(Number.NaN)).toBe('--:--');
     expect(formatDuration(Number.POSITIVE_INFINITY)).toBe('--:--');
+  });
+
+  it('parseDurationSeconds 还原成秒，认不出的返回 undefined', () => {
+    expect(parseDurationSeconds('3:07')).toBe(187);
+    expect(parseDurationSeconds('1:02:03')).toBe(3723);
+    expect(parseDurationSeconds('--:--')).toBeUndefined();
+    expect(parseDurationSeconds(undefined)).toBeUndefined();
   });
 });
 
