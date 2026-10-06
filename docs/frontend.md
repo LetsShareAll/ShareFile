@@ -69,7 +69,18 @@ src/
 - 路径即状态：单条 `/:pathMatch(.*)*` 路由承载所有目录路径；`404.html` 把未知路径写入 `sessionStorage('share-file:pending-route')` 后跳回首页，`router/index.ts` 在启动时恢复并清理。
 - `?path=` 链接一律 `replace` 收敛为 clean URL；路由输入经 `sanitizeRoutePath` 白名单（拒绝 `..`、`//`、协议串与含 `:` 的段）。
 - 偏好沿用旧 localStorage 键（`theme` / `view`），外挂缓存键前缀为 `share-file-external:v2:`（legacy 前缀读取后清理）。
+- 排序偏好存于 `sort`（`key:direction`），键为 `default / type / name / size / updated / created`；语义见下。
 - SSR-safe 纪律：不在模块顶层读 `window`/`localStorage`，浏览器能力集中在 `platform`，store 用工厂函数获取依赖。
+
+## 排序
+
+目录列表与搜索结果共用一套排序（`domain/sort.ts` + `ui` store 的 `sortKey` / `sortDirection`）：
+
+- 六个键：默认顺序（索引里声明的目录顺序）、文件类型、文件名称、文件大小、更新时间、创建时间；升降序可切换。
+- 切换键时采用语义默认方向：名称/类型升序，大小/时间降序。
+- 恒定规则：**文件夹永远在前**（不随方向翻转）；**缺失值（未知大小、没有时间）永远在最后**；同值按 zh-CN 路径稳定兜底。
+- 「文件类型」用的是列表上展示的类型（`nodeDisplay` 解析，与图标一致）。
+- 偏好持久化到 `localStorage.sort`，非法值回落到默认顺序。
 
 ## 安全约定
 

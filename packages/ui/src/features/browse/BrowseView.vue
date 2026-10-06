@@ -7,6 +7,7 @@ import { getNodeFileUrl } from '../../domain/links';
 import { getBreadcrumbSegments } from '../../domain/paths';
 import { useLibraryStore } from '../../stores/library';
 import { findDirectoryReadme } from '../../domain/readme';
+import { sortNodes } from '../../domain/sort';
 import DirectoryReadme from './components/DirectoryReadme.vue';
 import PreviewModal from '../preview/PreviewModal.vue';
 import { triggerFileDownload } from '../../platform/download';
@@ -16,10 +17,15 @@ import { useNodeActivation } from './useNodeActivation';
 import { useUiStore } from '../../stores/ui';
 import SearchBox from '../search/SearchBox.vue';
 import ThemeSwitch from '../settings/ThemeSwitch.vue';
+import SortControl from '../settings/SortControl.vue';
 import ViewSwitch from '../settings/ViewSwitch.vue';
 import FileListDetail from './components/FileListDetail.vue';
 import FileListIcon from './components/FileListIcon.vue';
-import { BROWSE_EMPTY_STATES, createNodeRow } from './nodeDisplay';
+import {
+  BROWSE_EMPTY_STATES,
+  createNodeRow,
+  resolveNodeDisplay,
+} from './nodeDisplay';
 
 const route = useRoute();
 const router = useRouter();
@@ -46,12 +52,16 @@ const currentNode = computed(() =>
 const searchQuery = computed(() => ui.query.trim());
 const isSearching = computed(() => searchQuery.value.length > 0);
 
-const rows = computed(() =>
-  (isSearching.value
+const rows = computed(() => {
+  const nodes = isSearching.value
     ? library.search(searchQuery.value)
-    : library.getChildNodes(currentPath.value)
-  ).map(node => createNodeRow(node, library.getNodePathById(node.id))),
-);
+    : library.getChildNodes(currentPath.value);
+
+  return sortNodes(nodes, ui.sortKey, ui.sortDirection, {
+    getPath: nodeId => library.getNodePathById(nodeId),
+    getTypeClass: node => resolveNodeDisplay(node).className,
+  }).map(node => createNodeRow(node, library.getNodePathById(node.id)));
+});
 
 const directFileNode = computed(() =>
   !isSearching.value && currentNode.value?.type === 'file'
@@ -107,6 +117,12 @@ function navigate(path: string): void {
     <header>
       <h1><i class="fas fa-share-alt" /> 一起分享吧！文件！</h1>
       <div class="toolbar">
+        <SortControl
+          :sort-key="ui.sortKey"
+          :sort-direction="ui.sortDirection"
+          @select="ui.setSortKey"
+          @toggle="ui.toggleSortDirection"
+        />
         <ViewSwitch :view="ui.view" @select="ui.setView" />
         <button
           v-if="library.hasExternalMounts"
