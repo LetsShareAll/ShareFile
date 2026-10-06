@@ -1,5 +1,6 @@
 /* ==========================================================================
-   全局音乐播放器：可拖动的悬浮卡 + 贴边把手 + 展开面板。
+   全局音乐播放器：可拖动的悬浮卡 + 贴边把手。
+   展开面板的样式随面板 chunk 懒加载，在各自组件的 <style scoped> 里。
    颜色只走 tokens，auto/light/dark 由 html[data-theme] 自动跟随；
    z-index 高于预览弹窗（1000），因此预览时悬浮卡与面板仍可操作。
    ========================================================================== */
@@ -163,8 +164,7 @@
   font-size: 0.58rem;
 }
 /* ===== 卡片内容 ===== */
-.music-bar-artwork,
-.music-panel-artwork {
+.music-bar-artwork {
   display: flex;
   flex: none;
   align-items: center;
@@ -179,8 +179,7 @@
   height: 2.75rem;
   font-size: 1.1rem;
 }
-.music-bar-artwork img,
-.music-panel-artwork img {
+.music-bar-artwork img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -226,9 +225,7 @@
   color: var(--text-secondary);
 }
 .music-bar-btn,
-.music-panel-btn,
-.music-bar-mode,
-.music-panel-mode {
+.music-bar-mode {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -247,25 +244,20 @@
     color var(--duration-normal) var(--ease-standard);
 }
 .music-bar-btn:hover,
-.music-panel-btn:hover,
-.music-bar-mode:hover,
-.music-panel-mode:hover {
+.music-bar-mode:hover {
   background: var(--button-hover-bg);
 }
-.music-bar-btn:disabled,
-.music-panel-btn:disabled {
+.music-bar-btn:disabled {
   opacity: 0.4;
   cursor: default;
 }
-.music-bar-play,
-.music-panel-play {
+.music-bar-play {
   width: 2.4rem;
   height: 2.4rem;
   font-size: 1rem;
   background: var(--button-bg);
 }
-.music-bar-mode.is-active,
-.music-panel-mode.is-active {
+.music-bar-mode.is-active {
   color: var(--button-active-color);
   background: var(--button-active-bg);
 }
@@ -337,206 +329,6 @@
     -webkit-backdrop-filter: var(--glass-blur-off);
   }
 }
-/* ===== 展开面板 ===== */
-.music-panel {
-  position: fixed;
-  inset: 0;
-  z-index: 1102;
-  display: flex;
-  padding: 1rem;
-  background: var(--modal-overlay-bg);
-  backdrop-filter: var(--glass-blur-subtle);
-  -webkit-backdrop-filter: var(--glass-blur-subtle);
-}
-.music-panel-shell {
-  display: flex;
-  flex-direction: column;
-  width: min(100%, 58rem);
-  max-height: 100%;
-  margin: auto;
-  overflow: hidden;
-  /* 玻璃配方（strong 档）见 base.css 的 .glass--strong 组 */
-  color: var(--text);
-}
-.music-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.7rem 0.9rem;
-  border-bottom: 1px solid var(--card-border);
-}
-.music-panel-heading {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-.music-panel-body {
-  display: grid;
-  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
-  gap: 1rem;
-  padding: 1rem;
-  overflow: auto;
-}
-.music-panel-now {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  text-align: center;
-}
-.music-panel-artwork {
-  width: 100%;
-  max-width: 16rem;
-  aspect-ratio: 1;
-  font-size: 3rem;
-  border-radius: var(--radius-md);
-}
-.music-panel-track-title {
-  font-size: 1rem;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-.music-panel-track-sub {
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  overflow-wrap: anywhere;
-}
-.music-panel-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.music-panel-error {
-  color: var(--color-audio);
-  font-size: 0.78rem;
-}
-.music-panel-lyrics {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  max-height: 14rem;
-  padding: 0.6rem;
-  overflow: auto;
-  border-radius: var(--radius-sm);
-  background: var(--button-bg);
-}
-.music-panel-lyric-row {
-  padding: 0.15rem 0.35rem;
-  border-radius: var(--radius-xs);
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  transition: color var(--duration-normal) var(--ease-standard);
-}
-.music-panel-lyric-row.is-active {
-  color: var(--primary);
-  font-weight: 600;
-}
-.music-panel-placeholder {
-  padding: 0.6rem;
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  text-align: center;
-}
-.music-panel-lists {
-  display: grid;
-  align-content: start;
-  gap: 1rem;
-  min-width: 0;
-}
-.music-panel-queue,
-.music-panel-history {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  min-width: 0;
-}
-.music-panel-section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-.music-panel-text-btn {
-  padding: 0.15rem 0.5rem;
-  border: none;
-  border-radius: var(--radius-pill);
-  background: var(--button-bg);
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-.music-panel-text-btn:hover {
-  background: var(--button-hover-bg);
-  color: var(--text);
-}
-.music-panel-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  max-height: 15rem;
-  margin: 0;
-  padding: 0;
-  overflow: auto;
-  list-style: none;
-}
-.music-panel-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.5rem;
-  border-radius: var(--radius-sm);
-}
-.music-panel-item:hover {
-  background: var(--button-hover-bg);
-}
-.music-panel-item.is-current {
-  background: var(--button-active-bg);
-  color: var(--button-active-color);
-}
-.music-panel-item-btn {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-width: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.music-panel-item-name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 0.84rem;
-}
-.music-panel-item-sub {
-  color: var(--text-secondary);
-  font-size: 0.72rem;
-}
-.music-panel-item.is-current .music-panel-item-sub {
-  color: inherit;
-  opacity: 0.75;
-}
-.music-panel-remove {
-  flex: none;
-  width: 1.6rem;
-  height: 1.6rem;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-.music-panel-remove:hover {
-  background: var(--button-hover-bg);
-  color: var(--text);
-}
 @media (max-width: 720px) {
   /* 窄屏：卡片本就接近视口宽，压紧内边距并藏掉音量条。 */
   .music-bar-card {
@@ -560,14 +352,5 @@
   .music-bar-play {
     width: 2.2rem;
     height: 2.2rem;
-  }
-  .music-panel-body {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .music-panel-artwork {
-    max-width: 8rem;
-  }
-  .music-panel-lyrics {
-    max-height: 9rem;
   }
 }

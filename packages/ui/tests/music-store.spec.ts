@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { MusicMessage } from '@/features/music/broadcast';
 import {
   parseMusicState,
   serializeMusicState,
@@ -75,6 +76,53 @@ const fake = vi.hoisted(() => {
 });
 
 vi.mock('amplitudejs', () => ({ default: fake.amplitude }));
+
+/**
+ * 假通道：默认不接线，各用例的 store 互不串台；
+ * 需要扮演「另一个标签页」时注入一份，用 deliver() 灌消息、用 sent 看本页广播。
+ */
+const channel = vi.hoisted(() => {
+  class FakeTransport {
+    handler: ((data: unknown) => void) | null = null;
+    sent: string[] = [];
+    /** 打开后 post 会立刻回送给自己，用来验证「忽略自身消息」。 */
+    echo = false;
+
+    post(data: string): void {
+      this.sent.push(data);
+
+      if (this.echo) this.handler?.(data);
+    }
+
+    subscribe(handler: (data: unknown) => void): () => void {
+      this.handler = handler;
+
+      return () => {
+        this.handler = null;
+      };
+    }
+
+    close(): void {
+      this.handler = null;
+    }
+
+    deliver(message: unknown): void {
+      this.handler?.(JSON.stringify(message));
+    }
+  }
+
+  return {
+    FakeTransport,
+    holder: { current: null as InstanceType<typeof FakeTransport> | null },
+  };
+});
+
+vi.mock('@/features/music/broadcast', async importOriginal => {
+  const actual =
+    await importOriginal<typeof import('@/features/music/broadcast')>();
+
+  return { ...actual, createBroadcastTransport: () => channel.holder.current };
+});
 vi.mock('@/features/preview/players/audio/metadata', () => ({
   readAudioMetadata: async () => ({
     title: '解析标题',
@@ -101,6 +149,7 @@ async function settle(): Promise<void> {
 beforeEach(() => {
   window.localStorage.clear();
   fake.reset();
+  channel.holder.current = null;
   setActivePinia(createPinia());
 });
 
@@ -485,5 +534,235 @@ describe('持久化与历史', () => {
     expect(music.metadata.title).toBe('解析标题');
     expect(music.metadata.album).toBe('解析专辑');
     expect(music.metadata.lyrics).toEqual([{ time: 1, text: '第一行' }]);
+  });
+});
+
+describe('跨标签页协调', () => {
+  function remoteState(targetId?: string): void {
+    channel.holder.current?.deliver({
+      type: 'state',
+      senderId: 'other-tab',
+      targetId,
+      state: {
+        queue: [track('x'), track('y')],
+        currentIndex: 1,
+        mode: 'loop-all',
+        volume: 0.3,
+        currentTime: 12,
+        duration: 120,
+        isPlaying: true,
+      },
+    });
+  }
+
+  it('远端 state 只镜像：同曲同进度，但本页不出声', async () => {
+    channel.holder.current = new channel.FakeTransport();
+
+    const music = useMusicStore();
+
+    await music.playTracks([track('a'), track('b')]);
+
+    remoteState();
+
+    expect(ids(music.queue)).toEqual(['x', 'y']);
+    expect(music.currentTrack?.id).toBe('y');
+    expect(music.mode).toBe('loop-all');
+    expect(music.volume).toBe(0.3);
+    expect(music.currentTime).toBe(12);
+    expect(music.isPlaying).toBe(false);
+    expect(fake.state.indexes).toEqual([0]);
+    expect(fake.state.play).toBe(0);
+    expect(fake.state.pause).toBe(1);
+
+    // 本页之后手动起播，从镜像到的进度接上。
+    await music.toggle();
+
+    expect(music.isPlaying).toBe(true);
+    expect(fake.state.audio.currentTime).toBe(12);
+  });
+
+  it('新标签页 hydrate 广播的暂停态不会掐掉本页播放', async () => {
+    const remote = new channel.FakeTransport();
+
+    channel.holder.current = remote;
+
+    const music = useMusicStore();
+
+    await music.playTracks([track('a')]);
+
+    // 新标签页恢复本地存档后会广播自己那份暂停态快照。
+    remote.deliver({
+      type: 'state',
+      senderId: 'other-tab',
+      state: {
+        queue: [track('a')],
+        currentIndex: 0,
+        mode: 'sequence',
+        volume: 0.8,
+        currentTime: 0,
+        duration: 0,
+        isPlaying: false,
+      },
+    });
+
+    expect(music.isPlaying).toBe(true);
+    expect(music.currentTime).toBe(0);
+  });
+
+  it('远端 action: toggle 不会让本页出声', async () => {
+    const remote = new channel.FakeTransport();
+
+    channel.holder.current = remote;
+
+    const music = useMusicStore();
+
+    await music.playTracks([track('a')]);
+
+    remote.deliver({
+      type: 'action',
+      senderId: 'other-tab',
+      action: 'toggle',
+    });
+
+    expect(music.isPlaying).toBe(false);
+    expect(fake.state.play).toBe(0);
+    expect(fake.state.indexes).toEqual([0]);
+  });
+
+  it('hydrate 发 hello，定向回包按快照对齐', () => {
+    const remote = new channel.FakeTransport();
+
+    channel.holder.current = remote;
+
+    const music = useMusicStore();
+
+    music.hydrate();
+
+    expect(remote.sent).toHaveLength(1);
+
+    const hello = JSON.parse(remote.sent[0]) as MusicMessage;
+
+    expect(hello.type).toBe('hello');
+
+    remote.deliver({
+      type: 'state',
+      senderId: 'other-tab',
+      targetId: hello.senderId,
+      state: {
+        queue: [track('b')],
+        currentIndex: 0,
+        mode: 'shuffle',
+        volume: 0.5,
+        currentTime: 9,
+        duration: 90,
+        isPlaying: true,
+      },
+    });
+
+    expect(ids(music.queue)).toEqual(['b']);
+    expect(music.mode).toBe('shuffle');
+    expect(music.currentTime).toBe(9);
+    expect(music.isPlaying).toBe(false);
+  });
+
+  it('定向给别的标签页的 state 不落地', async () => {
+    const remote = new channel.FakeTransport();
+
+    channel.holder.current = remote;
+
+    const music = useMusicStore();
+
+    await music.playTracks([track('a')]);
+
+    remoteState('someone-else');
+
+    expect(ids(music.queue)).toEqual(['a']);
+  });
+
+  it('本地动作广播意图与快照', async () => {
+    const remote = new channel.FakeTransport();
+
+    channel.holder.current = remote;
+
+    const music = useMusicStore();
+
+    await music.playTracks([track('a')]);
+
+    remote.sent.length = 0;
+    music.setVolume(0.2);
+
+    const messages = remote.sent.map(raw => JSON.parse(raw) as MusicMessage);
+
+    expect(
+      messages.some(
+        message =>
+          message.type === 'action' &&
+          message.action === 'volume' &&
+          message.value === 0.2,
+      ),
+    ).toBe(true);
+    expect(
+      messages.some(
+        message => message.type === 'state' && message.state.volume === 0.2,
+      ),
+    ).toBe(true);
+  });
+
+  it('自己的消息被回送时忽略（防回声）', async () => {
+    const remote = new channel.FakeTransport();
+
+    remote.echo = true;
+    channel.holder.current = remote;
+
+    const music = useMusicStore();
+
+    await music.playTracks([track('a')]);
+
+    expect(music.isPlaying).toBe(true);
+    expect(music.queue).toHaveLength(1);
+  });
+});
+
+describe('队列排序', () => {
+  it('移动非当前项：跨越当前下标时当前项不变', async () => {
+    const music = useMusicStore();
+
+    await music.playTracks(
+      [track('a'), track('b'), track('c'), track('d')],
+      'c',
+    );
+
+    music.moveInQueue(0, 2);
+
+    expect(ids(music.queue)).toEqual(['b', 'c', 'a', 'd']);
+    expect(music.currentTrack?.id).toBe('c');
+    expect(music.currentIndex).toBe(1);
+  });
+
+  it('移动当前项：当前下标跟着走', async () => {
+    const music = useMusicStore();
+
+    await music.playTracks([track('a'), track('b'), track('c')], 'b');
+
+    music.moveInQueue(1, 2);
+
+    expect(ids(music.queue)).toEqual(['a', 'c', 'b']);
+    expect(music.currentTrack?.id).toBe('b');
+    expect(music.currentIndex).toBe(2);
+  });
+
+  it('越界或原地不动不改队列引用', async () => {
+    const music = useMusicStore();
+
+    await music.playTracks([track('a'), track('b')], 'a');
+
+    const before = music.queue;
+
+    music.moveInQueue(1, 1);
+    music.moveInQueue(-1, 0);
+    music.moveInQueue(0, 5);
+
+    expect(music.queue).toBe(before);
+    expect(music.currentIndex).toBe(0);
   });
 });

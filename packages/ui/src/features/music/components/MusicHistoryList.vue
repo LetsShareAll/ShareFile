@@ -47,3 +47,14 @@ function formatPlayedAt(value: string): string {
     <p v-else class="music-panel-placeholder">暂无播放历史</p>
   </section>
 </template>
+
+<style scoped src="./musicList.css"></style>
+
+<style scoped>
+.music-panel-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+</style>

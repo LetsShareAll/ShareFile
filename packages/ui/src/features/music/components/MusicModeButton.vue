@@ -40,3 +40,32 @@ function cycle(): void {
     <i class="fas" :class="current.icon" aria-hidden="true" />
   </button>
 </template>
+
+<style scoped>
+/* 面板这一档的模式按钮：悬浮卡的 .music-bar-mode 留在全局（首屏要用）。 */
+.music-panel-mode {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    background var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
+}
+.music-panel-mode:hover {
+  background: var(--button-hover-bg);
+}
+.music-panel-mode.is-active {
+  color: var(--button-active-color);
+  background: var(--button-active-bg);
+}
+</style>

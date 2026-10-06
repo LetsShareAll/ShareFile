@@ -39,6 +39,16 @@ export function createHistoryEntry(
   };
 }
 
+/** 历史条目回灌成队列条目：历史只留了展示与播放需要的四个字段。 */
+export function toMusicTrack(entry: MusicHistoryEntry): MusicTrack {
+  return {
+    id: entry.id,
+    name: entry.name,
+    path: entry.path,
+    url: entry.url,
+  };
+}
+
 export function isHistoryEntry(value: unknown): value is MusicHistoryEntry {
   if (!value || typeof value !== 'object') return false;
 

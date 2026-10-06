@@ -2,6 +2,11 @@ import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
 
 import {
+  createBroadcastTransport,
+  type MusicSnapshot,
+} from '../features/music/broadcast';
+import { createMusicSync } from '../features/music/sync';
+import {
   setMediaSessionHandlers,
   setMediaSessionPosition,
   syncMediaSessionTrack,
@@ -10,11 +15,17 @@ import {
   createMusicHistoryLog,
   createMusicPersister,
   readMusicState,
+  toMusicTrack,
 } from '../features/music/persistence';
 import {
   createPlayerRuntime,
   type MusicMetadataState,
 } from '../features/music/playerRuntime';
+import {
+  insertQueueItem,
+  moveQueueItem,
+  removeQueueItem,
+} from '../features/music/queueOrder';
 import {
   DEFAULT_VOLUME,
   getNextIndex,
@@ -74,6 +85,25 @@ export const useMusicStore = defineStore('music', () => {
       syncMediaSessionTrack(currentTrack.value, state);
     },
   });
+
+  function silence(): void {
+    runtime.pause();
+    isPlaying.value = false;
+  }
+
+  // 远端快照落地后的善后：引擎音量与续播位置都跟着镜像走。
+  function afterApply(snapshot: MusicSnapshot): void {
+    runtime.setVolume(snapshot.volume);
+    pendingResumeTime = snapshot.currentTime > 0 ? snapshot.currentTime : null;
+    // 引擎已持有同一队列时顺势对齐进度，之后本页手动起播才接得上。
+    if (runtime.hasQueue(queue.value)) runtime.seek(snapshot.currentTime);
+  }
+
+  // 不变量：别的标签页在驱动播放时本页引擎必须停；UI 继续跟着镜像。
+  const sync = createMusicSync(
+    { queue, currentIndex, mode, volume, currentTime, duration, isPlaying },
+    { silence, afterApply, transport: createBroadcastTransport() },
+  );
 
   function handleTime(seconds: number): void {
     const whole = Math.floor(seconds);
@@ -167,6 +197,7 @@ export const useMusicStore = defineStore('music', () => {
     historyLog.push(queue.value[index]);
     runtime.loadMetadata(queue.value[index] ?? null);
     syncMediaSessionTrack(currentTrack.value, metadata.value);
+    sync.announce('select', queue.value[index]?.id);
 
     const resume = pendingResumeTime;
 
@@ -214,37 +245,27 @@ export const useMusicStore = defineStore('music', () => {
   }
 
   function enqueueNext(track: MusicTrack): void {
-    const at = currentIndex.value + 1;
-
-    queue.value = [
-      ...queue.value.slice(0, at),
-      track,
-      ...queue.value.slice(at),
-    ];
+    queue.value = insertQueueItem(queue.value, currentIndex.value + 1, track);
   }
 
   function removeFromQueue(id: string): void {
-    const index = queue.value.findIndex(track => track.id === id);
+    const removal = removeQueueItem(queue.value, id, currentIndex.value);
 
-    if (index < 0) return;
+    if (!removal) return;
 
-    const rest = queue.value.filter((_, position) => position !== index);
-
-    queue.value = rest;
-
-    if (rest.length === 0) {
+    if (removal.queue.length === 0) {
       clearQueue();
 
       return;
     }
 
-    if (index === currentIndex.value) {
+    if (removal.wasCurrent) {
       stopPlayback();
       currentTime.value = 0;
-      currentIndex.value = Math.min(index, rest.length - 1);
-    } else if (index < currentIndex.value) {
-      currentIndex.value -= 1;
     }
+
+    queue.value = removal.queue;
+    currentIndex.value = removal.currentIndex;
   }
 
   function clearQueue(): void {
@@ -257,10 +278,13 @@ export const useMusicStore = defineStore('music', () => {
     isPlaying.value = false;
     error.value = null;
     persist(true);
+    sync.announce('clear');
   }
 
   async function toggle(): Promise<void> {
     if (queue.value.length === 0) return;
+
+    sync.announce('toggle');
 
     if (isPlaying.value) {
       runtime.pause();
@@ -282,12 +306,14 @@ export const useMusicStore = defineStore('music', () => {
   }
 
   function next(): void {
+    sync.announce('next');
     playAtIndex(
       getNextIndex(queue.value.length, currentIndex.value, mode.value),
     );
   }
 
   function prev(): void {
+    sync.announce('prev');
     const index = getPrevIndex(
       queue.value.length,
       currentIndex.value,
@@ -311,6 +337,7 @@ export const useMusicStore = defineStore('music', () => {
     currentTime.value = target;
     setMediaSessionPosition(duration.value, target);
     persist(true);
+    sync.announce('seek', target);
 
     if (runtime.hasQueue(queue.value)) {
       runtime.seek(target);
@@ -328,10 +355,21 @@ export const useMusicStore = defineStore('music', () => {
 
     volume.value = level;
     runtime.setVolume(level);
+    sync.announce('volume', level);
   }
 
   function setMode(value: MusicMode): void {
     mode.value = value;
+    sync.announce('mode', value);
+  }
+
+  function moveInQueue(from: number, to: number): void {
+    const order = moveQueueItem(queue.value, from, to, currentIndex.value);
+
+    if (order.queue === queue.value) return;
+
+    queue.value = order.queue;
+    currentIndex.value = order.currentIndex;
   }
 
   function toggleExpanded(): void {
@@ -339,12 +377,7 @@ export const useMusicStore = defineStore('music', () => {
   }
 
   async function playFromHistory(entry: MusicHistoryEntry): Promise<void> {
-    const track: MusicTrack = {
-      id: entry.id,
-      name: entry.name,
-      path: entry.path,
-      url: entry.url,
-    };
+    const track = toMusicTrack(entry);
 
     queue.value = [track, ...queue.value.filter(item => item.id !== entry.id)];
     currentIndex.value = -1;
@@ -367,9 +400,19 @@ export const useMusicStore = defineStore('music', () => {
 
     historyLog.hydrate();
     isPlaying.value = false;
+    // 问其它标签页要当前状态：后开的页面显示同一首、同一进度，但保持暂停。
+    sync.hello();
   }
 
-  watch([queue, currentIndex, mode, volume], () => persist(true));
+  watch(
+    [queue, currentIndex, mode, volume, isPlaying],
+    () => {
+      sync.announceState();
+      persist(true);
+    },
+    // 同步 flush：应用远端快照时的写入必须落在协调器的 applying 窗口内，否则会回播成回声。
+    { flush: 'sync' },
+  );
   setMediaSessionHandlers({
     play: () => {
       if (!isPlaying.value) void toggle();
@@ -400,6 +443,7 @@ export const useMusicStore = defineStore('music', () => {
     enqueue,
     enqueueNext,
     removeFromQueue,
+    moveInQueue,
     clearQueue,
     toggle,
     next,

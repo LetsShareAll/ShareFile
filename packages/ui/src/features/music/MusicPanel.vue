@@ -31,6 +31,10 @@ function selectTrack(track: MusicTrack): void {
 function replay(entry: MusicHistoryEntry): void {
   void music.playFromHistory(entry);
 }
+
+function move(from: number, to: number): void {
+  music.moveInQueue(from, to);
+}
 </script>
 
 <template>
@@ -116,6 +120,7 @@ function replay(entry: MusicHistoryEntry): void {
             @select="selectTrack"
             @remove="music.removeFromQueue($event)"
             @clear="music.clearQueue()"
+            @move="move"
           />
           <MusicHistoryList :entries="music.history" @replay="replay" />
         </div>
@@ -123,3 +128,114 @@ function replay(entry: MusicHistoryEntry): void {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* 全屏遮罩：面板自己的定位与骨架，玻璃配方来自 base.css 的 .music-panel-shell。 */
+.music-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 1102;
+  display: flex;
+  padding: 1rem;
+  background: var(--modal-overlay-bg);
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+}
+.music-panel-shell {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 58rem);
+  max-height: 100%;
+  margin: auto;
+  overflow: hidden;
+  color: var(--text);
+}
+.music-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--card-border);
+}
+.music-panel-heading {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.music-panel-body {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  overflow: auto;
+}
+.music-panel-now {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+.music-panel-track-title {
+  font-size: 1rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.music-panel-track-sub {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+.music-panel-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.music-panel-error {
+  color: var(--color-audio);
+  font-size: 0.78rem;
+}
+.music-panel-lists {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  min-width: 0;
+}
+/* 面板自己的按钮：悬浮卡那套 .music-bar-btn 留在全局（首屏要用）。 */
+.music-panel-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    background var(--duration-normal) var(--ease-standard),
+    color var(--duration-normal) var(--ease-standard);
+}
+.music-panel-btn:hover {
+  background: var(--button-hover-bg);
+}
+.music-panel-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.music-panel-play {
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1rem;
+  background: var(--button-bg);
+}
+@media (max-width: 720px) {
+  .music-panel-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>

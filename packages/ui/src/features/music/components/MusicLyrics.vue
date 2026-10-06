@@ -49,3 +49,34 @@ onMounted(() => scrollToActive(activeIndex.value));
   </div>
   <p v-else class="music-panel-placeholder">暂无歌词</p>
 </template>
+
+<style scoped src="./musicList.css"></style>
+
+<style scoped>
+.music-panel-lyrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 14rem;
+  padding: 0.6rem;
+  overflow: auto;
+  border-radius: var(--radius-sm);
+  background: var(--button-bg);
+}
+.music-panel-lyric-row {
+  padding: 0.15rem 0.35rem;
+  border-radius: var(--radius-xs);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  transition: color var(--duration-normal) var(--ease-standard);
+}
+.music-panel-lyric-row.is-active {
+  color: var(--primary);
+  font-weight: 600;
+}
+@media (max-width: 720px) {
+  .music-panel-lyrics {
+    max-height: 9rem;
+  }
+}
+</style>
