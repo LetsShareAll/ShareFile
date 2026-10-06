@@ -1,105 +1,63 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 
+import { getNodeFileUrl } from '../../../domain/links';
+import { useLibraryStore } from '../../../stores/library';
+import { useMusicStore } from '../../../stores/music';
+import { usePreviewStore } from '../../../stores/preview';
+import { buildQueueFromDirectory } from '../../music/track';
 import AudioLyrics from './audio/AudioLyrics.vue';
-import { parseAudioTitle } from './audio/format';
 import { buildMetaRows } from './audio/metaRows';
-import {
-  isUsableAudioUrl,
-  readAudioMetadata,
-  type AudioPreviewMetadata,
-} from './audio/metadata';
-
-type AmplitudeApi = (typeof import('amplitudejs'))['default'];
 
 const props = defineProps<{ fileUrl: string; name: string; mime?: string }>();
 
-const fileUrl = props.fileUrl.trim();
-const song = { ...parseAudioTitle(props.name), url: fileUrl };
-const usable = isUsableAudioUrl(fileUrl);
+const preview = usePreviewStore();
+const library = useLibraryStore();
+const music = useMusicStore();
 
-const metadata = ref<AudioPreviewMetadata | null>(null);
-const statusText = ref(
-  usable ? '正在读取内嵌元数据...' : '音频地址无效，无法加载播放器',
+const isCurrent = computed(() => music.currentTrack?.id === preview.node?.id);
+const title = computed(
+  () => music.metadata.title || music.currentTrack?.name || props.name,
 );
-const coverUrl = ref<string | undefined>(undefined);
-const audioEl = ref<HTMLAudioElement | null>(null);
-
-let amplitude: AmplitudeApi | null = null;
-let controller: AbortController | null = null;
-let disposed = false;
-
-const lyrics = computed(() => metadata.value?.lyrics ?? []);
-const title = computed(() => metadata.value?.title || song.name);
-const artist = computed(() => metadata.value?.artist || '未知艺术家');
-const coverAlt = computed(
-  () => `${metadata.value?.album || metadata.value?.title || props.name} 封面`,
+const artist = computed(() => music.metadata.artist || '未知艺术家');
+const artworkAlt = computed(() => `${title.value} 封面`);
+const lyrics = computed(() =>
+  (music.metadata.lyrics ?? []).map(line => ({
+    time: line.time,
+    lyric: line.text,
+  })),
 );
 const metaRows = computed(() =>
-  metadata.value ? buildMetaRows(metadata.value) : [],
+  buildMetaRows({
+    title: music.metadata.title,
+    artist: music.metadata.artist,
+    album: music.metadata.album,
+    lyrics: lyrics.value,
+    hasCommonTags: false,
+  }),
 );
+const statusText = computed(() => {
+  if (music.error) return `播放失败：${music.error}`;
+  if (!isCurrent.value) return '正在转交底部全局播放器...';
 
-async function loadMetadata(): Promise<void> {
-  controller = new AbortController();
-
-  try {
-    const info = await readAudioMetadata(
-      fileUrl,
-      props.mime,
-      song,
-      controller.signal,
-    );
-
-    if (disposed) {
-      if (info.coverUrl) URL.revokeObjectURL(info.coverUrl);
-
-      return;
-    }
-
-    metadata.value = info;
-    coverUrl.value = info.coverUrl;
-    statusText.value =
-      info.lyrics.length > 0
-        ? '已读取内嵌元数据和同步歌词'
-        : info.hasCommonTags
-          ? '已读取内嵌元数据'
-          : '未找到内嵌标签，已读取音频流信息';
-  } catch {
-    if (!disposed && !controller.signal.aborted) {
-      statusText.value = '未能读取内嵌元数据';
-    }
-  }
-}
-
-onMounted(async () => {
-  if (!usable) return;
-
-  const { default: Amplitude } = await import('amplitudejs');
-
-  if (disposed) return;
-
-  amplitude = Amplitude;
-  Amplitude.init({ preload: 'metadata', songs: [song] });
-  audioEl.value = Amplitude.getAudio();
-  void loadMetadata();
+  return music.isPlaying ? '全局播放器中正在播放' : '已在全局播放器中暂停';
 });
 
-onUnmounted(() => {
-  disposed = true;
-  controller?.abort();
-  controller = null;
+/** 弹窗关闭后仍要继续播放：这里只把当前目录的音频队列交给全局播放器。 */
+onMounted(() => {
+  const node = preview.node;
 
-  const audio = amplitude?.getAudio();
+  if (!node || music.currentTrack?.id === node.id) return;
 
-  if (audio) {
-    audio.pause();
-    audio.removeAttribute('src');
-    audio.load();
-  }
+  const queue = buildQueueFromDirectory(
+    preview.navigation,
+    nodeId => library.getNodePathById(nodeId),
+    getNodeFileUrl,
+  );
 
-  if (coverUrl.value) URL.revokeObjectURL(coverUrl.value);
+  if (!queue.some(track => track.id === node.id)) return;
 
-  coverUrl.value = undefined;
+  void music.playTracks(queue, node.id);
 });
 </script>
 
@@ -107,7 +65,11 @@ onUnmounted(() => {
   <div class="amplitude-preview">
     <div class="amplitude-preview-main">
       <div class="amplitude-preview-artwork">
-        <img v-if="coverUrl" :src="coverUrl" :alt="coverAlt" />
+        <img
+          v-if="music.metadata.coverUrl"
+          :src="music.metadata.coverUrl"
+          :alt="artworkAlt"
+        />
         <i v-else class="fas fa-music" />
       </div>
       <div class="amplitude-preview-details">
@@ -126,36 +88,11 @@ onUnmounted(() => {
             <dd>{{ row.value }}</dd>
           </div>
         </dl>
-        <div class="amplitude-preview-controls">
-          <button
-            class="amplitude-play-pause amplitude-preview-play"
-            type="button"
-            data-amplitude-song-index="0"
-            :disabled="!usable"
-          >
-            <i class="fas fa-play" />
-            <i class="fas fa-pause" />
-          </button>
-          <div class="amplitude-preview-timeline">
-            <span class="amplitude-current-time" data-amplitude-song-index="0">
-              00:00
-            </span>
-            <input
-              class="amplitude-song-slider"
-              data-amplitude-song-index="0"
-              type="range"
-              min="0"
-              max="100"
-              :value="0"
-              :disabled="!usable"
-            />
-            <span class="amplitude-duration-time" data-amplitude-song-index="0">
-              00:00
-            </span>
-          </div>
-        </div>
+        <p class="amplitude-preview-status">
+          播放控制已移至底部播放条，关闭弹窗不会中断播放。
+        </p>
       </div>
     </div>
-    <AudioLyrics :lines="lyrics" :audio="audioEl" />
+    <AudioLyrics :lines="lyrics" :audio="null" />
   </div>
 </template>

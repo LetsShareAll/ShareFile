@@ -3,6 +3,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/browse.css';
 import './styles/preview.css';
+import './styles/music.css';
 import './styles/vendor.css';
 
 import { createPinia } from 'pinia';
