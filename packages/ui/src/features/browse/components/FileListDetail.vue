@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ShareNode } from '../../../domain/share-file';
+import { isRestrictedNode, type ShareNode } from '../../../domain/share-file';
 import {
   DEFAULT_NODE_DESCRIPTION,
   getNodeMetaText,
@@ -10,6 +10,7 @@ import {
   scheduleHoverPrefetch,
 } from '../../preview/prefetch';
 import NodeActions from './NodeActions.vue';
+import RestrictedIndicator from './RestrictedIndicator.vue';
 
 defineProps<{ rows: readonly NodeRow[]; showPath?: boolean }>();
 
@@ -56,6 +57,7 @@ function activate(row: NodeRow): void {
         <div class="item-copy">
           <span class="item-name" :title="row.node.name">
             <span class="item-name-text">{{ row.node.name }}</span>
+            <RestrictedIndicator v-if="isRestrictedNode(row.node)" />
             <span v-if="row.node.version" class="version-badge"
               >v{{ row.node.version }}</span
             >

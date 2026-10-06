@@ -11,7 +11,11 @@ import { sortNodes } from '../../domain/sort';
 import DirectoryReadme from './components/DirectoryReadme.vue';
 import PreviewModal from '../preview/PreviewModal.vue';
 import { triggerFileDownload } from '../../platform/download';
-import type { ShareNode } from '../../domain/share-file';
+import {
+  isRestrictedNode,
+  RESTRICTED_NOTICE,
+  type ShareNode,
+} from '../../domain/share-file';
 import { usePreviewStore } from '../../stores/preview';
 import { useNodeActivation } from './useNodeActivation';
 import { useUiStore } from '../../stores/ui';
@@ -116,6 +120,10 @@ let copiedTimer: number | undefined;
 const shareVisible = computed(
   () => !library.error && Boolean(currentNode.value),
 );
+
+// 受限目录（含受限文件的深链）禁用分享入口：静态站点无法阻止直接访问 URL，
+// 这里只是「不给分享入口 + 明确提示」，不是安全边界。
+const shareDisabled = computed(() => isRestrictedNode(currentNode.value));
 
 // 只有「当前路径恰好是文件深链」时才有下载示例——目录没有字节。
 const shareDownloadPath = computed(() =>
@@ -249,7 +257,8 @@ function navigate(path: string): void {
             type="button"
             class="glass share-btn"
             :class="{ active: shareOpen }"
-            title="分享当前目录"
+            :disabled="shareDisabled"
+            :title="shareDisabled ? RESTRICTED_NOTICE : '分享当前目录'"
             aria-label="分享当前目录"
             aria-haspopup="menu"
             :aria-expanded="shareOpen"
@@ -400,8 +409,13 @@ header {
   transition: background-color var(--duration-normal) var(--ease-standard);
 }
 
-.share-btn:hover {
+.share-btn:hover:not(:disabled) {
   background-color: var(--glass-surface-strong);
+}
+
+.share-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .share-btn.active {

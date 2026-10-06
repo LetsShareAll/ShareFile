@@ -7,6 +7,7 @@ export {
   getShareFileRootId,
 } from './accessors';
 export { normalizeMountSource, normalizeShareFile } from './normalize';
+export { RESTRICTED_NOTICE, isRestrictedNode } from './restricted';
 export type {
   BaseInfo,
   DirectoryNode,

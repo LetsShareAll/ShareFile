@@ -3,7 +3,11 @@ import { computed, onUnmounted, ref } from 'vue';
 
 import { formatFileSizeUnit } from '../../../domain/format';
 import { getCurlCommand } from '../../../domain/links';
-import type { ShareNode } from '../../../domain/share-file';
+import {
+  isRestrictedNode,
+  RESTRICTED_NOTICE,
+  type ShareNode,
+} from '../../../domain/share-file';
 import { copyText } from '../../../platform/clipboard';
 import { formatHashPreview } from '../nodeDisplay';
 
@@ -25,6 +29,16 @@ const emit = defineEmits<{
   open: [node: ShareNode];
   download: [node: ShareNode];
 }>();
+
+/**
+ * 受限内容只挡分享入口（复制直链 / 页面链接 / curl）：静态站点无法阻止任何人
+ * 直接访问 URL，所以下载与预览照常可用，见 `domain/share-file/restricted.ts`。
+ */
+const restricted = computed(() => isRestrictedNode(props.node));
+
+function actionTitle(text: string): string {
+  return restricted.value ? RESTRICTED_NOTICE : text;
+}
 
 const hashes = computed<HashEntry[]>(() => {
   const entries: { kind: HashKind; label: string; value?: string }[] = [
@@ -63,7 +77,8 @@ onUnmounted(() => window.clearTimeout(resetTimer));
     <button
       type="button"
       class="action-btn"
-      title="复制页面链接"
+      :disabled="restricted"
+      :title="actionTitle('复制页面链接')"
       aria-label="复制页面链接"
       @click.stop="copyValue(pageUrl)"
     >
@@ -73,7 +88,8 @@ onUnmounted(() => window.clearTimeout(resetTimer));
       <button
         type="button"
         class="action-btn"
-        title="复制直链"
+        :disabled="restricted"
+        :title="actionTitle('复制直链')"
         aria-label="复制直链"
         @click.stop="copyValue(fileUrl)"
       >
@@ -82,7 +98,8 @@ onUnmounted(() => window.clearTimeout(resetTimer));
       <button
         type="button"
         class="action-btn"
-        title="复制 curl 命令"
+        :disabled="restricted"
+        :title="actionTitle('复制 curl 命令')"
         aria-label="复制 curl 命令"
         @click.stop="copyValue(getCurlCommand(fileUrl))"
       >
@@ -119,5 +136,10 @@ onUnmounted(() => window.clearTimeout(resetTimer));
 <style scoped>
 .hash-value.copied {
   color: var(--color-success);
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 </style>

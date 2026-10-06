@@ -26,6 +26,20 @@ function getBoolean(
   return undefined;
 }
 
+/** 路径规则列表：只保留字符串元素，非数组按未配置处理。 */
+function getStringArray(
+  value: Record<string, unknown>,
+  key: string,
+): string[] | undefined {
+  const currentValue = value[key];
+
+  if (!Array.isArray(currentValue)) return undefined;
+
+  return currentValue.filter(
+    (item): item is string => typeof item === 'string',
+  );
+}
+
 export function normalizeMountSource(
   value: unknown,
 ): MountSourceInfo | undefined {
@@ -49,6 +63,12 @@ export function normalizeMountSource(
     ...(getBoolean(value, 'use_cdn_index') !== undefined && {
       use_cdn_index: getBoolean(value, 'use_cdn_index'),
     }),
+    ...(getStringArray(value, 'allow_paths') && {
+      allow_paths: getStringArray(value, 'allow_paths'),
+    }),
+    ...(getStringArray(value, 'deny_paths') && {
+      deny_paths: getStringArray(value, 'deny_paths'),
+    }),
   };
 }
 
@@ -65,11 +85,19 @@ function normalizeNode<T extends ShareNode>(value: T): T {
     children: normalizeChildren(source.children),
   };
   const mountSource = normalizeMountSource(source.mount_source);
+  // 脏数据（字符串或数字）不当作受限内容，缺失与非法值一律按未限制处理。
+  const restricted = getBoolean(source, 'restricted');
 
   delete normalized.mount_source;
 
   if (mountSource) {
     normalized.mount_source = mountSource;
+  }
+
+  if (restricted === undefined) {
+    delete normalized.restricted;
+  } else {
+    normalized.restricted = restricted;
   }
 
   return normalized as T;

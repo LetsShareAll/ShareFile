@@ -215,6 +215,89 @@ describe('normalizeMountSource', () => {
       }),
     ).toEqual({ provider: 'github', repository: 'o/r', use_cdn_index: false });
   });
+
+  it('保留 allow_paths / deny_paths 并丢弃非字符串元素', () => {
+    expect(
+      normalizeMountSource({
+        provider: 'github',
+        repository: 'o/r',
+        allow_paths: ['/docs', 1, null, '/media'],
+        deny_paths: ['/docs/secret'],
+      }),
+    ).toEqual({
+      provider: 'github',
+      repository: 'o/r',
+      allow_paths: ['/docs', '/media'],
+      deny_paths: ['/docs/secret'],
+    });
+  });
+
+  it('allow_paths / deny_paths 不是数组时忽略该字段', () => {
+    expect(
+      normalizeMountSource({
+        provider: 'github',
+        repository: 'o/r',
+        allow_paths: '/docs',
+      }),
+    ).toEqual({ provider: 'github', repository: 'o/r' });
+  });
+});
+
+describe('normalizeShareFile 的 restricted 归一化', () => {
+  it('true / false 原样保留', () => {
+    const result = requireShareFile(
+      makeRawShareFile({
+        nodes: {
+          root: {
+            id: 'root',
+            name: 'root',
+            type: 'folder',
+            children: ['a.txt', 'b.txt'],
+          },
+          'a.txt': {
+            id: 'a.txt',
+            name: 'a.txt',
+            type: 'file',
+            restricted: true,
+          },
+          'b.txt': {
+            id: 'b.txt',
+            name: 'b.txt',
+            type: 'file',
+            restricted: false,
+          },
+        },
+      }),
+    );
+
+    expect(result.nodes['a.txt'].restricted).toBe(true);
+    expect(result.nodes['b.txt'].restricted).toBe(false);
+  });
+
+  it('缺失与非法值都按未限制处理（字段被丢弃）', () => {
+    const result = requireShareFile(
+      makeRawShareFile({
+        nodes: {
+          root: {
+            id: 'root',
+            name: 'root',
+            type: 'folder',
+            children: ['a.txt', 'b.txt'],
+          },
+          'a.txt': { id: 'a.txt', name: 'a.txt', type: 'file' },
+          'b.txt': {
+            id: 'b.txt',
+            name: 'b.txt',
+            type: 'file',
+            restricted: 'true',
+          },
+        },
+      }),
+    );
+
+    expect('restricted' in result.nodes['a.txt']).toBe(false);
+    expect('restricted' in result.nodes['b.txt']).toBe(false);
+  });
 });
 
 describe('normalizeShareFile 的 mount_points', () => {

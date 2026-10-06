@@ -40,6 +40,8 @@ export function githubSource(
     sub_path?: string;
     access_cdn?: string;
     use_cdn_index?: boolean;
+    allow_paths?: readonly string[];
+    deny_paths?: readonly string[];
   } = {},
 ): MountSourceInfo {
   return {
@@ -51,6 +53,10 @@ export function githubSource(
     ...(options.use_cdn_index !== undefined && {
       use_cdn_index: options.use_cdn_index,
     }),
+    ...(options.allow_paths !== undefined && {
+      allow_paths: options.allow_paths,
+    }),
+    ...(options.deny_paths !== undefined && { deny_paths: options.deny_paths }),
   };
 }
 

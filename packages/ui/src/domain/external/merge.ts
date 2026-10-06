@@ -9,6 +9,7 @@ import type {
   ShareFile,
   ShareNode,
 } from '../share-file/schema';
+import { filterExternalChildren } from './pathRules';
 import { buildExternalFileUrl, isUsableExternalFileUrl } from './url';
 
 export interface MountPointInfo {
@@ -81,6 +82,10 @@ export function filterExternalNodes(
   return { nodes: filteredNodes, rootNodeId: subPathNodeId };
 }
 
+/**
+ * 去掉外部索引根节点前缀，得到「相对挂载根」的 ID（挂载根自身为空串）。
+ * 与构建期 `generate-files-manifest.py` 的同名函数逐行对应。
+ */
 export function getRelativeExternalNodeId(
   oldId: string,
   externalRootId: string,
@@ -96,6 +101,7 @@ export function getRelativeExternalNodeId(
   return oldId;
 }
 
+/** 把外部相对 ID 拼到挂载点 ID 上。 */
 export function joinMountedNodeId(
   mountPointPath: string,
   relativeId: string,
@@ -108,6 +114,10 @@ export function joinMountedNodeId(
 
 /**
  * 重写外部节点 ID / 父子引用 / 直链，并打上 external 与 mount_point 标记。
+ *
+ * 同时执行挂载源准入清单（`allow_paths` / `deny_paths`）过滤：此刻节点 ID 还是
+ * 外挂索引自身的坐标系，与构建期比较的是同一串路径。过滤只影响前端呈现，
+ * **不是安全边界**——被剔除的节点在外挂源上依旧公开可达。
  */
 export function rewriteExternalNodes(
   externalNodes: Record<string, ShareNode>,
@@ -119,14 +129,20 @@ export function rewriteExternalNodes(
   const rewrittenNodes: Record<string, ShareNode> = {};
   const pathIndex: Record<string, string> = {};
   const idMapping: Record<string, string> = {};
+  const admittedNodes = filterExternalChildren(
+    externalNodes,
+    externalRootId,
+    mountSource.allow_paths,
+    mountSource.deny_paths,
+  );
 
-  Object.keys(externalNodes).forEach(oldId => {
+  Object.keys(admittedNodes).forEach(oldId => {
     const relativeId = getRelativeExternalNodeId(oldId, externalRootId);
 
     idMapping[oldId] = joinMountedNodeId(mountPointPath, relativeId);
   });
 
-  Object.entries(externalNodes).forEach(([oldId, node]) => {
+  Object.entries(admittedNodes).forEach(([oldId, node]) => {
     const newId = idMapping[oldId];
     const newParentId = node.parent ? idMapping[node.parent] || null : null;
 

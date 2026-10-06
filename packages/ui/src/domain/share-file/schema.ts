@@ -31,6 +31,15 @@ export interface MountSourceInfo {
   readonly access_cdn?: string;
   /** 是否优先加载外部仓库的 share-file.cdn.json 文件。默认 false，加载 share-file.json。 */
   readonly use_cdn_index?: boolean;
+  /**
+   * 准入白名单：元素为以 `/` 开头的路径前缀，匹配的是**外挂索引里节点 ID 对应的
+   * 路径**（外挂源自身坐标系，含 `sub_path` 前缀）。命中规则见
+   * `domain/external/pathRules.ts`；非空时未命中的节点（含子树）不会出现在合并结果里。
+   * 空 / 缺失表示不按白名单限制。
+   */
+  readonly allow_paths?: readonly string[];
+  /** 准入黑名单，语义同 `allow_paths`，但优先于白名单：命中即剔除该节点及其整棵子树。 */
+  readonly deny_paths?: readonly string[];
 }
 
 /**
@@ -55,6 +64,13 @@ export interface BaseInfo {
   readonly description?: string;
   /** 是否在前端目录树或文件列表中默认隐藏此节点。 */
   readonly hidden?: boolean;
+  /**
+   * 是否为受限内容（来自 `._info.json`，缺失按 false 处理）。
+   *
+   * 语义只是「前端不提供分享入口 + 明确提示」：静态站点无法阻止任何人直接访问 URL，
+   * 因此它**不是**安全边界，也不会阻止预览与播放（见 `restricted.ts`）。
+   */
+  readonly restricted?: boolean;
   /** 虚拟节点的重定向配置。物理节点不应包含此字段。 */
   readonly redirect?: RedirectInfo;
   /** 字段更新锁定配置。若为 true 则锁定全部自动字段；若为对象则进行细粒度控制。 */
@@ -172,6 +188,8 @@ export interface ShareNode {
   readonly description?: string;
   /** 是否在用户界面端呈现隐藏状态。 */
   readonly hidden?: boolean;
+  /** 是否为受限内容：前端不提供分享入口（复制直链 / 页面链接 / curl），仅作提示，见 `restricted.ts`。 */
+  readonly restricted?: boolean;
   /** 文件节点的体积字节尺寸。 */
   readonly size?: number;
   /** 文件的版本号。 */

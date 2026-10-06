@@ -23,6 +23,12 @@ export {
   type MountPointInfo,
 } from './merge';
 export {
+  filterExternalChildren,
+  isExternalPathAllowed,
+  matchesPathRule,
+  normalizePathPrefix,
+} from './pathRules';
+export {
   GITHUB_RAW_BASE_URL,
   GITHUB_RAW_HOST,
   buildExternalFileUrl,

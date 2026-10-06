@@ -3,7 +3,11 @@ import { computed, onBeforeUnmount, ref } from 'vue';
 
 import { formatSize, getRelativeTime } from '../../domain/format';
 import { getCurlCommand } from '../../domain/links';
-import type { ShareNode } from '../../domain/share-file';
+import {
+  isRestrictedNode,
+  RESTRICTED_NOTICE,
+  type ShareNode,
+} from '../../domain/share-file';
 import { copyText } from '../../platform/clipboard';
 import { openPreviewInNewTab } from './actions';
 
@@ -29,6 +33,18 @@ const props = defineProps<{
 const expanded = ref(false);
 const copied = ref<CopyTarget | null>(null);
 let resetTimer: number | undefined;
+
+/**
+ * 受限节点在预览页脚只禁用三个分享动作（复制直链 / 页面链接 / curl）。
+ *
+ * 刻意不挡预览与播放：静态站点无法阻止任何人直接访问 URL，挡住内容只会伤害
+ * 正常浏览，换不来任何安全收益，见 `domain/share-file/restricted.ts`。
+ */
+const restricted = computed(() => isRestrictedNode(props.node));
+
+function actionTitle(text: string): string {
+  return restricted.value ? RESTRICTED_NOTICE : text;
+}
 
 const hashes = computed<HashEntry[]>(() => {
   const entries: { kind: HashEntry['kind']; label: string; value?: string }[] =
@@ -116,7 +132,8 @@ onBeforeUnmount(() => window.clearTimeout(resetTimer));
       <button
         class="preview-action-btn"
         type="button"
-        title="复制直链"
+        :disabled="restricted"
+        :title="actionTitle('复制直链')"
         @click="copy('direct', fileUrl)"
       >
         <i class="fas fa-copy" /> {{ label('direct', '复制直链') }}
@@ -124,7 +141,8 @@ onBeforeUnmount(() => window.clearTimeout(resetTimer));
       <button
         class="preview-action-btn"
         type="button"
-        title="复制页面链接"
+        :disabled="restricted"
+        :title="actionTitle('复制页面链接')"
         @click="copy('page', pageUrl)"
       >
         <i class="fas fa-link" /> {{ label('page', '复制页面链接') }}
@@ -132,7 +150,8 @@ onBeforeUnmount(() => window.clearTimeout(resetTimer));
       <button
         class="preview-action-btn"
         type="button"
-        title="复制 curl 命令"
+        :disabled="restricted"
+        :title="actionTitle('复制 curl 命令')"
         @click="copy('curl', getCurlCommand(fileUrl))"
       >
         <i class="fas fa-terminal" /> {{ label('curl', '复制 curl 命令') }}
@@ -155,3 +174,10 @@ onBeforeUnmount(() => window.clearTimeout(resetTimer));
     </div>
   </footer>
 </template>
+
+<style scoped>
+.preview-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+</style>
