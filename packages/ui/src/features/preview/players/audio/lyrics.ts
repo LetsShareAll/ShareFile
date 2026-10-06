@@ -80,7 +80,7 @@ function toTextArray(value: unknown): string[] {
 function getNativeLyricTexts(metadata: IAudioMetadata): string[] {
   const texts: string[] = [];
 
-  for (const [tagId, values] of Object.entries(metadata.native)) {
+  for (const [tagId, values] of Object.entries(metadata.native ?? {})) {
     const id = tagId.toLowerCase();
 
     if (!LYRIC_TAG_IDS.has(id) && !id.includes('lyric')) continue;

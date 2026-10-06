@@ -123,30 +123,68 @@ function mapAudioMetadata(
   };
 }
 
-export async function readAudioMetadata(
+export interface AudioMetadataOptions {
+  /**
+   * 只取文件前 N 字节（Range 请求）解析元信息。
+   * 这些音频有 38–56 MB，整文件流式解析在慢速 CDN 上要几分钟；
+   * 而 FLAC 的 STREAMINFO / Vorbis 注释都在文件头，512 KB 足够。
+   */
+  maxBytes?: number;
+}
+
+async function fetchMetadataResponse(
   fileUrl: string,
-  fallbackMime: string | undefined,
-  fallback: AudioTrack,
   signal: AbortSignal,
-): Promise<AudioPreviewMetadata> {
-  const { parseBlob, parseWebStream, selectCover } =
-    await import('music-metadata');
-  const response = await fetch(fileUrl, { signal });
+  maxBytes: number | undefined,
+): Promise<Response> {
+  const response = await fetch(
+    fileUrl,
+    maxBytes === undefined
+      ? { signal }
+      : { signal, headers: { Range: `bytes=0-${maxBytes - 1}` } },
+  );
 
   if (!response.ok) {
     throw new Error(`Metadata request failed: ${response.status}`);
   }
 
-  const mimeType = getResponseMimeType(response, fallbackMime);
-  const options = { duration: false, skipPostHeaders: true };
-  const metadata =
-    response.body && mimeType
-      ? await parseWebStream(response.body, mimeType, options)
-      : await parseBlob(await response.blob(), options);
+  return response;
+}
 
-  return mapAudioMetadata(
-    metadata,
-    fallback,
-    createCoverUrl(selectCover(metadata.common.picture)),
-  );
+export async function readAudioMetadata(
+  fileUrl: string,
+  fallbackMime: string | undefined,
+  fallback: AudioTrack,
+  signal: AbortSignal,
+  options: AudioMetadataOptions = {},
+): Promise<AudioPreviewMetadata> {
+  const { parseBlob, parseWebStream, selectCover } =
+    await import('music-metadata');
+
+  const parse = async (response: Response): Promise<AudioPreviewMetadata> => {
+    const mimeType = getResponseMimeType(response, fallbackMime);
+    const parseOptions = { duration: false, skipPostHeaders: true };
+    const metadata =
+      response.body && mimeType
+        ? await parseWebStream(response.body, mimeType, parseOptions)
+        : await parseBlob(await response.blob(), parseOptions);
+
+    return mapAudioMetadata(
+      metadata,
+      fallback,
+      createCoverUrl(selectCover(metadata.common.picture)),
+    );
+  };
+
+  const { maxBytes } = options;
+  const limited = maxBytes !== undefined;
+
+  try {
+    return await parse(await fetchMetadataResponse(fileUrl, signal, maxBytes));
+  } catch (error) {
+    // 元数据在文件尾的容器（如 MP4 的 moov）截断后会解析失败 → 回退整文件流。
+    if (!limited || signal.aborted) throw error;
+
+    return await parse(await fetchMetadataResponse(fileUrl, signal, undefined));
+  }
 }
